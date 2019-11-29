@@ -1,18 +1,26 @@
 plugins {
-  id 'application'
-  id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'java'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
 }
+
+group 'Triciyen'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile group: 'org.springframework', name: 'spring-messaging', version: '5.2.1.RELEASE'
+    compile group: 'org.springframework', name: 'spring-websocket', version: '5.2.1.RELEASE'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.10.1'
+    testCompile group: 'org.eclipse.jetty.aggregate', name: 'jetty-all', version: '9.4.24.v20191120', ext: 'pom'
 }
 
 javafx {
     version = "13"
     modules = [ 'javafx.controls', 'javafx.fxml' ]
 }
-
-mainClassName = 'com.triciyen.MainApp'
