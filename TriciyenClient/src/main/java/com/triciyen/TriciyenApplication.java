@@ -64,6 +64,7 @@ public class TriciyenApplication extends Application implements EventHandler<Eve
     }
 
     public static void main(String[] args) {
+
         launch(args);
     }
 
@@ -130,7 +131,7 @@ public class TriciyenApplication extends Application implements EventHandler<Eve
             }
         });
 
-        connector1.subscribe(broker1 + topic1, new StompFrameHandler() {
+        connector3.subscribe(broker1 + topic1, new StompFrameHandler() {
             @Override
             public Type getPayloadType(StompHeaders stompHeaders) {
                 return byte[].class;
