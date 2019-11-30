@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Table(name="message")
 public class Message {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer messageId;
 
     @ManyToOne

@@ -20,4 +20,6 @@ public class Conversation implements Serializable {
 
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UserConversation> userConversation;
+
+    private String name;
 }

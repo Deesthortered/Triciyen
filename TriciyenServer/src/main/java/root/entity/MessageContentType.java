@@ -14,6 +14,7 @@ import java.io.Serializable;
 @Table(name="message_content_type")
 public class MessageContentType implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer messageContentTypeId;
 
     @Column(unique=true)
