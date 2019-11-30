@@ -3,7 +3,7 @@ package root.controllers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import root.StompMessage;
+import root.entity.auxiliary.StompMessage;
 
 @Controller
 public class StompQueryController {
