@@ -13,8 +13,8 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name="MessageContentType")
-@Table(name="MessageContentType")
+@Entity
+@Table(name="message_content_type")
 public class MessageContentType implements Serializable {
     @Id
     private Integer messageContentTypeId;

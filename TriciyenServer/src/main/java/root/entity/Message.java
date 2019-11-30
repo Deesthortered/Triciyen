@@ -4,17 +4,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name="Message")
-@Table(name="Message")
+@Entity
+@Table(name="message")
 public class Message {
     @Id
     private Integer messageId;
+
+    @ManyToOne
+    @JoinColumn(name="conversationId", nullable=false)
     private Conversation conversation;
+
+    @ManyToOne
+    @JoinColumn(name = "login", nullable = false)
+    private UserAccount user;
+
 }

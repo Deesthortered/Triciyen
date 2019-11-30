@@ -1,0 +1,28 @@
+package root.entity;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name="user_conversation")
+public class UserConversation {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer userConversationId;
+
+    @ManyToOne
+    @JoinColumn(name = "login", nullable = false)
+    private UserAccount user;
+
+    @ManyToOne
+    @JoinColumn(name="conversationId", nullable=false)
+    private Conversation conversation;
+
+    private Integer lastReadMessage;
+}

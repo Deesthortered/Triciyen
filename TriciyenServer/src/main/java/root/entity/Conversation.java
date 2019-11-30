@@ -11,19 +11,16 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name="Conversation")
-@Table(name="Conversation")
+@Entity
+@Table(name="conversation")
 public class Conversation implements Serializable {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer conversationId;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(name = "UserConversation",
-            joinColumns = @JoinColumn(name = "conversationId"),
-            inverseJoinColumns = @JoinColumn(name = "login")
-    )
-    private List<UserAccount> userAccounts;
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserConversation> userConversation;
+
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Message> messages;
 }

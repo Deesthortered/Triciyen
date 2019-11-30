@@ -6,13 +6,14 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity(name="UserAccount")
-@Table(name="UserAccount")
+@Entity
+@Table(name="user_account")
 public class UserAccount implements Serializable {
     @Id
     private String login;
@@ -22,13 +23,6 @@ public class UserAccount implements Serializable {
     @Column(unique=true)
     private String email;
 
-    @ManyToMany(cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE
-    })
-    @JoinTable(name = "UserConversation",
-            joinColumns = @JoinColumn(name = "login"),
-            inverseJoinColumns = @JoinColumn(name = "conversationId")
-    )
-    private List<Conversation> conversations;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<UserConversation> userConversation = new ArrayList<>();
 }
