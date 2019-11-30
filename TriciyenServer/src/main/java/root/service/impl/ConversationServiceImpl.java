@@ -3,6 +3,7 @@ package root.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import root.entity.Conversation;
+import root.entity.Message;
 import root.entity.UserAccount;
 import root.entity.UserConversation;
 import root.exception.NotFoundException;
@@ -22,7 +23,7 @@ public class ConversationServiceImpl implements ConversationService {
     @Autowired
     private UserConversationRepository userConversationRepository;
     @Autowired
-    ConversationRepository conversationRepository;
+    private ConversationRepository conversationRepository;
 
     @Override
     public List<Conversation> getAllConversationsByUser(String login) {

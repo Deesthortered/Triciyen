@@ -1,5 +1,6 @@
 package root.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,10 +21,12 @@ public class Message implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer messageId;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="conversationId", nullable=false)
     private Conversation conversation;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "login", nullable = false)
     private UserAccount user;

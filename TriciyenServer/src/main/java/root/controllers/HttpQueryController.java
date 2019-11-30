@@ -5,11 +5,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import root.entity.Conversation;
+import root.entity.Message;
 import root.entity.UserAccount;
 import root.entity.auxiliary.AuthData;
-import root.repository.UserAccountRepository;
 import root.service.AccountService;
 import root.service.ConversationService;
+import root.service.MessageService;
 
 import java.util.List;
 
@@ -18,23 +19,12 @@ import java.util.List;
 public class HttpQueryController {
 
     @Autowired
-    private UserAccountRepository repository;
-
-    @Autowired
     private AccountService accountService;
-
     @Autowired
     private ConversationService conversationService;
+    @Autowired
+    private MessageService messageService;
 
-    @GetMapping("/get/{login}")
-    public ResponseEntity<?> get(@PathVariable String login) {
-        UserAccount user = repository.findById(login)
-                .orElse(UserAccount
-                        .builder()
-                        .login("Not found")
-                        .build());
-        return ResponseEntity.status(HttpStatus.OK).body(user);
-    }
 
     @PostMapping("/auth")
     public ResponseEntity<?> authenticate(@RequestBody AuthData authData) {
@@ -44,8 +34,22 @@ public class HttpQueryController {
 
     @GetMapping("/getConversations/{login}")
     public ResponseEntity<?> getUserConversations(@PathVariable String login) {
-        List<Conversation> res = conversationService.getAllConversationsByUser(login);
-        return ResponseEntity.status(HttpStatus.OK).body(res);
+        List<Conversation> conversationList = conversationService.getAllConversationsByUser(login);
+        return ResponseEntity.status(HttpStatus.OK).body(conversationList);
     }
 
+    @GetMapping("/getLastMessage/{conversationId}")
+    public ResponseEntity<?> getLastMessageInTheConversation(@PathVariable Integer conversationId) {
+        Message lastMessage = messageService.getLastMessageInConversation(conversationId);
+        return ResponseEntity.status(HttpStatus.OK).body(lastMessage);
+    }
+
+    @GetMapping("/getListOfLastMessages/{conversationId}")
+    public ResponseEntity<?> getListOfLastMessagesInTheConversation(
+            @PathVariable Integer conversationId,
+            @RequestParam(value = "messageCount", defaultValue = "1") Integer messageCount
+    ) {
+        List<Message> lastMessages = messageService.getSetOfLastMessagesInConversation(conversationId, messageCount);
+        return ResponseEntity.status(HttpStatus.OK).body(lastMessages);
+    }
 }
