@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import root.entity.Conversation;
 import root.entity.UserAccount;
-import root.entity.UserConversation;
 import root.entity.auxiliary.AuthData;
 import root.repository.UserAccountRepository;
 import root.service.AccountService;
@@ -44,7 +44,7 @@ public class HttpQueryController {
 
     @GetMapping("/getConversations/{login}")
     public ResponseEntity<?> getUserConversations(@PathVariable String login) {
-        List<UserConversation> res = conversationService.getAllConversationsByUser(login);
+        List<Conversation> res = conversationService.getAllConversationsByUser(login);
         return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 

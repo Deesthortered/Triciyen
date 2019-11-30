@@ -2,6 +2,7 @@ package root.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import root.entity.Conversation;
 import root.entity.UserAccount;
 import root.entity.UserConversation;
 import root.exception.NotFoundException;
@@ -10,6 +11,7 @@ import root.repository.UserAccountRepository;
 import root.repository.UserConversationRepository;
 import root.service.ConversationService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Transactional
@@ -23,12 +25,16 @@ public class ConversationServiceImpl implements ConversationService {
     ConversationRepository conversationRepository;
 
     @Override
-    public List<UserConversation> getAllConversationsByUser(String login) {
+    public List<Conversation> getAllConversationsByUser(String login) {
         UserAccount userAccount = userAccountRepository
                 .findById(login)
                 .orElseThrow(() -> new NotFoundException("User is not found"));
 
         List<UserConversation> userConversations = userConversationRepository.findAllByUser(userAccount);
-        return userConversations;
+
+        List<Conversation> conversations = new ArrayList<>(userConversations.size());
+        userConversations.forEach( item -> conversations.add(item.getConversation()));
+
+        return conversations;
     }
 }
