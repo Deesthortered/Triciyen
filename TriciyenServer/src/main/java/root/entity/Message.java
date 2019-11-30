@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -23,4 +24,11 @@ public class Message {
     @JoinColumn(name = "login", nullable = false)
     private UserAccount user;
 
+    private LocalDateTime creationTime;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="messageContentTypeId")
+    private MessageContentType contentType;
+
+    private String content;
 }
