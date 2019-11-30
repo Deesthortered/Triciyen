@@ -1,4 +1,4 @@
-package root.entity;
+package root;
 
 public class Greeting {
 

@@ -3,8 +3,8 @@ package root.controllers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
-import root.entity.Greeting;
-import root.entity.HelloMessage;
+import root.Greeting;
+import root.HelloMessage;
 
 @Controller
 public class UserAccountController {
