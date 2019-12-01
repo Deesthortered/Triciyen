@@ -88,11 +88,10 @@ public class Messanger_MessageList {
         ResultSet rs = null;
     	list = new ArrayList<Messanger_Content>();
 		
-		String sql = "select c.content_date, c.content, c.content_room "
-				+ "from employee_info e, (select max(content_date) content_date, content, content_room "
-				+ "from content where content_room like ? group by content_date desc) as c "
-				+ "group by c.content_room "
-				+ "order by c.content_date desc";
+		String sql = "select content_date, content, content_room  "
+				+ "from content  "
+				+ "where content_room like ? "
+				+ "order by content_date desc ";
 		ps = conn.getConnection().prepareStatement(sql);
 		ps.setString(1, "%"+Messanger_FriendsList.messangerMyProfile.getPersonNumber()+"%");
 		rs = ps.executeQuery();
@@ -114,8 +113,8 @@ public class Messanger_MessageList {
     }
 
     public List<Messanger_Content> subString(List<Messanger_Content> list) throws ClassNotFoundException, SQLException{
-    	List<Messanger_Content> roomList = new ArrayList<Messanger_Content>();
-    	List<String> subList = new ArrayList<String>();
+    	List<Messanger_Content> roomList;
+    	List<String> subList = new ArrayList<>();
     	
     	roomList = list;
     	
