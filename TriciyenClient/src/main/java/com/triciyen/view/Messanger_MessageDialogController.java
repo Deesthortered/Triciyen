@@ -100,6 +100,8 @@ public class Messanger_MessageDialogController {
 				+ "from content c, employee_info e "
 				+ "where c.content_send = e.employee_id and c.content_room = ? " 
 				+ "order by c.content_date asc;";
+		System.out.println(sql);
+		System.out.println(sumString());
 		
 		ps = conn.getConnection().prepareStatement(sql);
 		ps.setString(1, sumString());
@@ -131,6 +133,9 @@ public class Messanger_MessageDialogController {
 			return;
 		} else{
 			listviewContent.setItems(handleContent());
+			System.out.println("----list----");
+			for (Messanger_Content item : handleContent())
+				System.out.println(item.getContent());
 			listviewContent.setCellFactory(new Callback<ListView<Messanger_Content>, ListCell<Messanger_Content>>() {
 				
 				@Override
@@ -170,8 +175,6 @@ public class Messanger_MessageDialogController {
             	setText(null);
             	setGraphic(null);
             } else {
-            	
-//            	setStyle("-fx-background-color : white;");
 
             	String personNumber = Messanger_FriendsList.messangerMyProfile.getPersonNumber();
             	if(messangerContent.getSenderNumber().equals(personNumber)){
@@ -266,6 +269,7 @@ public class Messanger_MessageDialogController {
 					PreparedStatement ps = null;
 					
 					String sql = "insert into content(content_date, content, content_send, content_room) values(now(), ?, ?, ?)";
+					System.out.println("sql insert = " + sql);
 					ps = conn.getConnection().prepareStatement(sql);
 					ps.setString(1, messageTextarea.getText());
 					ps.setString(2, Messanger_FriendsList.messangerMyProfile.getPersonNumber());

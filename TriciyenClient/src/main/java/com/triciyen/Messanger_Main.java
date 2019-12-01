@@ -17,7 +17,6 @@ public class Messanger_Main extends Application {
         Messanger_Panel messangerPanel = new Messanger_Panel();
 
         messangerPanel.loginStage(primaryStage);
-        //primaryStage.show();
     }
 
     public static void main(String[] args) {

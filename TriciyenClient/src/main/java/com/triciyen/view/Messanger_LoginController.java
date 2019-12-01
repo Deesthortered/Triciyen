@@ -27,7 +27,7 @@ public class Messanger_LoginController{
 	@FXML
 	private Button loginButton;
 	@FXML
-	private TextField id;
+	private TextField email;
 	@FXML
 	private PasswordField password;
 	
@@ -173,13 +173,13 @@ public class Messanger_LoginController{
     	ResultSet rs = null;
     	Messanger_Connection conn = new Messanger_Connection();
     
-    	if(id.getText().equals("") && password.getText().equals("")){
+    	if(email.getText().equals("") && password.getText().equals("")){
     		return false;
     	} else{
     		int count = 0;
     	   	String sql = "select count(employee_name) as name, employee_id from employee_security where employee_email = ? and employee_password = ? group by employee_id";
     		ps = conn.getConnection().prepareStatement(sql);
-    		ps.setString(1, id.getText());
+    		ps.setString(1, email.getText());
     		ps.setString(2, password.getText());
     		rs = ps.executeQuery();
     		

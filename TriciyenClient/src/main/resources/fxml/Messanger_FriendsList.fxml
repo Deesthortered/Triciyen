@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="700.0" prefWidth="500.0" stylesheets="../css/Messanger_Util.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.triciyen.view.Messanger_FriendsList">
+<AnchorPane prefHeight="700.0" prefWidth="500.0" stylesheets="@../css/Messanger_Util.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.triciyen.view.Messanger_FriendsList">
    <children>
       <Label layoutX="14.0" layoutY="19.0" text="My profile" textFill="#499ea1" />
       <VBox fx:id="vbox_myProfile" layoutY="53.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">

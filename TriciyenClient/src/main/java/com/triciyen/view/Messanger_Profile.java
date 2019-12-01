@@ -19,7 +19,7 @@ public class Messanger_Profile {
 	public void profileDialog(Messanger_User messangerFriends) throws IOException{
 		
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(Messanger_Main.class.getResource("view/Messanger_Profile.fxml"));
+		loader.setLocation(ClassLoader.getSystemClassLoader().getResource("fxml/Messanger_Profile.fxml"));
 		AnchorPane profilePane = (AnchorPane) loader.load();
 		
 		Messanger_Panel.messangerList.setProfileStage(new Stage());

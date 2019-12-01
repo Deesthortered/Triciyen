@@ -87,25 +87,7 @@ public class Messanger_FriendsList {
             } 
         }
     }
-	
-//	private int isMessage;
-//	
-//	protected boolean isMessage() throws ClassNotFoundException, SQLException{
-//    	String sql = "select count(distinct content_room) as isContent from content where content_room like '110389,110397'";
-//    	ps = conn.getConnection().prepareStatement(sql);
-//		ps.setString(1, messangerMyProfile.getPersonNumber());
-//		rs = ps.executeQuery();
-//		
-//		if(rs.next()){
-//			isMessage = rs.getInt(1);
-//		}
-//		
-//		if(isMessage == 1){
-//			return true;
-//		} else{
-//			return false;
-//		}
-//	}
+
 
     public static Messanger_MessageDialog messageDialog = new Messanger_MessageDialog();
 
