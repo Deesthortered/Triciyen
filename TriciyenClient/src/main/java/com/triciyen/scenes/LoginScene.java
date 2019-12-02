@@ -1,6 +1,7 @@
 package com.triciyen.scenes;
 
 import com.triciyen.TriciyenApplication;
+import com.triciyen.service.UserAccountService;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -22,6 +23,9 @@ public class LoginScene implements EventHandler<Event> {
     private Button loginButton;
     private Button registrationButton;
 
+    private TextField loginField;
+    private PasswordField passwordField;
+
     private LoginScene() {
         HBox loginBox = new HBox();
         HBox passwordBox = new HBox();
@@ -32,11 +36,11 @@ public class LoginScene implements EventHandler<Event> {
         Label titleLabel = new Label("Wellcome to Triciyen!");
 
         Label loginLabel = new Label("Login: ");
-        TextField loginField = new TextField();
+        loginField = new TextField();
         loginBox.getChildren().addAll(loginLabel, loginField);
 
         Label passwordLabel = new Label("Password: ");
-        PasswordField passwordField = new PasswordField();
+        passwordField = new PasswordField();
         passwordBox.getChildren().addAll(passwordLabel, passwordField);
 
         loginButton = new Button("Login");
@@ -69,7 +73,10 @@ public class LoginScene implements EventHandler<Event> {
     }
 
     private void loginEvent() {
-
+        UserAccountService service = UserAccountService.getInstance();
+        String login = loginField.getText();
+        String password = passwordField.getText();
+        service.authenticate(login, password);
     }
     private void registrationEvent() {
         TriciyenApplication.setGlobalScene(RegistrationScene.getInstance().getScene());
