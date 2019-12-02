@@ -7,7 +7,6 @@ import javafx.stage.Stage;
 
 public class TriciyenApplication extends Application {
     private static Stage mainStage;
-    private LoginScene loginScene = LoginScene.getInstance();
 
     public static void main(String[] args) {
         launch(args);
@@ -20,6 +19,6 @@ public class TriciyenApplication extends Application {
     public void start(Stage stage) {
         mainStage = stage;
         mainStage.setTitle("Triciyen Application");
-        TriciyenApplication.setGlobalScene(loginScene.getScene());
+        TriciyenApplication.setGlobalScene(LoginScene.getInstance().getScene());
     }
 }
