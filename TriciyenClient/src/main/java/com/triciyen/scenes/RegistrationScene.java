@@ -2,7 +2,6 @@ package com.triciyen.scenes;
 
 import com.triciyen.TriciyenApplication;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class RegistrationScene implements EventHandler<Event> {
+public class RegistrationScene implements BaseScene {
     private static final RegistrationScene instance = new RegistrationScene();
     private static Scene scene;
 
@@ -62,10 +61,15 @@ public class RegistrationScene implements EventHandler<Event> {
     public static RegistrationScene getInstance() {
         return instance;
     }
+
+    @Override
     public Scene getScene() {
         return scene;
     }
+    @Override
+    public void initialize() {
 
+    }
     @Override
     public void handle(Event event) {
         if (event.getSource() == submitButton) {
@@ -80,8 +84,7 @@ public class RegistrationScene implements EventHandler<Event> {
     private void submitEvent() {
 
     }
-
     private void backEvent() {
-        TriciyenApplication.setGlobalScene(LoginScene.getInstance().getScene());
+        TriciyenApplication.setGlobalScene(LoginScene.getInstance());
     }
 }

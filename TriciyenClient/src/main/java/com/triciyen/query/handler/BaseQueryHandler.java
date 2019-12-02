@@ -1,5 +1,8 @@
 package com.triciyen.query.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.triciyen.service.StateService;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,6 +11,8 @@ import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 
 abstract class BaseQueryHandler {
+    StateService stateService = StateService.getInstance();
+    ObjectMapper jsonMapper = new ObjectMapper();
     String domain = "http://localhost:8080";
     String urlAuthentication = "/http_api/auth";
 

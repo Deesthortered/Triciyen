@@ -1,6 +1,5 @@
 package com.triciyen.query.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.triciyen.entity.UserAccount;
 import com.triciyen.entity.auxiliary.AuthData;
 
@@ -11,7 +10,6 @@ import java.util.Optional;
 
 public class UserAccountQueryHandler extends BaseQueryHandler {
     private static final UserAccountQueryHandler instance = new UserAccountQueryHandler();
-    private static ObjectMapper jsonMapper = new ObjectMapper();
 
     private UserAccountQueryHandler() {
 
@@ -35,11 +33,20 @@ public class UserAccountQueryHandler extends BaseQueryHandler {
             String jsonResponse = readResponseBody(connection);
             UserAccount userAccount = jsonMapper.readValue(jsonResponse, UserAccount.class);
             return Optional.of(userAccount);
-        } else {
-            String errorResponse = readResponseError(connection);
-            System.out.println("Response code: " + connection.getResponseCode());
-            System.out.println("Error info: " + errorResponse);
         }
+
+        StringBuilder errorBuilder = new StringBuilder();
+        errorBuilder.append("Source: UserAccountQueryHandler -> authenticateQuery");
+        errorBuilder.append("Response code: ");
+        errorBuilder.append("\n");
+        errorBuilder.append(connection.getResponseCode());
+        errorBuilder.append("Error info: ");
+        errorBuilder.append(readResponseError(connection));
+        errorBuilder.append("\n");
+
+        stateService.setServerErrorMessage(errorBuilder.toString());
+        System.out.println(errorBuilder.toString());
+
         return Optional.empty();
     }
 }

@@ -1,10 +1,9 @@
 package com.triciyen.scenes;
 
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-public class MainScene implements EventHandler<Event> {
+public class MainScene implements BaseScene {
     private static final MainScene instance = new MainScene();
     private static Scene scene;
 
@@ -19,10 +18,15 @@ public class MainScene implements EventHandler<Event> {
     public static MainScene getInstance() {
         return instance;
     }
+
+    @Override
     public Scene getScene() {
         return scene;
     }
+    @Override
+    public void initialize() {
 
+    }
     @Override
     public void handle(Event event) {
 

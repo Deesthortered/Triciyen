@@ -3,7 +3,6 @@ package com.triciyen.scenes;
 import com.triciyen.TriciyenApplication;
 import com.triciyen.service.UserAccountService;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,7 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class LoginScene implements EventHandler<Event> {
+public class LoginScene implements BaseScene {
     private static final LoginScene instance = new LoginScene();
     private static Scene scene;
 
@@ -57,10 +56,15 @@ public class LoginScene implements EventHandler<Event> {
     public static LoginScene getInstance() {
         return instance;
     }
+
+    @Override
     public Scene getScene() {
         return scene;
     }
+    @Override
+    public void initialize() {
 
+    }
     @Override
     public void handle(Event event) {
         if (event.getSource() == loginButton) {
@@ -76,9 +80,14 @@ public class LoginScene implements EventHandler<Event> {
         UserAccountService service = UserAccountService.getInstance();
         String login = loginField.getText();
         String password = passwordField.getText();
-        service.authenticate(login, password);
+        boolean success = service.authenticate(login, password);
+        if (success) {
+
+        } else {
+
+        }
     }
     private void registrationEvent() {
-        TriciyenApplication.setGlobalScene(RegistrationScene.getInstance().getScene());
+        TriciyenApplication.setGlobalScene(RegistrationScene.getInstance());
     }
 }

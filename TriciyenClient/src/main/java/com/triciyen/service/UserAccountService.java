@@ -1,12 +1,11 @@
 package com.triciyen.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.triciyen.entity.UserAccount;
 import com.triciyen.entity.auxiliary.AuthData;
 import com.triciyen.query.handler.UserAccountQueryHandler;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class UserAccountService {
     private static final UserAccountService instance = new UserAccountService();
@@ -18,19 +17,21 @@ public class UserAccountService {
         return instance;
     }
 
-    public void authenticate(String login, String password) {
+    public boolean authenticate(String login, String password) {
         UserAccountQueryHandler queryHandler = UserAccountQueryHandler.getInstance();
-
+        StateService stateService = StateService.getInstance();
         AuthData authData = new AuthData(login, password);
-        UserAccount account;
+
         try {
-            account = queryHandler
-                    .authenticateQuery(authData)
-                    .orElse(UserAccount.builder().login("Error").build());
-            ObjectMapper jsonMapper = new ObjectMapper();
-            System.out.println(jsonMapper.writeValueAsString(account));
+            Optional<UserAccount> account = queryHandler.authenticateQuery(authData);
+            if (account.isPresent()) {
+                stateService.setLogged(account.get());
+                return true;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return false;
     }
 }

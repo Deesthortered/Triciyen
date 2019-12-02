@@ -1,8 +1,9 @@
 package com.triciyen;
 
+import com.triciyen.scenes.BaseScene;
 import com.triciyen.scenes.LoginScene;
+import com.triciyen.service.StateService;
 import javafx.application.Application;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class TriciyenApplication extends Application {
@@ -11,14 +12,17 @@ public class TriciyenApplication extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    public static void setGlobalScene(Scene scene) {
-        mainStage.setScene(scene);
+    public static void setGlobalScene(BaseScene scene) {
+        StateService stateService = StateService.getInstance();
+        stateService.setDefaultState();
+        mainStage.setScene(scene.getScene());
+        scene.initialize();
         mainStage.show();
     }
     @Override
     public void start(Stage stage) {
         mainStage = stage;
         mainStage.setTitle("Triciyen Application");
-        TriciyenApplication.setGlobalScene(LoginScene.getInstance().getScene());
+        TriciyenApplication.setGlobalScene(LoginScene.getInstance());
     }
 }
