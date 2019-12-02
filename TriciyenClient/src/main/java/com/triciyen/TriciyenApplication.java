@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -85,7 +86,11 @@ public class TriciyenApplication extends Application implements EventHandler<Eve
             }
         });
     }
-}
 
-/// https://gluonhq.com/products/javafx/ JavaFX 13 version.
-/// Run >> Edit Configurations, VM Options:  --module-path D:/2.Programming/Triciyen/javafx13lib/lib --add-modules=javafx.controls
+
+    private Scene getLoginPage() {
+        StackPane mainPane = new StackPane();
+        Scene result = new Scene(mainPane, );
+        return result;
+    }
+}
