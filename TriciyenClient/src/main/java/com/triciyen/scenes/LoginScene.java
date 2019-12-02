@@ -1,5 +1,6 @@
 package com.triciyen.scenes;
 
+import com.triciyen.TriciyenApplication;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -71,6 +72,6 @@ public class LoginScene implements EventHandler<Event> {
 
     }
     private void registrationEvent() {
-
+        TriciyenApplication.setGlobalScene(RegistrationScene.getInstance().getScene());
     }
 }

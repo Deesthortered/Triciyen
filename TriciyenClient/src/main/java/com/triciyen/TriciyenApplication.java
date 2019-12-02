@@ -2,20 +2,24 @@ package com.triciyen;
 
 import com.triciyen.scenes.LoginScene;
 import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class TriciyenApplication extends Application {
+    private static Stage mainStage;
     private LoginScene loginScene = LoginScene.getInstance();
-
 
     public static void main(String[] args) {
         launch(args);
     }
-
+    public static void setGlobalScene(Scene scene) {
+        mainStage.setScene(scene);
+        mainStage.show();
+    }
     @Override
     public void start(Stage stage) {
-        stage.setScene(loginScene.getScene());
-        stage.setTitle("Triciyen Application");
-        stage.show();
+        mainStage = stage;
+        mainStage.setTitle("Triciyen Application");
+        TriciyenApplication.setGlobalScene(loginScene.getScene());
     }
 }

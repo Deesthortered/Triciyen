@@ -3,7 +3,9 @@ package com.triciyen.scenes;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 
 public class RegistrationScene implements EventHandler<Event> {
     private static final RegistrationScene instance = new RegistrationScene();
@@ -15,7 +17,10 @@ public class RegistrationScene implements EventHandler<Event> {
 
 
     private RegistrationScene() {
-        scene = new Scene(new Pane(), sceneWidth, sceneHeight);
+        StackPane pane = new StackPane();
+        Label test = new Label("1123");
+        pane.getChildren().addAll(test);
+        scene = new Scene(pane, sceneWidth, sceneHeight);
     }
     public static RegistrationScene getInstance() {
         return instance;
