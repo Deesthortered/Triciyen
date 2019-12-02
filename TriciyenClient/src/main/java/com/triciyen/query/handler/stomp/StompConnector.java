@@ -1,4 +1,4 @@
-package com.triciyen.stomp;
+package com.triciyen.query.handler.stomp;
 
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
 import org.springframework.messaging.simp.stomp.StompSession;
