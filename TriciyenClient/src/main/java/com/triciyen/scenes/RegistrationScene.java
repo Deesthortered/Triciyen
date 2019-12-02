@@ -1,9 +1,11 @@
 package com.triciyen.scenes;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 
-public class RegistrationScene {
+public class RegistrationScene implements EventHandler<Event> {
     private static final RegistrationScene instance = new RegistrationScene();
     private static Scene scene;
 
@@ -20,5 +22,10 @@ public class RegistrationScene {
     }
     public Scene getScene() {
         return scene;
+    }
+
+    @Override
+    public void handle(Event event) {
+
     }
 }
