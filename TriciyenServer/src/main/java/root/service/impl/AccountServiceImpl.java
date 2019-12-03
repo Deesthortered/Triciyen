@@ -18,11 +18,19 @@ public class AccountServiceImpl implements AccountService {
     public UserAccount authenticate(String login, String hashedPassword) {
         UserAccount userAccount = userAccountRepository
                 .findById(login)
-                .orElseThrow(() -> new NotFoundException("User is not found"));
+                .orElseThrow(() -> new NotFoundException("User is not found."));
         if (userAccount.getPassword().equals(hashedPassword)) {
             return userAccount;
         } else {
             throw new InvalidCredentialsException("Password is incorrect.");
         }
+    }
+
+    @Override
+    public UserAccount registration(UserAccount newUserAccount) {
+        userAccountRepository.save(newUserAccount);
+        return userAccountRepository
+                .findById(newUserAccount.getLogin())
+                .orElseThrow(() -> new NotFoundException("User is not found after saving."));
     }
 }

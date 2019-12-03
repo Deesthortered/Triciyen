@@ -32,6 +32,12 @@ public class HttpQueryController {
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
+    @PostMapping("/registration")
+    public ResponseEntity<?> registration(@RequestBody UserAccount newUserAccount) {
+        UserAccount givenUserAccount = accountService.registration(newUserAccount);
+        return ResponseEntity.status(HttpStatus.OK).body(givenUserAccount);
+    }
+
     @GetMapping("/getConversations/{login}")
     public ResponseEntity<?> getUserConversations(@PathVariable String login) {
         List<Conversation> conversationList = conversationService.getAllConversationsByUser(login);
