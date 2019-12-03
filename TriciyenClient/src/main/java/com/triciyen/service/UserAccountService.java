@@ -2,6 +2,7 @@ package com.triciyen.service;
 
 import com.triciyen.entity.UserAccount;
 import com.triciyen.entity.auxiliary.AuthData;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -17,7 +18,8 @@ public class UserAccountService implements BaseService {
     }
 
     public boolean authenticate(String login, String password) {
-        AuthData authData = new AuthData(login, password);
+        String encryptedPassword = DigestUtils.sha256Hex(password);
+        AuthData authData = new AuthData(login, encryptedPassword);
 
         try {
             Optional<UserAccount> account = userAccountQueryHandler.authenticateQuery(authData);
@@ -32,6 +34,8 @@ public class UserAccountService implements BaseService {
         return false;
     }
     public boolean registration(UserAccount userAccount) {
+        userAccount.setPassword(DigestUtils.sha256Hex(userAccount.getPassword()));
+
         Optional<UserAccount> givenUserAccount = Optional.empty();
         try {
             givenUserAccount = userAccountQueryHandler.registrationQuery(userAccount);
