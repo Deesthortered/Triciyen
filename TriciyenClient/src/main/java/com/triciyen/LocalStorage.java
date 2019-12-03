@@ -1,19 +1,31 @@
-package com.triciyen.service;
+package com.triciyen;
 
 import com.triciyen.entity.UserAccount;
+import javafx.scene.image.Image;
 
-public class StateService {
-    private static final StateService instance = new StateService();
+import java.io.File;
+import java.net.MalformedURLException;
 
-    private StateService() {
+public class LocalStorage {
+    private static final LocalStorage instance = new LocalStorage();
+
+    private LocalStorage() {
         this.wasError = false;
         this.serverErrorMessage = "";
         this.logged = false;
         this.loggedUserAccount = null;
+
+        try {
+            baseAccountImage = new Image(new File("baseAccountImage.png").toURI().toURL().toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
-    public static StateService getInstance() {
+    public static LocalStorage getInstance() {
         return instance;
     }
+
+    private Image baseAccountImage;
 
     private boolean wasError;
     private String serverErrorMessage;
@@ -51,5 +63,9 @@ public class StateService {
     public void setLogout() {
         this.logged = false;
         this.loggedUserAccount = null;
+    }
+
+    public Image getBaseAccountImage() {
+        return baseAccountImage;
     }
 }

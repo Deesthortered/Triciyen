@@ -1,7 +1,7 @@
 package com.triciyen.query.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.triciyen.service.StateService;
+import com.triciyen.LocalStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +12,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 abstract class BaseQueryHandler {
-    StateService stateService = StateService.getInstance();
+    LocalStorage localStorage = LocalStorage.getInstance();
     ObjectMapper jsonMapper = new ObjectMapper();
     private String domain = "http://localhost:8080";
     String urlAuthentication = "/http_api/auth";
@@ -65,7 +65,7 @@ abstract class BaseQueryHandler {
         errorBuilder.append(readResponseError(connection));
         errorBuilder.append("\n");
 
-        stateService.setServerErrorMessage(errorBuilder.toString());
+        localStorage.setServerErrorMessage(errorBuilder.toString());
         System.out.println(errorBuilder.toString());
     }
 

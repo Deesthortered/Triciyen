@@ -24,11 +24,11 @@ public class UserAccountService implements BaseService {
         try {
             Optional<UserAccount> account = userAccountQueryHandler.authenticateQuery(authData);
             if (account.isPresent()) {
-                stateService.setLogged(account.get());
+                localStorage.setLogged(account.get());
                 return true;
             }
         } catch (IOException e) {
-            stateService.setServerErrorMessage(e.getMessage());
+            localStorage.setServerErrorMessage(e.getMessage());
         }
 
         return false;
@@ -40,7 +40,7 @@ public class UserAccountService implements BaseService {
         try {
             givenUserAccount = userAccountQueryHandler.registrationQuery(userAccount);
         } catch (IOException e) {
-            stateService.setServerErrorMessage(e.getMessage());
+            localStorage.setServerErrorMessage(e.getMessage());
         }
 
         if (givenUserAccount.isEmpty()) {
@@ -48,7 +48,7 @@ public class UserAccountService implements BaseService {
         }
 
         if (!userAccount.equals(givenUserAccount.get())) {
-            stateService.setServerErrorMessage("Given data is not corresponding with input\n" +
+            localStorage.setServerErrorMessage("Given data is not corresponding with input\n" +
                     "Given: " + givenUserAccount.get().toString());
             return false;
         }

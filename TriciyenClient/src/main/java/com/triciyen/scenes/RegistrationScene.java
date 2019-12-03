@@ -122,7 +122,7 @@ public class RegistrationScene implements BaseScene {
             if (success) {
                 TriciyenApplication.setGlobalScene(MainScene.getInstance());
             } else {
-                errorLabel.setText(stateService.getServerErrorMessage());
+                errorLabel.setText(localStorage.getServerErrorMessage());
             }
         } else {
             errorLabel.setText("Please, do correct password confirmation.");

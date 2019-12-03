@@ -21,15 +21,15 @@ public class MessageService implements BaseService {
         try {
             packedMessage = messageQueryHandler.getLastMessageOfConversation(conversation);
         } catch (IOException e) {
-            stateService.setServerErrorMessage(e.getMessage());
+            localStorage.setServerErrorMessage(e.getMessage());
         }
 
         if (packedMessage.isPresent()) {
             return packedMessage.get();
         }
 
-        if (stateService.isWasError()) {
-            return Message.builder().content("Was error: " + stateService.getServerErrorMessage()).build();
+        if (localStorage.isWasError()) {
+            return Message.builder().content("Was error: " + localStorage.getServerErrorMessage()).build();
         }
 
         return Message.builder().content("No messages").build();

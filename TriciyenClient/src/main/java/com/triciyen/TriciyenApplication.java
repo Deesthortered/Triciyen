@@ -2,7 +2,6 @@ package com.triciyen;
 
 import com.triciyen.scenes.BaseScene;
 import com.triciyen.scenes.LoginScene;
-import com.triciyen.service.StateService;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -22,7 +21,7 @@ public class TriciyenApplication extends Application {
         mainStage = stage;
         mainStage.setTitle("Triciyen Application");
         mainStage.setResizable(false);
-        StateService.getInstance().setDefaultState();
+        LocalStorage.getInstance().setDefaultState();
         TriciyenApplication.setGlobalScene(LoginScene.getInstance());
     }
 }

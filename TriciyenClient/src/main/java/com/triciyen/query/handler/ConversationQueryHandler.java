@@ -20,7 +20,7 @@ public class ConversationQueryHandler extends BaseQueryHandler {
     }
 
     public Optional<List<Conversation>> getAllSubscribedConversationsQuery() throws IOException {
-        UserAccount account = stateService.getLoggedAccount();
+        UserAccount account = localStorage.getLoggedAccount();
         HttpURLConnection connection = makeGetQuery(urlGetAllSubscribedConversations + account.getLogin());
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
