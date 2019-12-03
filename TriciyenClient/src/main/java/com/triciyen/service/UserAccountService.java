@@ -29,7 +29,7 @@ public class UserAccountService {
                 return true;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            stateService.setServerErrorMessage(e.getMessage());
         }
 
         return false;

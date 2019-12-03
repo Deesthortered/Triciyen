@@ -20,7 +20,7 @@ public class ConversationQueryHandler extends BaseQueryHandler {
         return instance;
     }
 
-    public Optional<List<Conversation>> getAllSubscribedConversations() throws IOException {
+    public Optional<List<Conversation>> getAllSubscribedConversationsQuery() throws IOException {
         UserAccount account = stateService.getLoggedAccount();
         URL url = new URL(domain + urlGetAllSubscribedConversations + account.getLogin());
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

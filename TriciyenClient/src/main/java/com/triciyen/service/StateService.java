@@ -6,6 +6,7 @@ public class StateService {
     private static final StateService instance = new StateService();
 
     private StateService() {
+        this.wasError = false;
         this.serverErrorMessage = "";
         this.logged = false;
         this.loggedUserAccount = null;
@@ -14,7 +15,7 @@ public class StateService {
         return instance;
     }
 
-
+    private boolean wasError;
     private String serverErrorMessage;
     private boolean logged;
     private UserAccount loggedUserAccount;
@@ -26,9 +27,11 @@ public class StateService {
     }
 
     public void setServerErrorMessage(String message) {
+        this.wasError = true;
         this.serverErrorMessage = message;
     }
     public String getServerErrorMessage() {
+        this.wasError = false;
         return this.serverErrorMessage;
     }
 

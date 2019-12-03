@@ -25,6 +25,8 @@ public class LoginScene implements BaseScene {
     private TextField loginField;
     private PasswordField passwordField;
 
+    private Label errorLabel;
+
     private LoginScene() {
         HBox loginBox = new HBox();
         HBox passwordBox = new HBox();
@@ -48,7 +50,9 @@ public class LoginScene implements BaseScene {
         registrationButton.setOnMouseClicked(this);
         buttonBox.getChildren().addAll(loginButton, registrationButton);
 
-        rowBox.getChildren().addAll(titleLabel, loginBox, passwordBox, buttonBox);
+        errorLabel = new Label("");
+
+        rowBox.getChildren().addAll(titleLabel, loginBox, passwordBox, buttonBox, errorLabel);
         mainPane.getChildren().addAll(rowBox);
 
         scene = new Scene(mainPane, sceneWidth, sceneHeight);
@@ -65,6 +69,7 @@ public class LoginScene implements BaseScene {
     public void initialize() {
         this.loginField.setText("");
         this.passwordField.setText("");
+        this.errorLabel.setText("");
     }
     @Override
     public void handle(Event event) {
@@ -83,12 +88,15 @@ public class LoginScene implements BaseScene {
         String password = passwordField.getText();
         boolean success = service.authenticate(login, password);
         if (success) {
-
+            TriciyenApplication.setGlobalScene(MainScene.getInstance());
         } else {
-
+            errorMessage();
         }
     }
     private void registrationEvent() {
         TriciyenApplication.setGlobalScene(RegistrationScene.getInstance());
+    }
+    private void errorMessage() {
+        this.errorLabel.setText(stateService.getServerErrorMessage());
     }
 }
