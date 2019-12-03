@@ -36,6 +36,12 @@ public class StateService {
         this.logged = true;
         this.loggedUserAccount = account;
     }
+    public boolean getLogged() {
+        return this.logged;
+    }
+    public UserAccount getLoggedAccount() {
+        return this.loggedUserAccount;
+    }
     public void setLogout() {
         this.logged = false;
         this.loggedUserAccount = null;

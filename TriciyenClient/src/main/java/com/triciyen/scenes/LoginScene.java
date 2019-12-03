@@ -63,7 +63,8 @@ public class LoginScene implements BaseScene {
     }
     @Override
     public void initialize() {
-
+        this.loginField.setText("");
+        this.passwordField.setText("");
     }
     @Override
     public void handle(Event event) {

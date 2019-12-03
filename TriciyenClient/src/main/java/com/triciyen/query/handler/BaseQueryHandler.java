@@ -15,15 +15,16 @@ abstract class BaseQueryHandler {
     ObjectMapper jsonMapper = new ObjectMapper();
     String domain = "http://localhost:8080";
     String urlAuthentication = "/http_api/auth";
+    String urlGetAllSubscribedConversations = "/http_api/getConversations/";
 
-    void writeStringIntoConnectionBody(HttpURLConnection connection, String data) throws IOException {
+    protected void writeStringIntoConnectionBody(HttpURLConnection connection, String data) throws IOException {
         try (OutputStream os = connection.getOutputStream()) {
             byte[] input = data.getBytes(StandardCharsets.UTF_8);
             os.write(input, 0, input.length);
             os.flush();
         }
     }
-    String readResponseBody(HttpURLConnection connection) throws IOException {
+    protected String readResponseBody(HttpURLConnection connection) throws IOException {
         String result;
         try (var br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
             StringBuilder responseBuilder = new StringBuilder();
@@ -35,7 +36,7 @@ abstract class BaseQueryHandler {
         }
         return result;
     }
-    String readResponseError(HttpURLConnection connection) throws IOException {
+    protected String readResponseError(HttpURLConnection connection) throws IOException {
         String result;
         try (var br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8))) {
             StringBuilder responseBuilder = new StringBuilder();
@@ -46,5 +47,22 @@ abstract class BaseQueryHandler {
             result = responseBuilder.toString();
         }
         return result;
+    }
+    protected void logServerError(String handlerName, String handlerFunction, HttpURLConnection connection) throws IOException {
+        StringBuilder errorBuilder = new StringBuilder();
+        errorBuilder.append("Source: ");
+        errorBuilder.append(handlerName);
+        errorBuilder.append(" -> ");
+        errorBuilder.append(handlerFunction);
+        errorBuilder.append("\n");
+        errorBuilder.append("Response code: ");
+        errorBuilder.append(connection.getResponseCode());
+        errorBuilder.append("\n");
+        errorBuilder.append("Error info: ");
+        errorBuilder.append(readResponseError(connection));
+        errorBuilder.append("\n");
+
+        stateService.setServerErrorMessage(errorBuilder.toString());
+        System.out.println(errorBuilder.toString());
     }
 }

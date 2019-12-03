@@ -35,17 +35,7 @@ public class UserAccountQueryHandler extends BaseQueryHandler {
             return Optional.of(userAccount);
         }
 
-        StringBuilder errorBuilder = new StringBuilder();
-        errorBuilder.append("Source: UserAccountQueryHandler -> authenticateQuery");
-        errorBuilder.append("Response code: ");
-        errorBuilder.append("\n");
-        errorBuilder.append(connection.getResponseCode());
-        errorBuilder.append("Error info: ");
-        errorBuilder.append(readResponseError(connection));
-        errorBuilder.append("\n");
-
-        stateService.setServerErrorMessage(errorBuilder.toString());
-        System.out.println(errorBuilder.toString());
+        logServerError("UserAccountQueryHandler", "authenticateQuery", connection);
 
         return Optional.empty();
     }
