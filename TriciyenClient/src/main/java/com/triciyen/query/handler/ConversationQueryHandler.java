@@ -6,7 +6,6 @@ import com.triciyen.entity.UserAccount;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,9 +21,7 @@ public class ConversationQueryHandler extends BaseQueryHandler {
 
     public Optional<List<Conversation>> getAllSubscribedConversationsQuery() throws IOException {
         UserAccount account = stateService.getLoggedAccount();
-        URL url = new URL(domain + urlGetAllSubscribedConversations + account.getLogin());
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
+        HttpURLConnection connection = makeGetQuery(urlGetAllSubscribedConversations + account.getLogin());
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String jsonResponse = readResponseBody(connection);

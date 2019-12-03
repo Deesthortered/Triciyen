@@ -8,13 +8,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 abstract class BaseQueryHandler {
     StateService stateService = StateService.getInstance();
     ObjectMapper jsonMapper = new ObjectMapper();
-    String domain = "http://localhost:8080";
+    private String domain = "http://localhost:8080";
     String urlAuthentication = "/http_api/auth";
+    String urlRegistration = "/http_api/registration";
     String urlGetAllSubscribedConversations = "/http_api/getConversations/";
 
     protected void writeStringIntoConnectionBody(HttpURLConnection connection, String data) throws IOException {
@@ -64,5 +66,22 @@ abstract class BaseQueryHandler {
 
         stateService.setServerErrorMessage(errorBuilder.toString());
         System.out.println(errorBuilder.toString());
+    }
+
+    protected HttpURLConnection makeGetQuery(String targetUrl) throws IOException {
+        URL url = new URL(domain + targetUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        return connection;
+    }
+    protected HttpURLConnection makePostQuery(String targetUrl, String body) throws IOException {
+        URL url = new URL(domain + targetUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json; utf-8");
+        connection.setRequestProperty("Accept", "application/json");
+        connection.setDoOutput(true);
+        writeStringIntoConnectionBody(connection, body);
+        return connection;
     }
 }

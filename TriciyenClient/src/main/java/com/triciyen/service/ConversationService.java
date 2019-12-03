@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-public class ConversationService {
+public class ConversationService implements BaseService {
     private static final ConversationService instance = new ConversationService();
 
     private ConversationService() {

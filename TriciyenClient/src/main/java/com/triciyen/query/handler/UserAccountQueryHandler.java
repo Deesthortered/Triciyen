@@ -5,7 +5,6 @@ import com.triciyen.entity.auxiliary.AuthData;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Optional;
 
 public class UserAccountQueryHandler extends BaseQueryHandler {
@@ -19,15 +18,8 @@ public class UserAccountQueryHandler extends BaseQueryHandler {
     }
 
     public Optional<UserAccount> authenticateQuery(AuthData authData) throws IOException {
-        URL url = new URL(domain + urlAuthentication);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/json; utf-8");
-        connection.setRequestProperty("Accept", "application/json");
-        connection.setDoOutput(true);
-
         String jsonAuthData = jsonMapper.writeValueAsString(authData);
-        writeStringIntoConnectionBody(connection, jsonAuthData);
+        HttpURLConnection connection = makePostQuery(urlAuthentication, jsonAuthData);
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String jsonResponse = readResponseBody(connection);
@@ -36,6 +28,20 @@ public class UserAccountQueryHandler extends BaseQueryHandler {
         }
 
         logServerError("UserAccountQueryHandler", "authenticateQuery", connection);
+
+        return Optional.empty();
+    }
+    public Optional<UserAccount> registrationQuery(UserAccount userAccount) throws IOException {
+        String jsonUserAccount = jsonMapper.writeValueAsString(userAccount);
+        HttpURLConnection connection = makePostQuery(urlRegistration, jsonUserAccount);
+
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String jsonResponse = readResponseBody(connection);
+            UserAccount givenUserAccount = jsonMapper.readValue(jsonResponse, UserAccount.class);
+            return Optional.of(givenUserAccount);
+        }
+
+        logServerError("UserAccountQueryHandler", "registrationQuery", connection);
 
         return Optional.empty();
     }

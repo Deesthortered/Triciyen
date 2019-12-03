@@ -2,12 +2,11 @@ package com.triciyen.service;
 
 import com.triciyen.entity.UserAccount;
 import com.triciyen.entity.auxiliary.AuthData;
-import com.triciyen.query.handler.UserAccountQueryHandler;
 
 import java.io.IOException;
 import java.util.Optional;
 
-public class UserAccountService {
+public class UserAccountService implements BaseService {
     private static final UserAccountService instance = new UserAccountService();
 
     private UserAccountService() {
@@ -18,12 +17,10 @@ public class UserAccountService {
     }
 
     public boolean authenticate(String login, String password) {
-        UserAccountQueryHandler queryHandler = UserAccountQueryHandler.getInstance();
-        StateService stateService = StateService.getInstance();
         AuthData authData = new AuthData(login, password);
 
         try {
-            Optional<UserAccount> account = queryHandler.authenticateQuery(authData);
+            Optional<UserAccount> account = userAccountQueryHandler.authenticateQuery(authData);
             if (account.isPresent()) {
                 stateService.setLogged(account.get());
                 return true;
@@ -33,5 +30,25 @@ public class UserAccountService {
         }
 
         return false;
+    }
+    public boolean registration(UserAccount userAccount) {
+        Optional<UserAccount> givenUserAccount = Optional.empty();
+        try {
+            givenUserAccount = userAccountQueryHandler.registrationQuery(userAccount);
+        } catch (IOException e) {
+            stateService.setServerErrorMessage(e.getMessage());
+        }
+
+        if (givenUserAccount.isEmpty()) {
+            return false;
+        }
+
+        if (!userAccount.equals(givenUserAccount.get())) {
+            stateService.setServerErrorMessage("Given data is not corresponding with input\n" +
+                    "Given: " + givenUserAccount.get().toString());
+            return false;
+        }
+
+        return true;
     }
 }
