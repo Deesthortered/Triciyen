@@ -26,6 +26,9 @@ public class StateService {
         this.loggedUserAccount = UserAccount.builder().build();
     }
 
+    public boolean isWasError() {
+        return wasError;
+    }
     public void setServerErrorMessage(String message) {
         this.wasError = true;
         this.serverErrorMessage = message;

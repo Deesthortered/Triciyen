@@ -1,7 +1,6 @@
 package com.triciyen.service;
 
 import com.triciyen.entity.Conversation;
-import com.triciyen.query.handler.ConversationQueryHandler;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,10 +17,9 @@ public class ConversationService implements BaseService {
     }
 
     public Optional<List<Conversation>> getAllSubscribedConversations() {
-        ConversationQueryHandler handler = ConversationQueryHandler.getInstance();
         Optional<List<Conversation>> conversationList = Optional.empty();
         try {
-            conversationList = handler.getAllSubscribedConversationsQuery();
+            conversationList = conversationQueryHandler.getAllSubscribedConversationsQuery();
         } catch (IOException e) {
             stateService.setServerErrorMessage(e.getMessage());
         }
