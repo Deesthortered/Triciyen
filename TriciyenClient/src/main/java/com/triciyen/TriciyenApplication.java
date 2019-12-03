@@ -21,6 +21,7 @@ public class TriciyenApplication extends Application {
     public void start(Stage stage) {
         mainStage = stage;
         mainStage.setTitle("Triciyen Application");
+        mainStage.setResizable(false);
         StateService.getInstance().setDefaultState();
         TriciyenApplication.setGlobalScene(LoginScene.getInstance());
     }
