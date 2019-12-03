@@ -29,7 +29,7 @@ public class ConversationQueryHandler extends BaseQueryHandler {
             return Optional.of(res);
         }
 
-        logServerError("ConversationQueryHandler", "getAllSubscribedConversations", connection);
+        logServerError("ConversationQueryHandler", "getAllSubscribedConversationsQuery", connection);
 
         return Optional.empty();
     }

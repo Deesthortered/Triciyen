@@ -23,7 +23,7 @@ public class ConversationService implements BaseService {
         try {
             conversationList = handler.getAllSubscribedConversationsQuery();
         } catch (IOException e) {
-            e.printStackTrace();
+            stateService.setServerErrorMessage(e.getMessage());
         }
         return conversationList;
     }

@@ -13,8 +13,6 @@ public class TriciyenApplication extends Application {
         launch(args);
     }
     public static void setGlobalScene(BaseScene scene) {
-        StateService stateService = StateService.getInstance();
-        stateService.setDefaultState();
         mainStage.setScene(scene.getScene());
         scene.initialize();
         mainStage.show();
@@ -23,6 +21,7 @@ public class TriciyenApplication extends Application {
     public void start(Stage stage) {
         mainStage = stage;
         mainStage.setTitle("Triciyen Application");
+        StateService.getInstance().setDefaultState();
         TriciyenApplication.setGlobalScene(LoginScene.getInstance());
     }
 }
