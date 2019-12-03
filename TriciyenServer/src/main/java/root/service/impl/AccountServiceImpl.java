@@ -3,6 +3,7 @@ package root.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import root.entity.UserAccount;
+import root.exception.AlreadyExistsException;
 import root.exception.InvalidCredentialsException;
 import root.exception.NotFoundException;
 import root.repository.UserAccountRepository;
@@ -28,6 +29,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public UserAccount registration(UserAccount newUserAccount) {
+        var alreadyInBase = userAccountRepository.findById(newUserAccount.getLogin());
+        if (alreadyInBase.isPresent())
+            throw new AlreadyExistsException("User login is already used in DB");
+
         userAccountRepository.save(newUserAccount);
         return userAccountRepository
                 .findById(newUserAccount.getLogin())
