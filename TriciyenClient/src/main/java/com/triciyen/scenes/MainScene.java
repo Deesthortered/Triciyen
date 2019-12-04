@@ -10,12 +10,10 @@ import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,11 +21,14 @@ import java.util.Optional;
 
 public class MainScene implements BaseScene {
     private static final MainScene instance = new MainScene();
-    private static Scene scene;
 
+    // Scene settings
+    private static Scene scene;
     private static final int sceneWidth = 1000;
     private static final int sceneHeight = 700;
+    private BorderPane mainPane;
 
+    // Left corner settings
     private static final int leftCornerHeight = 100;
     private static final int avatarSize = 50;
 
@@ -36,14 +37,28 @@ public class MainScene implements BaseScene {
     private Label loginLabel;
     private Button logoutButton;
 
+    // Conversation box settings
     private VBox conversationsBox;
+    private List<Button> conversationButtons;
+    private List<Conversation> conversations;
     private static final int conversationButtonWidth = 200;
     private static final int conversationButtonHeight = 70;
     private static final int conversationScrollPaneWidth = 215;
     private static final int conversationScrollPaneHeight = sceneHeight - leftCornerHeight;
 
+    // Big right box settings
+    private StackPane emptyRightPane;
+    private Label emptyRightTitle;
+    private static final int emptyRightPaneWidth = sceneWidth - conversationScrollPaneWidth;
+    private static final int emptyRightPaneHeight = leftCornerHeight;
+
+    private VBox fullRightPane;
+    private StackPane fullRightTitlePane;
+    private Label fullRightConversationLabel;
+    private ListView<String> messageListView;
+
     private MainScene() {
-        BorderPane mainPane = new BorderPane();
+        mainPane = new BorderPane();
 
         StackPane leftCornerPane = new StackPane();
         leftCornerPane.setMinHeight(leftCornerHeight);
@@ -86,6 +101,24 @@ public class MainScene implements BaseScene {
 
         mainPane.setLeft(leftPane);
 
+        emptyRightPane = new StackPane();
+        emptyRightPane.setMinHeight(emptyRightPaneHeight);
+        emptyRightPane.setPrefHeight(emptyRightPaneHeight);
+        emptyRightPane.setMaxHeight(emptyRightPaneHeight);
+        emptyRightPane.setMinWidth(emptyRightPaneWidth);
+        emptyRightPane.setPrefHeight(emptyRightPaneWidth);
+        emptyRightPane.setMaxWidth(emptyRightPaneWidth);
+        emptyRightTitle = new Label("Please, choose the conversation");
+        emptyRightPane.getChildren().addAll(emptyRightTitle);
+        mainPane.setCenter(emptyRightPane);
+
+        fullRightPane = new VBox();
+        fullRightTitlePane = new StackPane();
+        fullRightConversationLabel = new Label("");
+        fullRightTitlePane.getChildren().addAll(fullRightConversationLabel);
+        messageListView = new ListView<>();
+        fullRightPane.getChildren().addAll(fullRightTitlePane, messageListView);
+
         scene = new Scene(mainPane, sceneWidth, sceneHeight);
     }
     public static MainScene getInstance() {
@@ -105,12 +138,14 @@ public class MainScene implements BaseScene {
         loginLabel.setText("Login: " + currentLoggedAccount.getLogin());
         usernameLabel.setText(currentLoggedAccount.getName());
 
+        mainPane.setCenter(emptyRightPane);
+
         conversationsBox.getChildren().clear();
         Optional<List<Conversation>> packedList = conversationService.getAllSubscribedConversations();
         if (packedList.isEmpty()) {
             System.out.println(localStorage.getServerErrorMessage());
         } else {
-            List<Conversation> conversations = packedList.get();
+            conversations = packedList.get();
             List<Message> lastMessages = new ArrayList<>();
             conversations.stream()
                     .map(messageService::getLastMessageOfConversation)
@@ -124,11 +159,20 @@ public class MainScene implements BaseScene {
         if (event.getSource() == logoutButton) {
             logoutEvent();
         } else {
-            System.out.println("Login Scene: Unknown event.");
+            boolean was = false;
+            for (int i = 0; i < conversationButtons.size(); i++) {
+                if (event.getSource() == conversationButtons.get(i)) {
+                    was = true;
+                    initConversation(i);
+                }
+            }
+            if (!was)
+                System.out.println("Login Scene: Unknown event.");
         }
     }
 
     private void initConversationButtons(List<Conversation> source, List<Message> lastMessages) {
+        conversationButtons = new ArrayList<>();
         for (int i = 0; i < source.size(); i++) {
             Button button = new Button(source.get(i).getName() + "\n" + lastMessages.get(i).getContent());
             button.setMinWidth(conversationButtonWidth);
@@ -138,7 +182,11 @@ public class MainScene implements BaseScene {
             button.setPrefHeight(conversationButtonHeight);
             button.setMaxHeight(conversationButtonHeight);
             conversationsBox.getChildren().add(button);
+            conversationButtons.add(button);
         }
+    }
+    private void initConversation(int conversationIndex) {
+        
     }
 
     private void logoutEvent() {
