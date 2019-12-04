@@ -19,7 +19,7 @@ public class MessageQueryHandler extends BaseQueryHandler {
         return instance;
     }
 
-    public Optional<Message> getLastMessageOfConversation(Conversation conversation) throws IOException {
+    public Optional<Message> getLastMessageOfConversationQuery(Conversation conversation) throws IOException {
         HttpURLConnection connection = makeGetQuery(urlGetLastMessageOfConversation + conversation.getConversationId());
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -31,10 +31,7 @@ public class MessageQueryHandler extends BaseQueryHandler {
         logServerError("MessageQueryHandler", "getLastMessageOfConversation", connection);
         return Optional.empty();
     }
-    public Optional<List<Message>> getMessagesOfConversationWithPaginationQuery(
-            int conversationId,
-            int page,
-            int pageSize) throws IOException {
+    public Optional<List<Message>> getMessagesOfConversationWithPaginationQuery(int conversationId, int page, int pageSize) throws IOException {
 
         HttpURLConnection connection = makeGetQuery(
                 urlGetMessagesOfConversationWithPaginationQuery + conversationId +
@@ -54,5 +51,23 @@ public class MessageQueryHandler extends BaseQueryHandler {
         );
 
         return Optional.empty();
+    }
+    public Boolean sendMessageQuery(String content, Integer contentTypeId, String authorUserLogin, Integer conversationId) throws IOException {
+        String parameterBuilder = "?content=" + content +
+                "&contentTypeId=" + contentTypeId +
+                "&authorUserLogin=" + authorUserLogin +
+                "&conversationId=" + conversationId;
+        HttpURLConnection connection = makePostQuery(urlSentMessage + parameterBuilder, "");
+
+        System.out.println(urlSentMessage + parameterBuilder);
+
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String jsonResponse = readResponseBody(connection);
+            return "Message is sent.".equals(jsonResponse);
+        }
+
+        logServerError("MessageQueryHandler", "sendMessage", connection);
+
+        return false;
     }
 }

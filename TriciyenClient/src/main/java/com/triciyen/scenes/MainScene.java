@@ -216,8 +216,10 @@ public class MainScene implements BaseScene {
     public void handle(Event event) {
         if (event.getSource() == logoutButton) {
             logoutEvent();
-        } if (event.getSource() == expandMessagesButton) {
+        } else if (event.getSource() == expandMessagesButton) {
             expandMessages(currentConversation);
+        } else if (event.getSource() == writeMessageSendButton) {
+            sendMessage();
         } else {
             boolean was = false;
             for (int i = 0; i < conversationButtons.size(); i++) {
@@ -278,6 +280,7 @@ public class MainScene implements BaseScene {
         messageBox.getChildren().clear();
         messageButton.forEach(messageBox.getChildren()::add);
     }
+
     private void expandMessages(Conversation conversation) {
         MessageService messageService = MessageService.getInstance();
         int nextPage = conversationLoadedPages.get(conversation.getConversationId()) + 1;
@@ -295,7 +298,23 @@ public class MainScene implements BaseScene {
         messageBox.getChildren().clear();
         messageButton.forEach(messageBox.getChildren()::add);
     }
-
+    private void sendMessage() {
+        MessageService messageService = MessageService.getInstance();
+        String content = writeMessageField.getText();
+        Integer contentType = 1;
+        String login = localStorage.getLoggedAccount().getLogin();
+        Integer conversationId = currentConversation.getConversationId();
+        boolean success = messageService.sendMessage(content, contentType, login, conversationId);
+        Button newMessage = new Button();
+        String buttonContent = localStorage.getLoggedAccount().getName() + ": " + content;
+        if (success) {
+            newMessage.setText(buttonContent);
+        } else {
+            newMessage.setText("---- message is not sent ---- {" + buttonContent + "}");
+        }
+        messageButton.add(newMessage);
+        messageBox.getChildren().addAll(newMessage);
+    }
     private void logoutEvent() {
         localStorage.setDefaultState();
         TriciyenApplication.setGlobalScene(LoginScene.getInstance());

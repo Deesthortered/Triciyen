@@ -22,7 +22,7 @@ public class MessageService implements BaseService {
     public Message getLastMessageOfConversation(Conversation conversation) {
         Optional<Message> packedMessage = Optional.empty();
         try {
-            packedMessage = messageQueryHandler.getLastMessageOfConversation(conversation);
+            packedMessage = messageQueryHandler.getLastMessageOfConversationQuery(conversation);
         } catch (IOException e) {
             localStorage.setServerErrorMessage(e.getMessage());
         }
@@ -49,5 +49,13 @@ public class MessageService implements BaseService {
         }
 
         return result.orElseGet(ArrayList::new);
+    }
+    public Boolean sendMessage(String content, Integer contentTypeId, String authorUserLogin, Integer conversationId) {
+        try {
+            return messageQueryHandler.sendMessageQuery(content, contentTypeId, authorUserLogin, conversationId);
+        } catch (IOException e) {
+            localStorage.setServerErrorMessage(e.getMessage());
+        }
+        return false;
     }
 }
