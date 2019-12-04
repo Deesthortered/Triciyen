@@ -15,6 +15,7 @@ import java.util.Date;
 public class Message implements Serializable {
     private Integer messageId;
     private Date creationTime;
+    private UserAccount user;
     private MessageContentType contentType;
     private String content;
 }

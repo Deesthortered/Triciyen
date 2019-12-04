@@ -55,6 +55,9 @@ public class MainScene implements BaseScene {
     private Label fullRightConversationLabel;
     private ScrollPane fullRightScrollPane;
     private VBox messageBox;
+    private List<Button> messageButton;
+    private Conversation currentConversation;
+    private Button expandMessagesButton;
 
     private static final int fullRightTitlePaneWidth = sceneWidth - conversationScrollPaneWidth;
     private static final int fullRightTitlePaneHeight = leftCornerHeight;
@@ -128,17 +131,16 @@ public class MainScene implements BaseScene {
         fullRightConversationLabel = new Label("");
         fullRightTitlePane.getChildren().addAll(fullRightConversationLabel);
 
-        fullRightScrollPane = new ScrollPane();
+        messageBox = new VBox();
+        fullRightScrollPane = new ScrollPane(messageBox);
         fullRightScrollPane.setMinHeight(fullRightScrollPaneHeight);
         fullRightScrollPane.setPrefHeight(fullRightScrollPaneHeight);
         fullRightScrollPane.setMaxHeight(fullRightScrollPaneHeight);
         fullRightScrollPane.setMinWidth(fullRightScrollPaneWidth);
         fullRightScrollPane.setPrefWidth(fullRightScrollPaneWidth);
         fullRightScrollPane.setMaxWidth(fullRightScrollPaneWidth);
-        fullRightPane.getChildren().addAll(fullRightTitlePane, fullRightScrollPane);
 
-        messageBox = new VBox();
-        fullRightScrollPane.getChildrenUnmodifiable().add(messageBox);
+        fullRightPane.getChildren().addAll(fullRightTitlePane, fullRightScrollPane);
 
         scene = new Scene(mainPane, sceneWidth, sceneHeight);
     }
@@ -176,11 +178,16 @@ public class MainScene implements BaseScene {
 
             initConversationButtons(conversations, lastMessages);
         }
+
+        expandMessagesButton = new Button(".... expand messages ...");
+        expandMessagesButton.setOnMouseClicked(this);
     }
     @Override
     public void handle(Event event) {
         if (event.getSource() == logoutButton) {
             logoutEvent();
+        } if (event.getSource() == expandMessagesButton) {
+            expandMessages(currentConversation);
         } else {
             boolean was = false;
             for (int i = 0; i < conversationButtons.size(); i++) {
@@ -215,16 +222,12 @@ public class MainScene implements BaseScene {
 
         fullRightConversationLabel.setText(conversation.getName());
 
+        currentConversation = conversation;
+
         int currentPage = 0;
-        if (conversationLoadedPages.containsKey(conversation.getConversationId())) {
-            currentPage = conversationLoadedPages.get(conversation.getConversationId()) + 1;
-        }
         conversationLoadedPages.put(conversation.getConversationId(), currentPage);
 
-        List<Message> currentMessages = messageService.getMessagesOfConversationWithPagination(
-                conversation,
-                currentPage
-        );
+        List<Message> currentMessages = messageService.getMessagesOfConversationWithPagination(conversation,0);
 
         if (localStorage.isWasError()) {
             emptyRightTitle.setText("Error was happened:\n" +
@@ -236,9 +239,31 @@ public class MainScene implements BaseScene {
         }
     }
     private void initMessages(List<Message> currentMessages) {
+        messageButton = new ArrayList<>();
+        expandMessagesButton.setDisable(false);
+        messageButton.add(expandMessagesButton);
         currentMessages.stream()
-                .map(message -> new Button(message.getContent()))
-                .forEach(messageBox.getChildren()::add);
+                .map(message -> new Button(message.getUser().getName() + ": " + message.getContent()))
+                .forEach( (button) -> { messageButton.add(1, button);});
+        messageBox.getChildren().clear();
+        messageButton.forEach(messageBox.getChildren()::add);
+    }
+    private void expandMessages(Conversation conversation) {
+        MessageService messageService = MessageService.getInstance();
+        int nextPage = conversationLoadedPages.get(conversation.getConversationId()) + 1;
+        conversationLoadedPages.put(conversation.getConversationId(), nextPage);
+
+        List<Message> currentMessages = messageService.getMessagesOfConversationWithPagination(conversation, nextPage);
+        if (currentMessages.isEmpty()) {
+            expandMessagesButton.setDisable(true);
+        } else {
+            currentMessages.stream()
+                    .map(message -> new Button(message.getUser().getName() + ": " + message.getContent()))
+                    .forEach( (button) -> { messageButton.add(1, button);});
+        }
+
+        messageBox.getChildren().clear();
+        messageButton.forEach(messageBox.getChildren()::add);
     }
 
     private void logoutEvent() {
