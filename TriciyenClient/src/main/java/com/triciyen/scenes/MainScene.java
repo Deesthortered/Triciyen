@@ -10,7 +10,6 @@ import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -54,7 +53,14 @@ public class MainScene implements BaseScene {
     private VBox fullRightPane;
     private StackPane fullRightTitlePane;
     private Label fullRightConversationLabel;
-    private ListView<String> messageListView;
+    private ScrollPane fullRightScrollPane;
+    private VBox messageBox;
+
+    private static final int fullRightTitlePaneWidth = sceneWidth - conversationScrollPaneWidth;
+    private static final int fullRightTitlePaneHeight = leftCornerHeight;
+    private static final int fullRightScrollPaneWidth = fullRightTitlePaneWidth;
+    private static final int fullRightScrollPaneHeight = sceneHeight - fullRightTitlePaneHeight;
+
 
     private MainScene() {
         mainPane = new BorderPane();
@@ -105,7 +111,7 @@ public class MainScene implements BaseScene {
         emptyRightPane.setPrefHeight(emptyRightPaneHeight);
         emptyRightPane.setMaxHeight(emptyRightPaneHeight);
         emptyRightPane.setMinWidth(emptyRightPaneWidth);
-        emptyRightPane.setPrefHeight(emptyRightPaneWidth);
+        emptyRightPane.setPrefWidth(emptyRightPaneWidth);
         emptyRightPane.setMaxWidth(emptyRightPaneWidth);
         emptyRightTitle = new Label("Please, choose the conversation");
         emptyRightPane.getChildren().addAll(emptyRightTitle);
@@ -113,10 +119,26 @@ public class MainScene implements BaseScene {
 
         fullRightPane = new VBox();
         fullRightTitlePane = new StackPane();
+        fullRightTitlePane.setMinHeight(fullRightTitlePaneHeight);
+        fullRightTitlePane.setPrefHeight(fullRightTitlePaneHeight);
+        fullRightTitlePane.setMaxHeight(fullRightTitlePaneHeight);
+        fullRightTitlePane.setMinWidth(fullRightTitlePaneWidth);
+        fullRightTitlePane.setPrefWidth(fullRightTitlePaneWidth);
+        fullRightTitlePane.setMaxWidth(fullRightTitlePaneWidth);
         fullRightConversationLabel = new Label("");
         fullRightTitlePane.getChildren().addAll(fullRightConversationLabel);
-        messageListView = new ListView<>();
-        fullRightPane.getChildren().addAll(fullRightTitlePane, messageListView);
+
+        fullRightScrollPane = new ScrollPane();
+        fullRightScrollPane.setMinHeight(fullRightScrollPaneHeight);
+        fullRightScrollPane.setPrefHeight(fullRightScrollPaneHeight);
+        fullRightScrollPane.setMaxHeight(fullRightScrollPaneHeight);
+        fullRightScrollPane.setMinWidth(fullRightScrollPaneWidth);
+        fullRightScrollPane.setPrefWidth(fullRightScrollPaneWidth);
+        fullRightScrollPane.setMaxWidth(fullRightScrollPaneWidth);
+        fullRightPane.getChildren().addAll(fullRightTitlePane, fullRightScrollPane);
+
+        messageBox = new VBox();
+        fullRightScrollPane.getChildrenUnmodifiable().add(messageBox);
 
         scene = new Scene(mainPane, sceneWidth, sceneHeight);
     }
@@ -191,12 +213,13 @@ public class MainScene implements BaseScene {
         MessageService messageService = MessageService.getInstance();
         Conversation conversation = conversations.get(conversationIndex);
 
+        fullRightConversationLabel.setText(conversation.getName());
+
         int currentPage = 0;
         if (conversationLoadedPages.containsKey(conversation.getConversationId())) {
             currentPage = conversationLoadedPages.get(conversation.getConversationId()) + 1;
         }
         conversationLoadedPages.put(conversation.getConversationId(), currentPage);
-
 
         List<Message> currentMessages = messageService.getMessagesOfConversationWithPagination(
                 conversation,
@@ -208,9 +231,14 @@ public class MainScene implements BaseScene {
                     localStorage.getServerErrorMessage());
             System.err.println(localStorage.getServerErrorMessage());
         } else {
-
-            
+            initMessages(currentMessages);
+            mainPane.setCenter(fullRightPane);
         }
+    }
+    private void initMessages(List<Message> currentMessages) {
+        currentMessages.stream()
+                .map(message -> new Button(message.getContent()))
+                .forEach(messageBox.getChildren()::add);
     }
 
     private void logoutEvent() {
