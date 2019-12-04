@@ -6,6 +6,8 @@ import com.triciyen.entity.Message;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,13 +55,11 @@ public class MessageQueryHandler extends BaseQueryHandler {
         return Optional.empty();
     }
     public Boolean sendMessageQuery(String content, Integer contentTypeId, String authorUserLogin, Integer conversationId) throws IOException {
-        String parameterBuilder = "?content=" + content +
+        String parameterBuilder = "?content=" + URLEncoder.encode(content, StandardCharsets.UTF_8.toString()) +
                 "&contentTypeId=" + contentTypeId +
                 "&authorUserLogin=" + authorUserLogin +
                 "&conversationId=" + conversationId;
         HttpURLConnection connection = makePostQuery(urlSentMessage + parameterBuilder, "");
-
-        System.out.println(urlSentMessage + parameterBuilder);
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String jsonResponse = readResponseBody(connection);
