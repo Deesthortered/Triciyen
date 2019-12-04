@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
@@ -53,17 +54,24 @@ public class MainScene implements BaseScene {
     private VBox fullRightPane;
     private StackPane fullRightTitlePane;
     private Label fullRightConversationLabel;
+
     private ScrollPane fullRightScrollPane;
     private VBox messageBox;
     private List<Button> messageButton;
     private Conversation currentConversation;
     private Button expandMessagesButton;
 
+    private StackPane writeMessagePane;
+    private HBox writeMessageHBox;
+    private TextField writeMessageField;
+    private Button writeMessageSendButton;
+    private static final int writeMessagePaneWidth = sceneWidth - conversationScrollPaneWidth;
+    private static final int writeMessagePaneHeight = 100;
+
     private static final int fullRightTitlePaneWidth = sceneWidth - conversationScrollPaneWidth;
     private static final int fullRightTitlePaneHeight = leftCornerHeight;
     private static final int fullRightScrollPaneWidth = fullRightTitlePaneWidth;
-    private static final int fullRightScrollPaneHeight = sceneHeight - fullRightTitlePaneHeight;
-
+    private static final int fullRightScrollPaneHeight = sceneHeight - fullRightTitlePaneHeight - writeMessagePaneHeight;
 
     private MainScene() {
         mainPane = new BorderPane();
@@ -140,7 +148,29 @@ public class MainScene implements BaseScene {
         fullRightScrollPane.setPrefWidth(fullRightScrollPaneWidth);
         fullRightScrollPane.setMaxWidth(fullRightScrollPaneWidth);
 
-        fullRightPane.getChildren().addAll(fullRightTitlePane, fullRightScrollPane);
+        writeMessagePane = new StackPane();
+        writeMessageHBox = new HBox();
+
+        writeMessageField = new TextField();
+        writeMessageField.setMinHeight(writeMessagePaneHeight);
+        writeMessageField.setPrefHeight(writeMessagePaneHeight);
+        writeMessageField.setMaxHeight(writeMessagePaneHeight);
+        writeMessageField.setMinWidth(writeMessagePaneWidth - writeMessagePaneHeight);
+        writeMessageField.setPrefWidth(writeMessagePaneWidth - writeMessagePaneHeight);
+        writeMessageField.setMaxWidth(writeMessagePaneWidth - writeMessagePaneHeight);
+
+        writeMessageSendButton = new Button("Send");
+        writeMessageSendButton.setOnMouseClicked(this);
+        writeMessageSendButton.setMinHeight(writeMessagePaneHeight);
+        writeMessageSendButton.setPrefHeight(writeMessagePaneHeight);
+        writeMessageSendButton.setMaxHeight(writeMessagePaneHeight);
+        writeMessageSendButton.setMinWidth(writeMessagePaneHeight);
+        writeMessageSendButton.setPrefWidth(writeMessagePaneHeight);
+        writeMessageSendButton.setMaxWidth(writeMessagePaneHeight);
+
+        writeMessageHBox.getChildren().addAll(writeMessageField, writeMessageSendButton);
+        writeMessagePane.getChildren().add(writeMessageHBox);
+        fullRightPane.getChildren().addAll(fullRightTitlePane, fullRightScrollPane, writeMessagePane);
 
         scene = new Scene(mainPane, sceneWidth, sceneHeight);
     }
