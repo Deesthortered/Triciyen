@@ -26,7 +26,6 @@ public class Message implements Serializable {
     @JoinColumn(name="conversationId", nullable=false)
     private Conversation conversation;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "login", nullable = false)
     private UserAccount user;
