@@ -6,6 +6,7 @@ import com.triciyen.entity.Message;
 import com.triciyen.entity.UserAccount;
 import com.triciyen.service.ConversationService;
 import com.triciyen.service.MessageService;
+import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -141,6 +142,7 @@ public class MainScene implements BaseScene {
 
         messageBox = new VBox();
         fullRightScrollPane = new ScrollPane(messageBox);
+        messageBox.heightProperty().addListener((ChangeListener) (observable, oldvalue, newValue) -> fullRightScrollPane.setVvalue((Double)newValue ));
         fullRightScrollPane.setMinHeight(fullRightScrollPaneHeight);
         fullRightScrollPane.setPrefHeight(fullRightScrollPaneHeight);
         fullRightScrollPane.setMaxHeight(fullRightScrollPaneHeight);
@@ -254,7 +256,9 @@ public class MainScene implements BaseScene {
 
         fullRightConversationLabel.setText(conversation.getName());
 
-        currentConversation = conversation;
+        synchronized (currentConversation) {
+            currentConversation = conversation;
+        }
 
         int currentPage = 0;
         conversationLoadedPages.put(conversation.getConversationId(), currentPage);
@@ -309,6 +313,7 @@ public class MainScene implements BaseScene {
         String buttonContent = localStorage.getLoggedAccount().getName() + ": " + content;
         if (success) {
             newMessage.setText(buttonContent);
+            writeMessageField.setText("");
         } else {
             newMessage.setText("---- message is not sent ---- {" + buttonContent + "}");
         }
@@ -318,5 +323,25 @@ public class MainScene implements BaseScene {
     private void logoutEvent() {
         localStorage.setDefaultState();
         TriciyenApplication.setGlobalScene(LoginScene.getInstance());
+    }
+
+
+    class MessageListener extends Thread {
+        @Override
+        public void run() {
+            while (isInterrupted()) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                if (currentConversation != null) {
+                    synchronized (currentConversation) {
+
+                    }
+                }
+            }
+        }
     }
 }

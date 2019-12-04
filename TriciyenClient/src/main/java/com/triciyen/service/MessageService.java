@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class MessageService implements BaseService {
     private static final MessageService instance = new MessageService();
-    private static final int messagePageSize = 5;
+    private static final int messagePageSize = 17;
 
     private MessageService() {
 
