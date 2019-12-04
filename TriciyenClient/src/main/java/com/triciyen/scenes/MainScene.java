@@ -15,9 +15,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class MainScene implements BaseScene {
     private static final MainScene instance = new MainScene();
@@ -41,6 +39,7 @@ public class MainScene implements BaseScene {
     private VBox conversationsBox;
     private List<Button> conversationButtons;
     private List<Conversation> conversations;
+    private Map<Integer, Integer> conversationLoadedPages;
     private static final int conversationButtonWidth = 200;
     private static final int conversationButtonHeight = 70;
     private static final int conversationScrollPaneWidth = 215;
@@ -138,7 +137,9 @@ public class MainScene implements BaseScene {
         loginLabel.setText("Login: " + currentLoggedAccount.getLogin());
         usernameLabel.setText(currentLoggedAccount.getName());
 
+        emptyRightTitle.setText("Please, choose the conversation");
         mainPane.setCenter(emptyRightPane);
+        conversationLoadedPages = new HashMap<>();
 
         conversationsBox.getChildren().clear();
         Optional<List<Conversation>> packedList = conversationService.getAllSubscribedConversations();
@@ -183,10 +184,33 @@ public class MainScene implements BaseScene {
             button.setMaxHeight(conversationButtonHeight);
             conversationsBox.getChildren().add(button);
             conversationButtons.add(button);
+            button.setOnMouseClicked(this);
         }
     }
     private void initConversation(int conversationIndex) {
-        
+        MessageService messageService = MessageService.getInstance();
+        Conversation conversation = conversations.get(conversationIndex);
+
+        int currentPage = 0;
+        if (conversationLoadedPages.containsKey(conversation.getConversationId())) {
+            currentPage = conversationLoadedPages.get(conversation.getConversationId()) + 1;
+        }
+        conversationLoadedPages.put(conversation.getConversationId(), currentPage);
+
+
+        List<Message> currentMessages = messageService.getMessagesOfConversationWithPagination(
+                conversation,
+                currentPage
+        );
+
+        if (localStorage.isWasError()) {
+            emptyRightTitle.setText("Error was happened:\n" +
+                    localStorage.getServerErrorMessage());
+            System.err.println(localStorage.getServerErrorMessage());
+        } else {
+
+            
+        }
     }
 
     private void logoutEvent() {

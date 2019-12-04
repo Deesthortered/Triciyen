@@ -6,6 +6,7 @@ import com.triciyen.entity.Message;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.List;
 import java.util.Optional;
 
 public class MessageQueryHandler extends BaseQueryHandler {
@@ -28,6 +29,30 @@ public class MessageQueryHandler extends BaseQueryHandler {
         }
 
         logServerError("MessageQueryHandler", "getLastMessageOfConversation", connection);
+        return Optional.empty();
+    }
+    public Optional<List<Message>> getMessagesOfConversationWithPaginationQuery(
+            int conversationId,
+            int page,
+            int pageSize) throws IOException {
+
+        HttpURLConnection connection = makeGetQuery(
+                urlGetMessagesOfConversationWithPaginationQuery + conversationId +
+                "?page=" + page +
+                "&pageSize=" + pageSize);
+
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String jsonResponse = readResponseBody(connection);
+            List<Message> res = jsonMapper.readValue(jsonResponse, new TypeReference<>(){});
+            return Optional.of(res);
+        }
+
+        logServerError(
+                "MessageQueryHandler",
+                "getMessagesOfConversationWithPaginationQuery",
+                connection
+        );
+
         return Optional.empty();
     }
 }
