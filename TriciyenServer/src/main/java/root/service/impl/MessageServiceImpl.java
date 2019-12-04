@@ -22,8 +22,11 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> getSetOfLastMessagesInConversation(Integer conversationId, Integer count) {
+    public List<Message> getSetOfLastMessagesInConversation(Integer conversationId, Integer page, Integer pageSize) {
         return messageRepository
-                .getAllByConversation_ConversationIdOrderByCreationTimeDesc(conversationId, PageRequest.of(0, count));
+                .getAllByConversation_ConversationIdOrderByCreationTimeDesc(
+                        conversationId,
+                        PageRequest.of(page, pageSize)
+                );
     }
 }

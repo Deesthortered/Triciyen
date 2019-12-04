@@ -8,5 +8,5 @@ import java.util.List;
 @Service
 public interface MessageService {
     Message getLastMessageInConversation(Integer conversationId);
-    List<Message> getSetOfLastMessagesInConversation(Integer conversationId, Integer count);
+    List<Message> getSetOfLastMessagesInConversation(Integer conversationId, Integer page, Integer pageSize);
 }

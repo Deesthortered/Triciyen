@@ -50,12 +50,13 @@ public class HttpQueryController {
         return ResponseEntity.status(HttpStatus.OK).body(lastMessage);
     }
 
-    @GetMapping("/getListOfLastMessages/{conversationId}")
+        @GetMapping("/getListOfLastMessages/{conversationId}")
     public ResponseEntity<?> getListOfLastMessagesInTheConversation(
             @PathVariable Integer conversationId,
-            @RequestParam(value = "messageCount", defaultValue = "1") Integer messageCount
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
     ) {
-        List<Message> lastMessages = messageService.getSetOfLastMessagesInConversation(conversationId, messageCount);
+        List<Message> lastMessages = messageService.getSetOfLastMessagesInConversation(conversationId, page, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(lastMessages);
     }
 }
