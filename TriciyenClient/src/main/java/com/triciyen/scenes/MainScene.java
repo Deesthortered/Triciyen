@@ -6,6 +6,7 @@ import com.triciyen.entity.Message;
 import com.triciyen.entity.UserAccount;
 import com.triciyen.service.ConversationService;
 import com.triciyen.service.MessageService;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
 import javafx.scene.Scene;
@@ -358,7 +359,7 @@ public class MainScene implements BaseScene {
                 if (currentConversation != null) {
                     synchronized (currentConversation) {
                         MessageService messageService = MessageService.getInstance();
-                        List<Message> newMessages = messageService.getLastNewestMessagesOfConversation(
+                                List<Message> newMessages = messageService.getLastNewestMessagesOfConversation(
                                 currentConversation.getConversationId(),
                                 lastMessage.getMessageId());
                         if (!newMessages.isEmpty()) {
@@ -368,10 +369,8 @@ public class MainScene implements BaseScene {
                             newMessages.stream()
                                     .map((message) -> new Button(message.getUser().getName() + ": " + message.getContent()))
                                     .forEach(currentButtons::add);
-                            synchronized (messageBox) {
-                                for (int i = 0; i < currentButtons.size(); i++)
-                                    messageBox.getChildren().add(currentButtons.get(i));
-                            }
+                            for (Button currentButton : currentButtons)
+                                Platform.runLater(() -> messageBox.getChildren().add(currentButton));
                         }
                     }
                 }
