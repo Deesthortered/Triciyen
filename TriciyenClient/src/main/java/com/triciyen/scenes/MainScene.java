@@ -275,25 +275,16 @@ public class MainScene implements BaseScene {
         conversationLoadedPages.put(conversation.getConversationId(), currentPage);
 
         lastPaginedMessage = messageService.getLastMessageOfConversation(conversation);
-        List<Message> currentMessages = null;
-        if (lastPaginedMessage.getMessageId() != null) {
-            currentMessages = messageService.
-                    getMessagesOfConversationWithPagination(conversation, lastPaginedMessage.getMessageId(),0);
-            currentMessages.add(lastPaginedMessage);
-        } else {
-            currentMessages = new ArrayList<>();
-            currentMessages.add(Message.builder().content("No messages").build());
-        }
+        List<Message> currentMessages = messageService.
+                getMessagesOfConversationWithPagination(conversation, lastPaginedMessage.getMessageId(),0);
 
         if (localStorage.isWasError()) {
             emptyRightTitle.setText("Error was happened:\n" +
                     localStorage.getServerErrorMessage());
             System.err.println(localStorage.getServerErrorMessage());
         } else {
-            if (!currentMessages.isEmpty() && currentMessages.get(0).getMessageId() != null) {
-                initMessages(currentMessages);
-            }
-            lastMessage = lastPaginedMessage;
+            initMessages(currentMessages);
+            lastMessage = currentMessages.get(currentMessages.size() - 1);
             messageListener = new MessageListener();
             messageListener.setDaemon(true);
             messageListener.start();
@@ -340,18 +331,16 @@ public class MainScene implements BaseScene {
         String login = localStorage.getLoggedAccount().getLogin();
         Integer conversationId = currentConversation.getConversationId();
         boolean success = messageService.sendMessage(content, contentType, login, conversationId);
+        Button newMessage = new Button();
+        String buttonContent = localStorage.getLoggedAccount().getName() + ": " + content;
         if (success) {
+            newMessage.setText(buttonContent);
             writeMessageField.setText("");
-            lastMessage = messageService.getLastMessageOfConversation(currentConversation);
-            Platform.runLater(() -> messageBox.getChildren().add(
-                    new Button(lastMessage.getUser().getName() + ": " + lastMessage.getContent())));
         } else {
-            Button newMessage = new Button();
-            String buttonContent = localStorage.getLoggedAccount().getName() + ": " + content;
             newMessage.setText("---- message is not sent ---- {" + buttonContent + "}");
-            messageButton.add(newMessage);
-            messageBox.getChildren().addAll(newMessage);
         }
+        messageButton.add(newMessage);
+        messageBox.getChildren().addAll(newMessage);
     }
     private void logoutEvent() {
         localStorage.setDefaultState();
@@ -370,21 +359,19 @@ public class MainScene implements BaseScene {
                 }
                 if (currentConversation != null) {
                     synchronized (currentConversation) {
-                        if (lastMessage.getMessageId() != null) {
-                            MessageService messageService = MessageService.getInstance();
-                            List<Message> newMessages = messageService.getLastNewestMessagesOfConversation(
-                                    currentConversation.getConversationId(),
-                                    lastMessage.getMessageId());
-                            if (!newMessages.isEmpty()) {
-                                lastMessage = newMessages.get(newMessages.size() - 1);
+                        MessageService messageService = MessageService.getInstance();
+                                List<Message> newMessages = messageService.getLastNewestMessagesOfConversation(
+                                currentConversation.getConversationId(),
+                                lastMessage.getMessageId());
+                        if (!newMessages.isEmpty()) {
+                            lastMessage = newMessages.get(newMessages.size() - 1);
 
-                                List<Button> currentButtons = new ArrayList<>();
-                                newMessages.stream()
-                                        .map((message) -> new Button(message.getUser().getName() + ": " + message.getContent()))
-                                        .forEach(currentButtons::add);
-                                for (Button currentButton : currentButtons)
-                                    Platform.runLater(() -> messageBox.getChildren().add(currentButton));
-                            }
+                            List<Button> currentButtons = new ArrayList<>();
+                            newMessages.stream()
+                                    .map((message) -> new Button(message.getUser().getName() + ": " + message.getContent()))
+                                    .forEach(currentButtons::add);
+                            for (Button currentButton : currentButtons)
+                                Platform.runLater(() -> messageBox.getChildren().add(currentButton));
                         }
                     }
                 }
