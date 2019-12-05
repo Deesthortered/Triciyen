@@ -9,6 +9,7 @@ import java.util.List;
 @Service
 public interface MessageService {
     Message getLastMessageInConversation(Integer conversationId);
-    List<Message> getSetOfLastMessagesInConversation(Integer conversationId, Integer page, Integer pageSize);
-    Boolean sendMessage(String content, Integer contentTypeId, String authorUserLogin, Integer conversationId);
+    void sendMessage(String content, Integer contentTypeId, String authorUserLogin, Integer conversationId);
+    List<Message> getSetOfLastMessagesInConversation(Integer conversationId, Integer lastPageableId, Integer page, Integer pageSize);
+    List<Message> getLastMessages(Integer conversationId, Integer lastMessageId);
 }

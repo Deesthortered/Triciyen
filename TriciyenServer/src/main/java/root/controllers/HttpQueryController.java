@@ -50,16 +50,6 @@ public class HttpQueryController {
         return ResponseEntity.status(HttpStatus.OK).body(lastMessage);
     }
 
-    @GetMapping("/getListOfLastMessages/{conversationId}")
-    public ResponseEntity<?> getListOfLastMessagesInTheConversation(
-            @PathVariable Integer conversationId,
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize
-    ) {
-        List<Message> lastMessages = messageService.getSetOfLastMessagesInConversation(conversationId, page, pageSize);
-        return ResponseEntity.status(HttpStatus.OK).body(lastMessages);
-    }
-
     @PostMapping("/sendMessage")
     public ResponseEntity<?> sendMessage(
             @RequestParam(value = "content") String content,
@@ -69,5 +59,25 @@ public class HttpQueryController {
     ) {
         messageService.sendMessage(content, contentTypeId, authorUserLogin, conversationId);
         return ResponseEntity.status(HttpStatus.OK).body("Message is sent.");
+    }
+
+    @GetMapping("/getListOfLastMessages/{conversationId}")
+    public ResponseEntity<?> getListOfLastMessagesInTheConversation(
+            @PathVariable Integer conversationId,
+            @RequestParam(value = "lastPageableId") Integer lastPageableId,
+            @RequestParam(value = "page") Integer page,
+            @RequestParam(value = "pageSize") Integer pageSize
+    ) {
+        List<Message> lastPaginedMessages = messageService.getSetOfLastMessagesInConversation(conversationId, lastPageableId, page, pageSize);
+        return ResponseEntity.status(HttpStatus.OK).body(lastPaginedMessages);
+    }
+
+    @GetMapping("/getLastMessages")
+    public ResponseEntity<?> getListOfLastMessagesInTheConversation(
+            @RequestParam(value = "conversationId") Integer conversationId,
+            @RequestParam(value = "lastMessageId") Integer lastMessageId
+    ) {
+        List<Message> lastMessages = messageService.getLastMessages(conversationId, lastMessageId);
+        return ResponseEntity.status(HttpStatus.OK).body(lastMessages);
     }
 }

@@ -37,16 +37,17 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> getSetOfLastMessagesInConversation(Integer conversationId, Integer page, Integer pageSize) {
+    public List<Message> getSetOfLastMessagesInConversation(Integer conversationId, Integer lastPageableId, Integer page, Integer pageSize) {
         return messageRepository
-                .getAllByConversation_ConversationIdOrderByCreationTimeDesc(
+                .getAllByConversation_ConversationIdAndCreationTimeBeforeOrderByCreationTimeDesc(
                         conversationId,
+                        messageRepository.getTopByMessageId(lastPageableId).getCreationTime(),
                         PageRequest.of(page, pageSize)
                 );
     }
 
     @Override
-    public Boolean sendMessage(String content, Integer contentTypeId, String authorUserLogin, Integer conversationId) {
+    public void sendMessage(String content, Integer contentTypeId, String authorUserLogin, Integer conversationId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new NotFoundException("Conversation is not found"));
 
@@ -65,7 +66,14 @@ public class MessageServiceImpl implements MessageService {
                 .build();
 
         messageRepository.save(preparedMessage);
+    }
 
-        return false;
+    @Override
+    public List<Message> getLastMessages(Integer conversationId, Integer lastMessageId) {
+        return messageRepository
+                .getAllByConversation_ConversationIdAndCreationTimeAfterOrderByCreationTimeDesc(
+                        conversationId,
+                        messageRepository.getTopByMessageId(lastMessageId).getCreationTime()
+                );
     }
 }
