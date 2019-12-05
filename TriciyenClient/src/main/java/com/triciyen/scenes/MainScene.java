@@ -331,16 +331,15 @@ public class MainScene implements BaseScene {
         String login = localStorage.getLoggedAccount().getLogin();
         Integer conversationId = currentConversation.getConversationId();
         boolean success = messageService.sendMessage(content, contentType, login, conversationId);
-        Button newMessage = new Button();
-        String buttonContent = localStorage.getLoggedAccount().getName() + ": " + content;
         if (success) {
-            newMessage.setText(buttonContent);
             writeMessageField.setText("");
         } else {
+            Button newMessage = new Button();
+            String buttonContent = localStorage.getLoggedAccount().getName() + ": " + content;
             newMessage.setText("---- message is not sent ---- {" + buttonContent + "}");
+            messageButton.add(newMessage);
+            messageBox.getChildren().addAll(newMessage);
         }
-        messageButton.add(newMessage);
-        messageBox.getChildren().addAll(newMessage);
     }
     private void logoutEvent() {
         localStorage.setDefaultState();
