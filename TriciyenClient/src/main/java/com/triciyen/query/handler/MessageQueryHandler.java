@@ -33,11 +33,11 @@ public class MessageQueryHandler extends BaseQueryHandler {
         logServerError("MessageQueryHandler", "getLastMessageOfConversation", connection);
         return Optional.empty();
     }
-    public Optional<List<Message>> getMessagesOfConversationWithPaginationQuery(int conversationId, int page, int pageSize) throws IOException {
-
+    public Optional<List<Message>> getMessagesOfConversationWithPaginationQuery(int conversationId, int lastPageableId, int page, int pageSize) throws IOException {
         HttpURLConnection connection = makeGetQuery(
                 urlGetMessagesOfConversationWithPaginationQuery + conversationId +
-                "?page=" + page +
+                "?lastPageableId=" + lastPageableId +
+                "&page=" + page +
                 "&pageSize=" + pageSize);
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -69,5 +69,25 @@ public class MessageQueryHandler extends BaseQueryHandler {
         logServerError("MessageQueryHandler", "sendMessage", connection);
 
         return false;
+    }
+    public Optional<List<Message>> getLastNewestMessagesOfConversationQuery(Integer conversationId, Integer lastMessageId) throws IOException {
+        HttpURLConnection connection = makeGetQuery(
+                urlGetLastNewestMessages +
+                        "?conversationId" + conversationId +
+                        "&lastMessageId=" + lastMessageId);
+
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String jsonResponse = readResponseBody(connection);
+            List<Message> res = jsonMapper.readValue(jsonResponse, new TypeReference<>(){});
+            return Optional.of(res);
+        }
+
+        logServerError(
+                "MessageQueryHandler",
+                "getLastNewestMessagesOfConversationQuery",
+                connection
+        );
+
+        return Optional.empty();
     }
 }

@@ -74,6 +74,10 @@ public class MainScene implements BaseScene {
     private static final int fullRightScrollPaneWidth = fullRightTitlePaneWidth;
     private static final int fullRightScrollPaneHeight = sceneHeight - fullRightTitlePaneHeight - writeMessagePaneHeight;
 
+    private MessageListener messageListener;
+    private Message lastPaginedMessage;
+    private Message lastMessage;
+
     private MainScene() {
         mainPane = new BorderPane();
 
@@ -256,14 +260,20 @@ public class MainScene implements BaseScene {
 
         fullRightConversationLabel.setText(conversation.getName());
 
-        synchronized (currentConversation) {
+        if (currentConversation != null) {
+            synchronized (currentConversation) {
+                currentConversation = conversation;
+            }
+        } else {
             currentConversation = conversation;
         }
 
         int currentPage = 0;
         conversationLoadedPages.put(conversation.getConversationId(), currentPage);
 
-        List<Message> currentMessages = messageService.getMessagesOfConversationWithPagination(conversation,0);
+        lastPaginedMessage = messageService.getLastMessageOfConversation(conversation);
+        List<Message> currentMessages = messageService.
+                getMessagesOfConversationWithPagination(conversation, lastPaginedMessage.getMessageId(),0);
 
         if (localStorage.isWasError()) {
             emptyRightTitle.setText("Error was happened:\n" +
@@ -271,6 +281,9 @@ public class MainScene implements BaseScene {
             System.err.println(localStorage.getServerErrorMessage());
         } else {
             initMessages(currentMessages);
+            lastMessage = currentMessages.get(currentMessages.size() - 1);
+            messageListener = new MessageListener();
+            messageListener.start();
             mainPane.setCenter(fullRightPane);
         }
     }
@@ -290,7 +303,8 @@ public class MainScene implements BaseScene {
         int nextPage = conversationLoadedPages.get(conversation.getConversationId()) + 1;
         conversationLoadedPages.put(conversation.getConversationId(), nextPage);
 
-        List<Message> currentMessages = messageService.getMessagesOfConversationWithPagination(conversation, nextPage);
+        List<Message> currentMessages = messageService
+                .getMessagesOfConversationWithPagination(conversation, lastPaginedMessage.getMessageId(), nextPage);
         if (currentMessages.isEmpty()) {
             expandMessagesButton.setDisable(true);
         } else {
@@ -338,7 +352,7 @@ public class MainScene implements BaseScene {
 
                 if (currentConversation != null) {
                     synchronized (currentConversation) {
-
+                        System.out.println("I am working at " + currentConversation.getName());
                     }
                 }
             }

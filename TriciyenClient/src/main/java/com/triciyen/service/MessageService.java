@@ -37,11 +37,12 @@ public class MessageService implements BaseService {
 
         return Message.builder().content("No messages").build();
     }
-    public List<Message> getMessagesOfConversationWithPagination(Conversation conversation, int page) {
+    public List<Message> getMessagesOfConversationWithPagination(Conversation conversation, Integer lastPaginedMessage, int page) {
         Optional<List<Message>> result = Optional.empty();
         try {
             result = messageQueryHandler.getMessagesOfConversationWithPaginationQuery(
                     conversation.getConversationId(),
+                    lastPaginedMessage,
                     page,
                     messagePageSize);
         } catch (IOException e) {
@@ -57,5 +58,18 @@ public class MessageService implements BaseService {
             localStorage.setServerErrorMessage(e.getMessage());
         }
         return false;
+    }
+    public List<Message> getLastNewestMessagesOfConversation(Integer conversationId, Integer lastMessageId) {
+        Optional<List<Message>> result = Optional.empty();
+        try {
+            result = messageQueryHandler.getLastNewestMessagesOfConversationQuery(
+                    conversationId,
+                    lastMessageId
+            );
+        } catch (IOException e) {
+            localStorage.setServerErrorMessage(e.getMessage());
+        }
+
+        return result.orElseGet(ArrayList::new);
     }
 }
