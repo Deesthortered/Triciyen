@@ -286,6 +286,7 @@ public class MainScene implements BaseScene {
             initMessages(currentMessages);
             lastMessage = currentMessages.get(currentMessages.size() - 1);
             messageListener = new MessageListener();
+            messageListener.setDaemon(true);
             messageListener.start();
             mainPane.setCenter(fullRightPane);
         }
