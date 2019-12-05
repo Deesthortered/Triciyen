@@ -242,7 +242,7 @@ public class MainScene implements BaseScene {
     private void initConversationButtons(List<Conversation> source, List<Message> lastMessages) {
         conversationButtons = new ArrayList<>();
         for (int i = 0; i < source.size(); i++) {
-            Button button = new Button(source.get(i).getName() + "\n" + lastMessages.get(i).getContent());
+            Button button = new Button(source.get(i).getName());
             button.setMinWidth(conversationButtonWidth);
             button.setPrefWidth(conversationButtonWidth);
             button.setMaxWidth(conversationButtonWidth);
@@ -267,6 +267,8 @@ public class MainScene implements BaseScene {
         } else {
             currentConversation = conversation;
         }
+        if (messageListener != null)
+            messageListener.interrupt();
 
         int currentPage = 0;
         conversationLoadedPages.put(conversation.getConversationId(), currentPage);
@@ -294,8 +296,10 @@ public class MainScene implements BaseScene {
         currentMessages.stream()
                 .map(message -> new Button(message.getUser().getName() + ": " + message.getContent()))
                 .forEach( (button) -> { messageButton.add(1, button);});
-        messageBox.getChildren().clear();
-        messageButton.forEach(messageBox.getChildren()::add);
+        synchronized (messageBox) {
+            messageBox.getChildren().clear();
+            messageButton.forEach(messageBox.getChildren()::add);
+        }
     }
 
     private void expandMessages(Conversation conversation) {
@@ -313,8 +317,10 @@ public class MainScene implements BaseScene {
                     .forEach( (button) -> { messageButton.add(1, button);});
         }
 
-        messageBox.getChildren().clear();
-        messageButton.forEach(messageBox.getChildren()::add);
+        synchronized (messageBox) {
+            messageBox.getChildren().clear();
+            messageButton.forEach(messageBox.getChildren()::add);
+        }
     }
     private void sendMessage() {
         MessageService messageService = MessageService.getInstance();
@@ -343,16 +349,30 @@ public class MainScene implements BaseScene {
     class MessageListener extends Thread {
         @Override
         public void run() {
-            while (isInterrupted()) {
+            while (!isInterrupted()) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    System.out.println("Interrupted slipping");
                 }
-
                 if (currentConversation != null) {
                     synchronized (currentConversation) {
-                        System.out.println("I am working at " + currentConversation.getName());
+                        MessageService messageService = MessageService.getInstance();
+                        List<Message> newMessages = messageService.getLastNewestMessagesOfConversation(
+                                currentConversation.getConversationId(),
+                                lastMessage.getMessageId());
+                        if (!newMessages.isEmpty()) {
+                            lastMessage = newMessages.get(newMessages.size() - 1);
+
+                            List<Button> currentButtons = new ArrayList<>();
+                            newMessages.stream()
+                                    .map((message) -> new Button(message.getUser().getName() + ": " + message.getContent()))
+                                    .forEach(currentButtons::add);
+                            synchronized (messageBox) {
+                                for (int i = 0; i < currentButtons.size(); i++)
+                                    messageBox.getChildren().add(currentButtons.get(i));
+                            }
+                        }
                     }
                 }
             }

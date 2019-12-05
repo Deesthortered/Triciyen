@@ -73,7 +73,7 @@ public class MessageQueryHandler extends BaseQueryHandler {
     public Optional<List<Message>> getLastNewestMessagesOfConversationQuery(Integer conversationId, Integer lastMessageId) throws IOException {
         HttpURLConnection connection = makeGetQuery(
                 urlGetLastNewestMessages +
-                        "?conversationId" + conversationId +
+                        "?conversationId=" + conversationId +
                         "&lastMessageId=" + lastMessageId);
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
