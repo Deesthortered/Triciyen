@@ -71,7 +71,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<Message> getLastMessages(Integer conversationId, Integer lastMessageId) {
         return messageRepository
-                .getAllByConversation_ConversationIdAndCreationTimeAfterOrderByCreationTimeDesc(
+                .getAllByConversation_ConversationIdAndCreationTimeAfterOrderByCreationTime(
                         conversationId,
                         messageRepository.getTopByMessageId(lastMessageId).getCreationTime()
                 );
