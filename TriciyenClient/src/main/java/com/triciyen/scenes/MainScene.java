@@ -4,6 +4,7 @@ import com.triciyen.MessageListener;
 import com.triciyen.TriciyenApplication;
 import com.triciyen.components.ConversationButton;
 import com.triciyen.entity.Conversation;
+import com.triciyen.entity.Message;
 import com.triciyen.entity.UserAccount;
 import com.triciyen.service.ConversationService;
 import com.triciyen.service.MessageService;
@@ -260,6 +261,9 @@ public class MainScene implements BaseScene {
             localStorage.closeError();
         } else {
             System.out.println("Last read: " + oldestReadMessageId);
+            List<Message> lastMessages = messageService
+                    .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageId);
+            lastMessages.forEach(System.out::println);
         }
     }
 

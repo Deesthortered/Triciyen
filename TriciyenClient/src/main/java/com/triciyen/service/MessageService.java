@@ -1,6 +1,10 @@
 package com.triciyen.service;
 
+import com.triciyen.entity.Message;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class MessageService implements BaseService {
@@ -30,5 +34,22 @@ public class MessageService implements BaseService {
             return -1;
         }
         return lastReadMessageIdEnvelop.get();
+    }
+    public List<Message> getLastMessagesOfConversation(Integer conversationId, Integer lastReadMessageId) {
+        Optional<List<Message>> messageListEnvelop = Optional.empty();
+        try {
+            messageListEnvelop = messageQueryHandler
+                    .getLastMessagesOfConversationQuery(conversationId, lastReadMessageId);
+        } catch (IOException e) {
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with loading last messages");
+        }
+
+        if (messageListEnvelop.isEmpty()) {
+            localStorage.setErrorMessage(
+                    "Loaded empty Optional of last messages of conversation",
+                    "Some troubles with loading last messages");
+            return new ArrayList<>();
+        }
+        return messageListEnvelop.get();
     }
 }

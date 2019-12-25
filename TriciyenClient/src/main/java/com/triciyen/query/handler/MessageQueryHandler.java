@@ -1,9 +1,11 @@
 package com.triciyen.query.handler;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.triciyen.entity.Message;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.util.List;
 import java.util.Optional;
 
 public class MessageQueryHandler extends BaseQueryHandler {
@@ -31,4 +33,18 @@ public class MessageQueryHandler extends BaseQueryHandler {
         return Optional.empty();
     }
 
+    public Optional<List<Message>> getLastMessagesOfConversationQuery
+            (Integer conversationId, Integer lastReadMessageId) throws IOException {
+        HttpURLConnection connection = makeGetQuery
+                (urlGetLastMessagesOfConversation + conversationId + "?lastReadMessageId=" + lastReadMessageId);
+
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String jsonResponse = readResponseBody(connection);
+            List<Message> res = jsonMapper.readValue(jsonResponse, new TypeReference<>(){});
+            return Optional.of(res);
+        }
+
+        logServerError("MessageQueryHandler", "getLastMessagesOfConversationQuery", connection);
+        return Optional.empty();
+    }
 }
