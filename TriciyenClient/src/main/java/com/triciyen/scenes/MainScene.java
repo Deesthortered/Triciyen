@@ -2,11 +2,7 @@ package com.triciyen.scenes;
 
 import com.triciyen.TriciyenApplication;
 import com.triciyen.entity.Conversation;
-import com.triciyen.entity.Message;
 import com.triciyen.entity.UserAccount;
-import com.triciyen.service.ConversationService;
-import com.triciyen.service.MessageService;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
 import javafx.scene.Scene;
@@ -40,8 +36,6 @@ public class MainScene implements BaseScene {
     // Conversation box settings
     private VBox conversationsBox;
     private List<Button> conversationButtons;
-    private List<Conversation> conversations;
-    private Map<Integer, Integer> conversationLoadedPages;
     private static final int conversationButtonWidth = 200;
     private static final int conversationButtonHeight = 70;
     private static final int conversationScrollPaneWidth = 215;
@@ -74,10 +68,6 @@ public class MainScene implements BaseScene {
     private static final int fullRightTitlePaneHeight = leftCornerHeight;
     private static final int fullRightScrollPaneWidth = fullRightTitlePaneWidth;
     private static final int fullRightScrollPaneHeight = sceneHeight - fullRightTitlePaneHeight - writeMessagePaneHeight;
-
-    private MessageListener messageListener;
-    private Message lastPaginedMessage;
-    private Message lastMessage;
 
     private MainScene() {
         mainPane = new BorderPane();
@@ -192,195 +182,28 @@ public class MainScene implements BaseScene {
     }
     @Override
     public void initialize() {
-        ConversationService conversationService = ConversationService.getInstance();
-        MessageService messageService = MessageService.getInstance();
-
         UserAccount currentLoggedAccount = localStorage.getLoggedAccount();
         loginLabel.setText("Login: " + currentLoggedAccount.getLogin());
         usernameLabel.setText(currentLoggedAccount.getName());
 
         emptyRightTitle.setText("Please, choose the conversation");
         mainPane.setCenter(emptyRightPane);
-        conversationLoadedPages = new HashMap<>();
-
-        conversationsBox.getChildren().clear();
-        Optional<List<Conversation>> packedList = conversationService.getAllSubscribedConversations();
-        if (packedList.isEmpty()) {
-            System.out.println(localStorage.getServerErrorMessage());
-        } else {
-            conversations = packedList.get();
-            List<Message> lastMessages = new ArrayList<>();
-            conversations.stream()
-                    .map(messageService::getLastMessageOfConversation)
-                    .forEach(lastMessages::add);
-
-            initConversationButtons(conversations, lastMessages);
-        }
-
-        expandMessagesButton = new Button(".... expand messages ...");
-        expandMessagesButton.setOnMouseClicked(this);
     }
     @Override
     public void destroy() {
-
+        conversationsBox.getChildren().clear();
     }
     @Override
     public void handle(Event event) {
         if (event.getSource() == logoutButton) {
             logoutEvent();
-        } else if (event.getSource() == expandMessagesButton) {
-            expandMessages(currentConversation);
-        } else if (event.getSource() == writeMessageSendButton) {
-            sendMessage();
         } else {
-            boolean was = false;
-            for (int i = 0; i < conversationButtons.size(); i++) {
-                if (event.getSource() == conversationButtons.get(i)) {
-                    was = true;
-                    initConversation(i);
-                }
-            }
-            if (!was)
-                System.out.println("Login Scene: Unknown event.");
+            System.out.println("Login Scene: Unknown event.");
         }
     }
 
-    private void initConversationButtons(List<Conversation> source, List<Message> lastMessages) {
-        conversationButtons = new ArrayList<>();
-        for (int i = 0; i < source.size(); i++) {
-            Button button = new Button(source.get(i).getName());
-            button.setMinWidth(conversationButtonWidth);
-            button.setPrefWidth(conversationButtonWidth);
-            button.setMaxWidth(conversationButtonWidth);
-            button.setMinHeight(conversationButtonHeight);
-            button.setPrefHeight(conversationButtonHeight);
-            button.setMaxHeight(conversationButtonHeight);
-            conversationsBox.getChildren().add(button);
-            conversationButtons.add(button);
-            button.setOnMouseClicked(this);
-        }
-    }
-    private void initConversation(int conversationIndex) {
-        MessageService messageService = MessageService.getInstance();
-        Conversation conversation = conversations.get(conversationIndex);
-
-        fullRightConversationLabel.setText(conversation.getName());
-
-        if (currentConversation != null) {
-            synchronized (currentConversation) {
-                currentConversation = conversation;
-            }
-        } else {
-            currentConversation = conversation;
-        }
-        if (messageListener != null)
-            messageListener.interrupt();
-
-        int currentPage = 0;
-        conversationLoadedPages.put(conversation.getConversationId(), currentPage);
-
-        lastPaginedMessage = messageService.getLastMessageOfConversation(conversation);
-        List<Message> currentMessages = messageService.
-                getMessagesOfConversationWithPagination(conversation, lastPaginedMessage.getMessageId(),0);
-
-        if (localStorage.isWasError()) {
-            emptyRightTitle.setText("Error was happened:\n" +
-                    localStorage.getServerErrorMessage());
-            System.err.println(localStorage.getServerErrorMessage());
-        } else {
-            initMessages(currentMessages);
-            lastMessage = currentMessages.get(currentMessages.size() - 1);
-            messageListener = new MessageListener();
-            messageListener.setDaemon(true);
-            messageListener.start();
-            mainPane.setCenter(fullRightPane);
-        }
-    }
-    private void initMessages(List<Message> currentMessages) {
-        messageButton = new ArrayList<>();
-        expandMessagesButton.setDisable(false);
-        messageButton.add(expandMessagesButton);
-        currentMessages.stream()
-                .map(message -> new Button(message.getUser().getName() + ": " + message.getContent()))
-                .forEach( (button) -> { messageButton.add(1, button);});
-        synchronized (messageBox) {
-            messageBox.getChildren().clear();
-            messageButton.forEach(messageBox.getChildren()::add);
-        }
-    }
-
-    private void expandMessages(Conversation conversation) {
-        MessageService messageService = MessageService.getInstance();
-        int nextPage = conversationLoadedPages.get(conversation.getConversationId()) + 1;
-        conversationLoadedPages.put(conversation.getConversationId(), nextPage);
-
-        List<Message> currentMessages = messageService
-                .getMessagesOfConversationWithPagination(conversation, lastPaginedMessage.getMessageId(), nextPage);
-        if (currentMessages.isEmpty()) {
-            expandMessagesButton.setDisable(true);
-        } else {
-            currentMessages.stream()
-                    .map(message -> new Button(message.getUser().getName() + ": " + message.getContent()))
-                    .forEach( (button) -> { messageButton.add(1, button);});
-        }
-
-        synchronized (messageBox) {
-            messageBox.getChildren().clear();
-            messageButton.forEach(messageBox.getChildren()::add);
-        }
-    }
-    private void sendMessage() {
-        MessageService messageService = MessageService.getInstance();
-        String content = writeMessageField.getText();
-        Integer contentType = 1;
-        String login = localStorage.getLoggedAccount().getLogin();
-        Integer conversationId = currentConversation.getConversationId();
-        boolean success = messageService.sendMessage(content, contentType, login, conversationId);
-        Button newMessage = new Button();
-        String buttonContent = localStorage.getLoggedAccount().getName() + ": " + content;
-        if (success) {
-            newMessage.setText(buttonContent);
-            writeMessageField.setText("");
-        } else {
-            newMessage.setText("---- message is not sent ---- {" + buttonContent + "}");
-        }
-        messageButton.add(newMessage);
-        messageBox.getChildren().addAll(newMessage);
-    }
     private void logoutEvent() {
         localStorage.setDefaultState();
         TriciyenApplication.setGlobalScene(LoginScene.getInstance());
-    }
-
-    // Jopa
-    class MessageListener extends Thread {
-        @Override
-        public void run() {
-            while (!isInterrupted()) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    System.out.println("Interrupted slipping");
-                }
-                if (currentConversation != null) {
-                    synchronized (currentConversation) {
-                        MessageService messageService = MessageService.getInstance();
-                                List<Message> newMessages = messageService.getLastNewestMessagesOfConversation(
-                                currentConversation.getConversationId(),
-                                lastMessage.getMessageId());
-                        if (!newMessages.isEmpty()) {
-                            lastMessage = newMessages.get(newMessages.size() - 1);
-
-                            List<Button> currentButtons = new ArrayList<>();
-                            newMessages.stream()
-                                    .map((message) -> new Button(message.getUser().getName() + ": " + message.getContent()))
-                                    .forEach(currentButtons::add);
-                            for (Button currentButton : currentButtons)
-                                Platform.runLater(() -> messageBox.getChildren().add(currentButton));
-                        }
-                    }
-                }
-            }
-        }
     }
 }

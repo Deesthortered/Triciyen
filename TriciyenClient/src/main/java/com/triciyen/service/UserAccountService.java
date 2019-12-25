@@ -36,24 +36,27 @@ public class UserAccountService implements BaseService {
     public boolean registration(UserAccount userAccount) {
         userAccount.setPassword(DigestUtils.sha256Hex(userAccount.getPassword()));
 
-        Optional<UserAccount> givenUserAccount = Optional.empty();
+        Optional<UserAccount> givenUserAccountEnvelop = Optional.empty();
         try {
-            givenUserAccount = userAccountQueryHandler.registrationQuery(userAccount);
+            givenUserAccountEnvelop = userAccountQueryHandler.registrationQuery(userAccount);
         } catch (IOException e) {
             localStorage.setServerErrorMessage(e.getMessage());
         }
 
-        if (givenUserAccount.isEmpty()) {
+        if (givenUserAccountEnvelop.isEmpty()) {
             return false;
         }
 
-        if (!userAccount.equals(givenUserAccount.get())) {
+        UserAccount givenUserAccount = givenUserAccountEnvelop.get();
+        givenUserAccount.setPassword(userAccount.getPassword());
+
+        if (!userAccount.equals(givenUserAccount)) {
             localStorage.setServerErrorMessage("Given data is not corresponding with input\n" +
-                    "Given: " + givenUserAccount.get().toString());
+                    "Given: " + givenUserAccount.toString());
             return false;
         }
 
-        localStorage.setLogged(givenUserAccount.get());
+        localStorage.setLogged(givenUserAccountEnvelop.get());
         return true;
     }
 }
