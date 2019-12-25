@@ -72,6 +72,10 @@ public class LoginScene implements BaseScene {
         this.errorLabel.setText("");
     }
     @Override
+    public void destroy() {
+
+    }
+    @Override
     public void handle(Event event) {
         if (event.getSource() == loginButton) {
             loginEvent();

@@ -10,4 +10,5 @@ public interface BaseScene extends EventHandler<Event> {
 
     Scene getScene();
     void initialize();
+    void destroy();
 }

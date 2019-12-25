@@ -91,6 +91,10 @@ public class RegistrationScene implements BaseScene {
         this.errorLabel.setText("");
     }
     @Override
+    public void destroy() {
+
+    }
+    @Override
     public void handle(Event event) {
         if (event.getSource() == submitButton) {
             submitEvent();

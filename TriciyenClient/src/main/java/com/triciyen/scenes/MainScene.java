@@ -221,6 +221,10 @@ public class MainScene implements BaseScene {
         expandMessagesButton.setOnMouseClicked(this);
     }
     @Override
+    public void destroy() {
+
+    }
+    @Override
     public void handle(Event event) {
         if (event.getSource() == logoutButton) {
             logoutEvent();
