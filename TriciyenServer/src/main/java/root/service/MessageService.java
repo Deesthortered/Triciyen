@@ -9,11 +9,5 @@ import java.util.List;
 @Service
 public interface MessageService {
     Integer getLastReadMessageIdOfConversation(Integer conversationId,  String userLogin);
-
-
-
-    Message getLastMessageInConversation(Integer conversationId);
-    void sendMessage(String content, Integer contentTypeId, String authorUserLogin, Integer conversationId);
-    List<Message> getSetOfLastMessagesInConversation(Integer conversationId, Integer lastPageableId, Integer page, Integer pageSize);
-    List<Message> getLastMessages(Integer conversationId, Integer lastMessageId);
+    List<Message> getLastMessagesInConversation(Integer conversationId, Integer lastReadMessageId);
 }

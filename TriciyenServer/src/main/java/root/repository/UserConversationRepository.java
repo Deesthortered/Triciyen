@@ -12,5 +12,5 @@ import java.util.Optional;
 @Repository
 public interface UserConversationRepository extends CrudRepository<UserConversation, Integer> {
     List<UserConversation> findAllByUser(UserAccount user);
-    Optional<UserConversation> findByConversationAndUser(Conversation conversation, UserAccount user);
+    Optional<UserConversation> findByConversation_ConversationIdAndUser_Login(Integer conversationId, String userLogin);
 }

@@ -53,43 +53,13 @@ public class HttpQueryController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-
-
-
-    @GetMapping("/getLastMessage/{conversationId}")
-    public ResponseEntity<?> getLastMessageInTheConversation(@PathVariable Integer conversationId) {
-        Message lastMessage = messageService.getLastMessageInConversation(conversationId);
-        return ResponseEntity.status(HttpStatus.OK).body(lastMessage);
-    }
-
-    @PostMapping("/sendMessage")
-    public ResponseEntity<?> sendMessage(
-            @RequestParam(value = "content") String content,
-            @RequestParam(value = "contentTypeId") Integer contentTypeId,
-            @RequestParam(value = "authorUserLogin") String authorUserLogin,
-            @RequestParam(value = "conversationId") Integer conversationId
-    ) {
-        messageService.sendMessage(content, contentTypeId, authorUserLogin, conversationId);
-        return ResponseEntity.status(HttpStatus.OK).body("Message is sent.");
-    }
-
     @GetMapping("/getListOfLastMessages/{conversationId}")
     public ResponseEntity<?> getListOfLastMessagesInTheConversation(
             @PathVariable Integer conversationId,
-            @RequestParam(value = "lastPageableId") Integer lastPageableId,
-            @RequestParam(value = "page") Integer page,
-            @RequestParam(value = "pageSize") Integer pageSize
+            @RequestParam(value = "lastReadMessageId") Integer lastReadMessageId
     ) {
-        List<Message> lastPaginedMessages = messageService.getSetOfLastMessagesInConversation(conversationId, lastPageableId, page, pageSize);
-        return ResponseEntity.status(HttpStatus.OK).body(lastPaginedMessages);
-    }
-
-    @GetMapping("/getLastMessages")
-    public ResponseEntity<?> getListOfLastMessagesInTheConversation(
-            @RequestParam(value = "conversationId") Integer conversationId,
-            @RequestParam(value = "lastMessageId") Integer lastMessageId
-    ) {
-        List<Message> lastMessages = messageService.getLastMessages(conversationId, lastMessageId);
+        List<Message> lastMessages = messageService.
+                getLastMessagesInConversation(conversationId, lastReadMessageId);
         return ResponseEntity.status(HttpStatus.OK).body(lastMessages);
     }
 }

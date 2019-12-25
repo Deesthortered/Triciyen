@@ -30,64 +30,21 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public Integer getLastReadMessageIdOfConversation(Integer conversationId, String userLogin) {
         Optional<UserConversation> userConversationEnvelop = userConversationRepository
-                .findByConversationAndUser(
-                        Conversation.builder().conversationId(conversationId).build(),
-                        UserAccount.builder().login(userLogin).build()
-                );
+                .findByConversation_ConversationIdAndUser_Login(conversationId, userLogin);
         UserConversation userConversation = userConversationEnvelop
                 .orElseThrow(() -> new NotFoundException("UserConversation is not found by id"));
         return userConversation.getLastReadMessageId() == null ? -1 : userConversation.getLastReadMessageId();
     }
 
-
-
-
-
-
     @Override
-    public Message getLastMessageInConversation(Integer conversationId) {
-        return messageRepository
-                .getTopByConversation_ConversationIdOrderByCreationTimeDesc(conversationId);
-    }
-
-    @Override
-    public List<Message> getSetOfLastMessagesInConversation(Integer conversationId, Integer lastPageableId, Integer page, Integer pageSize) {
-        return messageRepository
-                .getAllByConversation_ConversationIdAndCreationTimeBeforeOrderByCreationTimeDesc(
-                        conversationId,
-                        messageRepository.getTopByMessageId(lastPageableId).getCreationTime(),
-                        PageRequest.of(page, pageSize)
-                );
-    }
-
-    @Override
-    public void sendMessage(String content, Integer contentTypeId, String authorUserLogin, Integer conversationId) {
-        Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new NotFoundException("Conversation is not found"));
-
-        UserAccount userAccount = userAccountRepository.findById(authorUserLogin)
-                .orElseThrow(() -> new NotFoundException("UserAccount is not found"));
-
-        MessageContentType contentType = messageContentTypeRepository.findById(contentTypeId)
-                .orElseThrow(() -> new NotFoundException("ContentType is not found"));
-
-        Message preparedMessage = Message.builder()
-                .conversation(conversation)
-                .user(userAccount)
-                .creationTime(LocalDateTime.now())
-                .contentType(contentType)
-                .content(content)
-                .build();
-
-        messageRepository.save(preparedMessage);
-    }
-
-    @Override
-    public List<Message> getLastMessages(Integer conversationId, Integer lastMessageId) {
+    public List<Message> getLastMessagesInConversation
+            (Integer conversationId, Integer lastReadMessageId) {
+        Message lastReadMessage = messageRepository.findById(lastReadMessageId)
+                .orElseThrow(() -> new NotFoundException("Last read message is not found"));
         return messageRepository
                 .getAllByConversation_ConversationIdAndCreationTimeAfterOrderByCreationTime(
                         conversationId,
-                        messageRepository.getTopByMessageId(lastMessageId).getCreationTime()
+                        lastReadMessage.getCreationTime()
                 );
     }
 }
