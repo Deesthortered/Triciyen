@@ -41,12 +41,13 @@ public class MainScene implements BaseScene {
     private static final int conversationScrollPaneWidth = 215;
     private static final int conversationScrollPaneHeight = sceneHeight - leftCornerHeight;
 
-    // Big right box settings
+    // Big right box settings - None state
     private StackPane emptyRightPane;
     private Label emptyRightTitle;
     private static final int emptyRightPaneWidth = sceneWidth - conversationScrollPaneWidth;
     private static final int emptyRightPaneHeight = leftCornerHeight;
 
+    // Big right box settings - Conversation state
     private VBox fullRightPane;
     private StackPane fullRightTitlePane;
     private Label fullRightConversationLabel;
@@ -61,9 +62,9 @@ public class MainScene implements BaseScene {
     private HBox writeMessageHBox;
     private TextField writeMessageField;
     private Button writeMessageSendButton;
+
     private static final int writeMessagePaneWidth = sceneWidth - conversationScrollPaneWidth;
     private static final int writeMessagePaneHeight = 100;
-
     private static final int fullRightTitlePaneWidth = sceneWidth - conversationScrollPaneWidth;
     private static final int fullRightTitlePaneHeight = leftCornerHeight;
     private static final int fullRightScrollPaneWidth = fullRightTitlePaneWidth;
@@ -182,16 +183,15 @@ public class MainScene implements BaseScene {
     }
     @Override
     public void initialize() {
-        UserAccount currentLoggedAccount = localStorage.getLoggedAccount();
-        loginLabel.setText("Login: " + currentLoggedAccount.getLogin());
-        usernameLabel.setText(currentLoggedAccount.getName());
-
-        emptyRightTitle.setText("Please, choose the conversation");
-        mainPane.setCenter(emptyRightPane);
+        initializeUserCorner();
+        initializeRightPane();
+        initializeConversations();
     }
     @Override
     public void destroy() {
-        conversationsBox.getChildren().clear();
+        destroyUserCorner();
+        destroyRightPane();
+        destroyConversations();
     }
     @Override
     public void handle(Event event) {
@@ -202,8 +202,37 @@ public class MainScene implements BaseScene {
         }
     }
 
+
+    private void initializeUserCorner() {
+        UserAccount currentLoggedAccount = localStorage.getLoggedAccount();
+        loginLabel.setText("Login: " + currentLoggedAccount.getLogin());
+        usernameLabel.setText(currentLoggedAccount.getName());
+    }
+    private void initializeRightPane() {
+        emptyRightTitle.setText("Please, choose the conversation");
+        mainPane.setCenter(emptyRightPane);
+
+    }
+    private void initializeConversations() {
+
+    }
+
+    private void destroyUserCorner() {
+        loginLabel.setText("Shutdown....");
+        usernameLabel.setText("Shutdown....");
+    }
+    private void destroyRightPane() {
+        emptyRightTitle.setText("Shutdown....");
+        mainPane.setCenter(emptyRightPane);
+    }
+    private void destroyConversations() {
+        conversationsBox.getChildren().clear();
+    }
+
+
     private void logoutEvent() {
         localStorage.setDefaultState();
+        destroy();
         TriciyenApplication.setGlobalScene(LoginScene.getInstance());
     }
 }
