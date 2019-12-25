@@ -39,9 +39,9 @@ public class MainScene implements BaseScene {
     // Conversation box settings
     private VBox conversationsBox;
     private List<Button> conversationButtons;
-    private static final int conversationButtonWidth = 200;
+    private static final int conversationButtonWidth = 250;
     private static final int conversationButtonHeight = 70;
-    private static final int conversationScrollPaneWidth = 215;
+    private static final int conversationScrollPaneWidth = 265;
     private static final int conversationScrollPaneHeight = sceneHeight - leftCornerHeight;
 
     // Big right box settings - None state

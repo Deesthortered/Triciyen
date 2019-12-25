@@ -19,10 +19,9 @@ public class ConversationButton extends HBox {
     private Label conversationName;
     private Label lastMessage;
     private Label unreadCounter;
-    private Label lasttime;
+    private Label lastTime;
 
     public ConversationButton(String conversationName, Image image) {
-
         setMinSize(250, 100);
 
         this.imageView = new ImageView(image);
@@ -43,16 +42,15 @@ public class ConversationButton extends HBox {
                                 "-fx-text-fill: #c8cadd;" +
                                 "-fx-padding: 2");
         this.unreadCounter.setFont(Font.font("Cambria", FontWeight.BOLD, 13));
-        this.lasttime = new Label("20.01.1999 00:00");
-        this.lasttime.setTextAlignment(TextAlignment.LEFT);
-        this.lasttime.setFont(Font.font("Cambria", 13));
-        this.lasttime.setAlignment(Pos.BOTTOM_LEFT);
-        this.lasttime.setStyle("-fx-text-fill: grey");
-
+        this.lastTime = new Label("20.01.1999 00:00");
+        this.lastTime.setTextAlignment(TextAlignment.LEFT);
+        this.lastTime.setFont(Font.font("Cambria", 13));
+        this.lastTime.setAlignment(Pos.BOTTOM_LEFT);
+        this.lastTime.setStyle("-fx-text-fill: grey");
 
 
         HBox counterTimeHBox = new HBox();
-        counterTimeHBox.getChildren().addAll( this.lasttime,  this.unreadCounter);
+        counterTimeHBox.getChildren().addAll( this.lastTime,  this.unreadCounter);
         counterTimeHBox.setMinSize( this.conversationName.getMinWidth(),  this.conversationName.getMinHeight());
         counterTimeHBox.setMaxSize( this.conversationName.getMinWidth(),  this.conversationName.getMinHeight());
         counterTimeHBox.setSpacing(35);
@@ -84,18 +82,13 @@ public class ConversationButton extends HBox {
             this.unreadCounter.setVisible(true);
         }
     }
-
     public void setProfileImage(Image image) {
         this.imageView.setImage(image);
     }
-
     public void setLastMessage(String message) {
         this.lastMessage.setText(message);
     }
-
-    public void setLasttime(String lasttime) {
-        this.lasttime.setText(lasttime);
+    public void setLastTime(String lastTime) {
+        this.lastTime.setText(lastTime);
     }
-
-
 }
