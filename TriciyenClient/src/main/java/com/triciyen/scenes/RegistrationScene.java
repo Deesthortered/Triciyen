@@ -26,7 +26,7 @@ public class RegistrationScene implements BaseScene {
     private static Scene scene;
 
     private int sceneWidth = 500;
-    private int sceneHeight = 350;
+    private int sceneHeight = 375;
 
     private TextField loginField;
     private PasswordField passwordField;
@@ -173,16 +173,25 @@ public class RegistrationScene implements BaseScene {
 
         // Email validation
         String email = emailField.getText();
-        String regex = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+        String emailRegex = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
                 + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        Pattern pattern = Pattern.compile(regex);
+        Pattern emailPattern = Pattern.compile(emailRegex);
 
-        if (!pattern.matcher(email).matches()) {
+        if (!emailPattern.matcher(email).matches()) {
             errorLabel.setText("Please, enter the correct email");
             return;
         }
 
+        // Password validation
         String password = passwordField.getText();
+        String passwordRegex = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{8,}$";
+        Pattern passwordPattern = Pattern.compile(passwordRegex);
+
+        if (!passwordPattern.matcher(password).matches()) {
+            errorLabel.setText("Password must contain minimum 8 characters,\nat least 1 letter and 1 number");
+            return;
+        }
+
         String confirmPassword = confirmPasswordField.getText();
         if (password.equals(confirmPassword)) {
             UserAccount newAccount = UserAccount
