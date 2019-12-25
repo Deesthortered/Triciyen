@@ -348,7 +348,7 @@ public class MainScene implements BaseScene {
         TriciyenApplication.setGlobalScene(LoginScene.getInstance());
     }
 
-
+    // Jopa
     class MessageListener extends Thread {
         @Override
         public void run() {
