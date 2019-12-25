@@ -11,7 +11,8 @@ public class LocalStorage {
 
     private LocalStorage() {
         this.wasError = false;
-        this.serverErrorMessage = "";
+        this.internalErrorMessage = "";
+        this.interfaceErrorMessage = "";
         this.logged = false;
         this.loggedUserAccount = null;
 
@@ -28,7 +29,9 @@ public class LocalStorage {
     private Image baseAccountImage;
 
     private boolean wasError;
-    private String serverErrorMessage;
+    private String internalErrorMessage;
+    private String interfaceErrorMessage;
+
     private boolean logged;
     private UserAccount loggedUserAccount;
 
@@ -37,17 +40,28 @@ public class LocalStorage {
         this.logged = false;
         this.loggedUserAccount = UserAccount.builder().build();
     }
+    public Image getBaseAccountImage() {
+        return baseAccountImage;
+    }
 
-    public boolean isWasError() {
+    public boolean wasError() {
         return wasError;
     }
-    public void setServerErrorMessage(String message) {
+    public void    setErrorMessage(String internalMessage, String interfaceMessage) {
         this.wasError = true;
-        this.serverErrorMessage = message;
+        this.internalErrorMessage = internalErrorMessage;
+        this.interfaceErrorMessage = interfaceErrorMessage;
     }
-    public String getServerErrorMessage() {
+    public String  getInternalErrorMessage() {
+        return this.internalErrorMessage;
+    }
+    public String  getInterfaceErrorMessage() {
+        return this.interfaceErrorMessage;
+    }
+    public void    closeError() {
         this.wasError = false;
-        return this.serverErrorMessage;
+        this.internalErrorMessage = "";
+        this.interfaceErrorMessage = "";
     }
 
     public void setLogged(UserAccount account) {
@@ -63,9 +77,5 @@ public class LocalStorage {
     public void setLogout() {
         this.logged = false;
         this.loggedUserAccount = null;
-    }
-
-    public Image getBaseAccountImage() {
-        return baseAccountImage;
     }
 }

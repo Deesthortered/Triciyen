@@ -3,6 +3,7 @@ package com.triciyen.scenes;
 import com.triciyen.TriciyenApplication;
 import com.triciyen.entity.Conversation;
 import com.triciyen.entity.UserAccount;
+import com.triciyen.service.ConversationService;
 import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
 import javafx.scene.Scene;
@@ -214,7 +215,8 @@ public class MainScene implements BaseScene {
 
     }
     private void initializeConversations() {
-
+        ConversationService conversationService = ConversationService.getInstance();
+        conversationService.getAllSubscribedConversations();
     }
 
     private void destroyUserCorner() {

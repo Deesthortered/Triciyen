@@ -28,7 +28,7 @@ public class UserAccountService implements BaseService {
                 return true;
             }
         } catch (IOException e) {
-            localStorage.setServerErrorMessage(e.getMessage());
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with authentication");
         }
 
         return false;
@@ -40,7 +40,7 @@ public class UserAccountService implements BaseService {
         try {
             givenUserAccountEnvelop = userAccountQueryHandler.registrationQuery(userAccount);
         } catch (IOException e) {
-            localStorage.setServerErrorMessage(e.getMessage());
+            localStorage.setErrorMessage(e.getMessage(), "Error with registration");
         }
 
         if (givenUserAccountEnvelop.isEmpty()) {
@@ -51,8 +51,8 @@ public class UserAccountService implements BaseService {
         givenUserAccount.setPassword(userAccount.getPassword());
 
         if (!userAccount.equals(givenUserAccount)) {
-            localStorage.setServerErrorMessage("Given data is not corresponding with input\n" +
-                    "Given: " + givenUserAccount.toString());
+            localStorage.setErrorMessage("Given data is not corresponding with input\n" +
+                    "Given: " + givenUserAccount.toString(), "Some troubles with registration");
             return false;
         }
 

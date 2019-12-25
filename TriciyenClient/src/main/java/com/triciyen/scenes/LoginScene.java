@@ -101,6 +101,8 @@ public class LoginScene implements BaseScene {
         TriciyenApplication.setGlobalScene(RegistrationScene.getInstance());
     }
     private void errorMessage() {
-        this.errorLabel.setText(localStorage.getServerErrorMessage());
+        errorLabel.setText(localStorage.getInterfaceErrorMessage());
+        System.err.println(localStorage.getInternalErrorMessage());
+        localStorage.closeError();
     }
 }

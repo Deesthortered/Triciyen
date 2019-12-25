@@ -21,7 +21,7 @@ public class ConversationService implements BaseService {
         try {
             conversationList = conversationQueryHandler.getAllSubscribedConversationsQuery();
         } catch (IOException e) {
-            localStorage.setServerErrorMessage(e.getMessage());
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with loading conversations");
         }
         return conversationList;
     }

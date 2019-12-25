@@ -55,6 +55,8 @@ abstract class BaseQueryHandler {
         return result;
     }
     protected void logServerError(String handlerName, String handlerFunction, HttpURLConnection connection) throws IOException {
+        String responseError = readResponseError(connection);
+
         StringBuilder errorBuilder = new StringBuilder();
         errorBuilder.append("Source: ");
         errorBuilder.append(handlerName);
@@ -65,10 +67,10 @@ abstract class BaseQueryHandler {
         errorBuilder.append(connection.getResponseCode());
         errorBuilder.append("\n");
         errorBuilder.append("Error info: ");
-        errorBuilder.append(readResponseError(connection));
+        errorBuilder.append(responseError);
         errorBuilder.append("\n");
 
-        localStorage.setServerErrorMessage(errorBuilder.toString());
+        localStorage.setErrorMessage(errorBuilder.toString(), responseError);
         System.out.println(errorBuilder.toString());
     }
 
