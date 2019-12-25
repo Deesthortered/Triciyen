@@ -11,6 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface UserConversationRepository extends CrudRepository<UserConversation, Integer> {
+    // Загрузить все беседы юзера для списка слева
     List<UserConversation> findAllByUser(UserAccount user);
+
+    // Загружаем конкретную беседу по ID и Логину, что бы с нее выцепить ID последнего прочитаного сообщения
     Optional<UserConversation> findByConversation_ConversationIdAndUser_Login(Integer conversationId, String userLogin);
 }

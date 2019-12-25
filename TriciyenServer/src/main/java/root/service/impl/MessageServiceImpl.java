@@ -39,12 +39,25 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public List<Message> getLastMessagesInConversation
             (Integer conversationId, Integer lastReadMessageId) {
-        Message lastReadMessage = messageRepository.findById(lastReadMessageId)
-                .orElseThrow(() -> new NotFoundException("Last read message is not found"));
+        LocalDateTime lastReadMessageDateTime;
+        if (lastReadMessageId == -1) {
+            Optional<Message> lastReadMessage = messageRepository
+                    .findTopByConversation_ConversationIdOrderByCreationTime(conversationId);
+            if (lastReadMessage.isPresent()) {
+                lastReadMessageDateTime = lastReadMessage.get().getCreationTime();
+            } else {
+                lastReadMessageDateTime = LocalDateTime.now();
+            }
+        } else {
+            Message lastReadMessage = messageRepository.findById(lastReadMessageId)
+                    .orElseThrow(() -> new NotFoundException("Last read message is not found"));
+            lastReadMessageDateTime = lastReadMessage.getCreationTime();
+        }
+
         return messageRepository
-                .getAllByConversation_ConversationIdAndCreationTimeAfterOrderByCreationTime(
+                .getAllByConversation_ConversationIdAndCreationTimeGreaterThanEqualOrderByCreationTime(
                         conversationId,
-                        lastReadMessage.getCreationTime()
+                        lastReadMessageDateTime
                 );
     }
 }
