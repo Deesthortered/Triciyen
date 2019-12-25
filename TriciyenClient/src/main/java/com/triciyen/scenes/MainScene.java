@@ -56,8 +56,6 @@ public class MainScene implements BaseScene {
     private ScrollPane fullRightScrollPane;
     private VBox messageBox;
     private List<Button> messageButton;
-    private Conversation currentConversation;
-    private Button expandMessagesButton;
 
     private StackPane writeMessagePane;
     private HBox writeMessageHBox;
@@ -92,7 +90,7 @@ public class MainScene implements BaseScene {
         avatarBox.getChildren().addAll(imageUserAvatar, loginBox);
 
         logoutButton = new Button("Logout");
-        logoutButton.setOnMouseClicked(this);
+        logoutButton.setOnMouseClicked(this::handleLogout);
 
         VBox leftCornerBox = new VBox();
         leftCornerBox.getChildren().addAll(avatarBox, logoutButton);
@@ -196,11 +194,7 @@ public class MainScene implements BaseScene {
     }
     @Override
     public void handle(Event event) {
-        if (event.getSource() == logoutButton) {
-            logoutEvent();
-        } else {
-            System.out.println("Login Scene: Unknown event.");
-        }
+        System.out.println("Login Scene: Unknown event.");
     }
 
 
@@ -215,8 +209,32 @@ public class MainScene implements BaseScene {
 
     }
     private void initializeConversations() {
+        conversationsBox.getChildren().clear();
+        conversationButtons = new ArrayList<>();
+
         ConversationService conversationService = ConversationService.getInstance();
-        conversationService.getAllSubscribedConversations();
+        Optional<List<Conversation>> conversationListEnvelop = conversationService.getAllSubscribedConversations();
+        if (localStorage.wasError()) {
+            System.err.println(localStorage.getInternalErrorMessage());
+            Button button = makeErrorConversationButton();
+            conversationButtons.add(button);
+            conversationsBox.getChildren().add(button);
+            localStorage.closeError();
+        } else {
+            if (conversationListEnvelop.isPresent() && !conversationListEnvelop.get().isEmpty()) {
+                List<Conversation> conversationList = conversationListEnvelop.get();
+                conversationList.stream()
+                        .map(this::mapConversationToButton)
+                        .forEach(button -> {
+                            conversationButtons.add(button);
+                            conversationsBox.getChildren().add(button);
+                        });
+            } else {
+                Button button = makeNoConversationButton();
+                conversationButtons.add(button);
+                conversationsBox.getChildren().add(button);
+            }
+        }
     }
 
     private void destroyUserCorner() {
@@ -229,12 +247,36 @@ public class MainScene implements BaseScene {
     }
     private void destroyConversations() {
         conversationsBox.getChildren().clear();
+        conversationButtons.clear();
     }
 
+    private Button mapConversationToButton(Conversation conversation) {
+        Button button = new Button();
+        button.setText(conversation.getName());
+        button.setMinWidth(conversationButtonWidth);
+        button.setMinHeight(conversationButtonHeight);
+        button.setOnMouseClicked(this::handleConversationButton);
+        return button;
+    }
+    private Button makeNoConversationButton() {
+        Button button = new Button();
+        button.setText("You have no conversations");
+        button.setMinWidth(conversationButtonWidth);
+        return button;
+    }
+    private Button makeErrorConversationButton() {
+        Button button = new Button();
+        button.setText("Error: " + localStorage.getInterfaceErrorMessage());
+        button.setMinWidth(conversationButtonWidth);
+        return button;
+    }
 
-    private void logoutEvent() {
+    private void handleLogout(Event event) {
         localStorage.setDefaultState();
         destroy();
         TriciyenApplication.setGlobalScene(LoginScene.getInstance());
+    }
+    private void handleConversationButton(Event event) {
+        System.out.println("Boom!");
     }
 }
