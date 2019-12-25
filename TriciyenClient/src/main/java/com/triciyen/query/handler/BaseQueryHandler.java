@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 abstract class BaseQueryHandler {
     LocalStorage localStorage = LocalStorage.getInstance();
     ObjectMapper jsonMapper = new ObjectMapper();
-    private String domain = "http://10.35.78.187:8080";//"http://192.168.31.201:8080";
+    private String domain = "http://localhost:8080";
     String urlAuthentication = "/http_api/auth";
     String urlRegistration = "/http_api/registration";
     String urlGetAllSubscribedConversations = "/http_api/getConversations/";

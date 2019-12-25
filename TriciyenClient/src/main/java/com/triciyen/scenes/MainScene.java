@@ -147,7 +147,8 @@ public class MainScene implements BaseScene {
 
         messageBox = new VBox();
         fullRightScrollPane = new ScrollPane(messageBox);
-        messageBox.heightProperty().addListener((ChangeListener) (observable, oldvalue, newValue) -> fullRightScrollPane.setVvalue((Double)newValue ));
+        messageBox.heightProperty().addListener(
+                (ChangeListener) (observable, oldvalue, newValue) -> fullRightScrollPane.setVvalue((Double)newValue ));
         fullRightScrollPane.setMinHeight(fullRightScrollPaneHeight);
         fullRightScrollPane.setPrefHeight(fullRightScrollPaneHeight);
         fullRightScrollPane.setMaxHeight(fullRightScrollPaneHeight);

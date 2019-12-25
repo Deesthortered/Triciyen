@@ -53,6 +53,7 @@ public class UserAccountService implements BaseService {
             return false;
         }
 
+        localStorage.setLogged(givenUserAccount.get());
         return true;
     }
 }
