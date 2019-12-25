@@ -5,6 +5,8 @@ import javafx.scene.image.Image;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class LocalStorage {
     private static final LocalStorage instance = new LocalStorage();
@@ -15,6 +17,9 @@ public class LocalStorage {
         this.interfaceErrorMessage = "";
         this.logged = false;
         this.loggedUserAccount = null;
+
+        this.conversationLock = new ReentrantReadWriteLock();
+        this.currentActiveConversation = -1;
 
         try {
             baseAccountImage = new Image(new File("baseAccountImage.png").toURI().toURL().toString());
@@ -34,6 +39,9 @@ public class LocalStorage {
 
     private boolean logged;
     private UserAccount loggedUserAccount;
+
+    private ReadWriteLock conversationLock;
+    private int currentActiveConversation;
 
 
     public void setDefaultState() {
@@ -77,5 +85,17 @@ public class LocalStorage {
     public void setLogout() {
         this.logged = false;
         this.loggedUserAccount = null;
+    }
+
+    public int getCurrentActiveConversation() {
+        this.conversationLock.readLock().lock();
+        int res = currentActiveConversation;
+        this.conversationLock.readLock().unlock();
+        return res;
+    }
+    public void setCurrentActiveConversation(int currentActiveConversation) {
+        this.conversationLock.writeLock().lock();
+        this.currentActiveConversation = currentActiveConversation;
+        this.conversationLock.writeLock().unlock();
     }
 }

@@ -11,4 +11,5 @@ public class MessageService implements BaseService {
         return instance;
     }
 
+
 }

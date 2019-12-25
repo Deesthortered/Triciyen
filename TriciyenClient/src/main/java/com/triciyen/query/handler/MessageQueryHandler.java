@@ -21,7 +21,8 @@ public class MessageQueryHandler extends BaseQueryHandler {
         return instance;
     }
 
-    public Optional<Message> getLastMessageOfConversationQuery(Conversation conversation) throws IOException {
+    public Optional<Message> getLastMessageOfConversationQuery
+            (Conversation conversation) throws IOException {
         HttpURLConnection connection = makeGetQuery(urlGetLastMessageOfConversation + conversation.getConversationId());
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
@@ -33,7 +34,8 @@ public class MessageQueryHandler extends BaseQueryHandler {
         logServerError("MessageQueryHandler", "getLastMessageOfConversation", connection);
         return Optional.empty();
     }
-    public Optional<List<Message>> getMessagesOfConversationWithPaginationQuery(int conversationId, int lastPageableId, int page, int pageSize) throws IOException {
+    public Optional<List<Message>> getMessagesOfConversationWithPaginationQuery
+            (int conversationId, int lastPageableId, int page, int pageSize) throws IOException {
         HttpURLConnection connection = makeGetQuery(
                 urlGetMessagesOfConversationWithPaginationQuery + conversationId +
                 "?lastPageableId=" + lastPageableId +
@@ -54,7 +56,8 @@ public class MessageQueryHandler extends BaseQueryHandler {
 
         return Optional.empty();
     }
-    public Boolean sendMessageQuery(String content, Integer contentTypeId, String authorUserLogin, Integer conversationId) throws IOException {
+    public Boolean sendMessageQuery
+            (String content, Integer contentTypeId, String authorUserLogin, Integer conversationId) throws IOException {
         String parameterBuilder = "?content=" + URLEncoder.encode(content, StandardCharsets.UTF_8.toString()) +
                 "&contentTypeId=" + contentTypeId +
                 "&authorUserLogin=" + authorUserLogin +
@@ -70,7 +73,8 @@ public class MessageQueryHandler extends BaseQueryHandler {
 
         return false;
     }
-    public Optional<List<Message>> getLastNewestMessagesOfConversationQuery(Integer conversationId, Integer lastMessageId) throws IOException {
+    public Optional<List<Message>> getLastNewestMessagesOfConversationQuery
+            (Integer conversationId, Integer lastMessageId) throws IOException {
         HttpURLConnection connection = makeGetQuery(
                 urlGetLastNewestMessages +
                         "?conversationId=" + conversationId +

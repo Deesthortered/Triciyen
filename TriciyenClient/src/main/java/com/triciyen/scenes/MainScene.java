@@ -1,5 +1,6 @@
 package com.triciyen.scenes;
 
+import com.triciyen.MessageListener;
 import com.triciyen.TriciyenApplication;
 import com.triciyen.entity.Conversation;
 import com.triciyen.entity.UserAccount;
@@ -68,6 +69,8 @@ public class MainScene implements BaseScene {
     private static final int fullRightTitlePaneHeight = leftCornerHeight;
     private static final int fullRightScrollPaneWidth = fullRightTitlePaneWidth;
     private static final int fullRightScrollPaneHeight = sceneHeight - fullRightTitlePaneHeight - writeMessagePaneHeight;
+
+    List<MessageListener> messageListeners;
 
     private MainScene() {
         mainPane = new BorderPane();
@@ -158,7 +161,7 @@ public class MainScene implements BaseScene {
         writeMessageField.setMaxWidth(writeMessagePaneWidth - writeMessagePaneHeight);
 
         writeMessageSendButton = new Button("Send");
-        writeMessageSendButton.setOnMouseClicked(this);
+        writeMessageSendButton.setOnMouseClicked(this::handleSendMessageButton);
         writeMessageSendButton.setMinHeight(writeMessagePaneHeight);
         writeMessageSendButton.setPrefHeight(writeMessagePaneHeight);
         writeMessageSendButton.setMaxHeight(writeMessagePaneHeight);
@@ -211,6 +214,7 @@ public class MainScene implements BaseScene {
     private void initializeConversations() {
         conversationsBox.getChildren().clear();
         conversationButtons = new ArrayList<>();
+        messageListeners = new ArrayList<>();
 
         ConversationService conversationService = ConversationService.getInstance();
         Optional<List<Conversation>> conversationListEnvelop = conversationService.getAllSubscribedConversations();
@@ -224,7 +228,12 @@ public class MainScene implements BaseScene {
             if (conversationListEnvelop.isPresent() && !conversationListEnvelop.get().isEmpty()) {
                 List<Conversation> conversationList = conversationListEnvelop.get();
                 conversationList.stream()
-                        .map(this::mapConversationToButton)
+                        .map(conversation -> {
+                            MessageListener listener = new MessageListener(conversation.getConversationId());
+                            messageListeners.add(listener);
+                            listener.start();
+                            return mapConversationToButton(conversation);
+                        })
                         .forEach(button -> {
                             conversationButtons.add(button);
                             conversationsBox.getChildren().add(button);
@@ -235,6 +244,12 @@ public class MainScene implements BaseScene {
                 conversationsBox.getChildren().add(button);
             }
         }
+    }
+    private void initializeMessages(Integer conversationId) {
+        messageBox.getChildren().clear();
+        messageButton = new ArrayList<>();
+        localStorage.setCurrentActiveConversation(conversationId);
+
     }
 
     private void destroyUserCorner() {
@@ -247,7 +262,18 @@ public class MainScene implements BaseScene {
     }
     private void destroyConversations() {
         conversationsBox.getChildren().clear();
-        conversationButtons.clear();
+        if (conversationButtons != null)
+            conversationButtons.clear();
+        if (messageListeners != null) {
+            messageListeners.forEach(Thread::interrupt);
+            messageListeners.clear();
+        }
+    }
+    private void destroyMessages() {
+        localStorage.setCurrentActiveConversation(-1);
+        messageBox.getChildren().clear();
+        if (messageButton != null)
+            messageButton.clear();
     }
 
     private Button mapConversationToButton(Conversation conversation) {
@@ -280,7 +306,10 @@ public class MainScene implements BaseScene {
     private void handleConversationButton(Event event) {
         Button conversationButton = (Button) event.getSource();
         Integer conversationId = Integer.valueOf(conversationButton.getId());
-
-        
+        destroyMessages();
+        initializeMessages(conversationId);
     }
+    private void handleSendMessageButton(Event event) {
+
+}
 }
