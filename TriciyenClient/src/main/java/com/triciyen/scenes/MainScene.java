@@ -252,6 +252,7 @@ public class MainScene implements BaseScene {
 
     private Button mapConversationToButton(Conversation conversation) {
         Button button = new Button();
+        button.setId(conversation.getConversationId().toString());
         button.setText(conversation.getName());
         button.setMinWidth(conversationButtonWidth);
         button.setMinHeight(conversationButtonHeight);
@@ -277,6 +278,9 @@ public class MainScene implements BaseScene {
         TriciyenApplication.setGlobalScene(LoginScene.getInstance());
     }
     private void handleConversationButton(Event event) {
-        System.out.println("Boom!");
+        Button conversationButton = (Button) event.getSource();
+        Integer conversationId = Integer.valueOf(conversationButton.getId());
+
+        
     }
 }
