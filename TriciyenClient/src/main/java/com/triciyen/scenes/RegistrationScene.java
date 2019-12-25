@@ -4,21 +4,29 @@ import com.triciyen.TriciyenApplication;
 import com.triciyen.entity.UserAccount;
 import com.triciyen.service.UserAccountService;
 import javafx.event.Event;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Reflection;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+
+import java.util.regex.Pattern;
+
 
 public class RegistrationScene implements BaseScene {
     private static final RegistrationScene instance = new RegistrationScene();
     private static Scene scene;
 
-    private int sceneWidth = 300;
-    private int sceneHeight = 300;
+    private int sceneWidth = 500;
+    private int sceneHeight = 350;
 
     private TextField loginField;
     private PasswordField passwordField;
@@ -32,49 +40,88 @@ public class RegistrationScene implements BaseScene {
     private Label errorLabel;
 
     private RegistrationScene() {
-        VBox contentBox = new VBox();
-        StackPane mainPane = new StackPane();
+        BorderPane bp = new BorderPane();
+        bp.setPadding(new Insets(10,50,50,50));
 
-        Label titleLabel = new Label("The registration menu");
+        //Adding HBox
+        HBox hb = new HBox();
+        hb.setPadding(new Insets(20,20,20,30));
 
-        HBox loginBox = new HBox();
-        Label loginLabel = new Label("Login: ");
+        //Adding GridPane
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(20,0,20,10));
+        gridPane.setHgap(5);
+        gridPane.setVgap(5);
+
+        //Implementing Nodes for GridPane
+        Label lblUserName = new Label("Login");
         loginField = new TextField();
-        loginBox.getChildren().addAll(loginLabel, loginField);
-
-        HBox passwordBox = new HBox();
-        Label passwordLabel = new Label("Password: ");
+        loginField.setMinWidth(200);
+        Label lblPassword = new Label("Password");
         passwordField = new PasswordField();
-        passwordBox.getChildren().addAll(passwordLabel, passwordField);
-
-        HBox confirmPasswordBox = new HBox();
-        Label confirmPasswordLabel = new Label("Confirm password: ");
+        Label lblConfirmPassword = new Label("Confirm password");
         confirmPasswordField = new PasswordField();
-        confirmPasswordBox.getChildren().addAll(confirmPasswordLabel, confirmPasswordField);
-
-        HBox fullnameBox = new HBox();
-        Label fullnameLabel = new Label("Full name: ");
+        Label lblFullname = new Label("Fullname");
         fullnameField = new TextField();
-        fullnameBox.getChildren().addAll(fullnameLabel, fullnameField);
-
-        HBox emailBox = new HBox();
-        Label emailLabel = new Label("E-mail: ");
+        Label lblEmail = new Label("Email");
         emailField = new TextField();
-        emailBox.getChildren().addAll(emailLabel, emailField);
-
-        HBox buttonBox = new HBox();
         submitButton = new Button("Submit");
         submitButton.setOnMouseClicked(this);
         backButton = new Button("Back");
         backButton.setOnMouseClicked(this);
-        buttonBox.getChildren().addAll(submitButton, backButton);
-
         errorLabel = new Label("");
 
-        contentBox.getChildren().addAll(titleLabel, loginBox, passwordBox, confirmPasswordBox,
-                fullnameBox, emailBox, buttonBox, errorLabel);
-        mainPane.getChildren().add(contentBox);
-        scene = new Scene(mainPane, sceneWidth, sceneHeight);
+        // Buttons HBox
+        HBox btnHBox = new HBox();
+        btnHBox.setSpacing(5.);
+        btnHBox.setAlignment(Pos.CENTER_RIGHT);
+        btnHBox.getChildren().addAll(backButton, submitButton);
+
+        //Adding Nodes to GridPane layout
+        gridPane.add(lblUserName, 0, 0);
+        gridPane.add(loginField, 1, 0);
+        gridPane.add(lblPassword, 0, 1);
+        gridPane.add(passwordField, 1, 1);
+        gridPane.add(lblConfirmPassword, 0, 2);
+        gridPane.add(confirmPasswordField, 1, 2);
+        gridPane.add(lblFullname, 0, 3);
+        gridPane.add(fullnameField, 1, 3);
+        gridPane.add(lblEmail, 0, 4);
+        gridPane.add(emailField, 1, 4);
+        gridPane.add(btnHBox, 1, 5);
+        gridPane.add(errorLabel, 1, 6);
+
+        //Reflection for gridPane
+        Reflection r = new Reflection();
+        r.setFraction(0.7f);
+        gridPane.setEffect(r);
+
+        //DropShadow effect
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setOffsetX(5);
+        dropShadow.setOffsetY(5);
+
+        //Adding text and DropShadow effect to it
+        Text text = new Text("New account...");
+        text.setFont(Font.font("Courier New", FontWeight.BOLD, 28));
+        text.setEffect(dropShadow);
+
+        //Adding text to HBox
+        hb.getChildren().add(text);
+
+        //Add ID's to Nodes
+        bp.setId("bp");
+        gridPane.setId("root");
+        submitButton.setId("btnSubmit");
+        backButton.setId("btnBack");
+        text.setId("text");
+
+        //Add HBox and GridPane layout to BorderPane Layout
+        bp.setTop(hb);
+        bp.setCenter(gridPane);
+
+        scene = new Scene(bp, sceneWidth, sceneHeight);
+        scene.getStylesheets().add(getClass().getClassLoader().getResource("css/login_registration.css").toExternalForm());
     }
     public static RegistrationScene getInstance() {
         return instance;
@@ -105,14 +152,39 @@ public class RegistrationScene implements BaseScene {
         }
     }
 
+
     private void submitEvent() {
+
+        // Login validation
+        String login = loginField.getText();
+
+        if (login.length() < 4 || login.length() > 20) {
+            errorLabel.setText("Login must contain 4-20 characters");
+            return;
+        }
+
+        // Fullname validation
+        String fullname = fullnameField.getText();
+
+        if (fullname.length() < 1) {
+            errorLabel.setText("Fullname must contain at least 1 character");
+            return;
+        }
+
+        // Email validation
+        String email = emailField.getText();
+        String regex = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        Pattern pattern = Pattern.compile(regex);
+
+        if (!pattern.matcher(email).matches()) {
+            errorLabel.setText("Please, enter the correct email");
+            return;
+        }
+
         String password = passwordField.getText();
         String confirmPassword = confirmPasswordField.getText();
         if (password.equals(confirmPassword)) {
-            String login = loginField.getText();
-            String fullname = fullnameField.getText();
-            String email = emailField.getText();
-
             UserAccount newAccount = UserAccount
                     .builder()
                     .login(login)
