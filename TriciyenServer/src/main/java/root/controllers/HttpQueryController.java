@@ -44,6 +44,18 @@ public class HttpQueryController {
         return ResponseEntity.status(HttpStatus.OK).body(conversationList);
     }
 
+    @GetMapping("/getLastReadMessageIdOfConversation/{conversationId}")
+    public ResponseEntity<?> getLastReadMessageIdOfConversation(
+            @PathVariable Integer conversationId,
+            @RequestParam(value = "userLogin") String userLogin
+    ) {
+        Integer result = messageService.getLastReadMessageIdOfConversation(conversationId, userLogin);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+
+
+
     @GetMapping("/getLastMessage/{conversationId}")
     public ResponseEntity<?> getLastMessageInTheConversation(@PathVariable Integer conversationId) {
         Message lastMessage = messageService.getLastMessageInConversation(conversationId);

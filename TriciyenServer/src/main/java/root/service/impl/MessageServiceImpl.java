@@ -3,20 +3,15 @@ package root.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
-import root.entity.Conversation;
-import root.entity.Message;
-import root.entity.MessageContentType;
-import root.entity.UserAccount;
+import root.entity.*;
 import root.exception.NotFoundException;
-import root.repository.ConversationRepository;
-import root.repository.MessageContentTypeRepository;
-import root.repository.MessageRepository;
-import root.repository.UserAccountRepository;
+import root.repository.*;
 import root.service.MessageService;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Transactional
 public class MessageServiceImpl implements MessageService {
@@ -29,6 +24,25 @@ public class MessageServiceImpl implements MessageService {
     private UserAccountRepository userAccountRepository;
     @Autowired
     private MessageContentTypeRepository messageContentTypeRepository;
+    @Autowired
+    private UserConversationRepository userConversationRepository;
+
+    @Override
+    public Integer getLastReadMessageIdOfConversation(Integer conversationId, String userLogin) {
+        Optional<UserConversation> userConversationEnvelop = userConversationRepository
+                .findByConversationAndUser(
+                        Conversation.builder().conversationId(conversationId).build(),
+                        UserAccount.builder().login(userLogin).build()
+                );
+        UserConversation userConversation = userConversationEnvelop
+                .orElseThrow(() -> new NotFoundException("UserConversation is not found by id"));
+        return userConversation.getLastReadMessageId() == null ? -1 : userConversation.getLastReadMessageId();
+    }
+
+
+
+
+
 
     @Override
     public Message getLastMessageInConversation(Integer conversationId) {

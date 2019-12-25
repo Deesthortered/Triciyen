@@ -22,6 +22,7 @@ public class Conversation implements Serializable {
     private Integer conversationId;
 
     @JsonIgnore
+    @Transient
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UserConversation> userConversation;
 

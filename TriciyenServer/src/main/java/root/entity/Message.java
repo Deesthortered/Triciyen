@@ -21,7 +21,6 @@ public class Message implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer messageId;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="conversationId", nullable=false)
     private Conversation conversation;

@@ -27,5 +27,5 @@ public class UserConversation implements Serializable {
     @JoinColumn(name="conversationId", nullable=false)
     private Conversation conversation;
 
-    private Integer lastReadMessage;
+    private Integer lastReadMessageId;
 }
