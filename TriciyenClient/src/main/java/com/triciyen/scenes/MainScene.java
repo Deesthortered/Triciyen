@@ -5,6 +5,7 @@ import com.triciyen.TriciyenApplication;
 import com.triciyen.entity.Conversation;
 import com.triciyen.entity.UserAccount;
 import com.triciyen.service.ConversationService;
+import com.triciyen.service.MessageService;
 import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
 import javafx.scene.Scene;
@@ -71,6 +72,7 @@ public class MainScene implements BaseScene {
     private static final int fullRightScrollPaneHeight = sceneHeight - fullRightTitlePaneHeight - writeMessagePaneHeight;
 
     List<MessageListener> messageListeners;
+    Integer oldestReadMessageId = -1;
 
     private MainScene() {
         mainPane = new BorderPane();
@@ -250,6 +252,14 @@ public class MainScene implements BaseScene {
         messageButton = new ArrayList<>();
         localStorage.setCurrentActiveConversation(conversationId);
 
+        MessageService messageService = MessageService.getInstance();
+        oldestReadMessageId = messageService.getLastReadMessageIdOfConversation(conversationId);
+        if (localStorage.wasError()) {
+            System.err.println(localStorage.getInternalErrorMessage());
+            localStorage.closeError();
+        } else {
+            System.out.println("Last read: " + oldestReadMessageId);
+        }
     }
 
     private void destroyUserCorner() {
@@ -274,6 +284,7 @@ public class MainScene implements BaseScene {
         messageBox.getChildren().clear();
         if (messageButton != null)
             messageButton.clear();
+        this.oldestReadMessageId = -1;
     }
 
     private Button mapConversationToButton(Conversation conversation) {

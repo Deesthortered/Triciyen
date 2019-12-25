@@ -18,6 +18,9 @@ abstract class BaseQueryHandler {
     String urlAuthentication = "/http_api/auth";
     String urlRegistration = "/http_api/registration";
     String urlGetAllSubscribedConversations = "/http_api/getConversations/";
+    String urlGetLastReadMessageIdOfConversation = "/http_api/getLastReadMessageIdOfConversation/";
+
+
     String urlGetLastMessageOfConversation = "/http_api/getLastMessage/";
     String urlGetMessagesOfConversationWithPaginationQuery = "/http_api/getListOfLastMessages/";
     String urlGetLastNewestMessages = "/http_api/getLastMessages";

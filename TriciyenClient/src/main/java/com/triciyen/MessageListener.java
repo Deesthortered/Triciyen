@@ -20,10 +20,17 @@ public class MessageListener extends Thread {
             }
 
             if (this.currentConversationId == localStorage.getCurrentActiveConversation()) {
-
+                ActiveAction();
             } else {
-
+                PassiveAction();
             }
         }
+    }
+
+    private void ActiveAction() {
+
+    }
+    private void PassiveAction() {
+
     }
 }

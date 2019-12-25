@@ -21,6 +21,23 @@ public class MessageQueryHandler extends BaseQueryHandler {
         return instance;
     }
 
+    public Optional<Integer> getLastReadMessageIdOfConversationQuery
+            (Integer conversationId, String userLogin) throws IOException {
+        HttpURLConnection connection = makeGetQuery
+                (urlGetLastReadMessageIdOfConversation + conversationId + "?userLogin=" + userLogin);
+
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String jsonResponse = readResponseBody(connection);
+            Integer res = jsonMapper.readValue(jsonResponse, new TypeReference<>(){});
+            return Optional.of(res);
+        }
+
+        logServerError("MessageQueryHandler", "getLastReadMessageIdOfConversation", connection);
+        return Optional.empty();
+    }
+
+
+
     public Optional<Message> getLastMessageOfConversationQuery
             (Conversation conversation) throws IOException {
         HttpURLConnection connection = makeGetQuery(urlGetLastMessageOfConversation + conversation.getConversationId());
