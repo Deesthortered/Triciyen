@@ -49,8 +49,8 @@ public class LocalStorage {
     }
     public void    setErrorMessage(String internalMessage, String interfaceMessage) {
         this.wasError = true;
-        this.internalErrorMessage = internalErrorMessage;
-        this.interfaceErrorMessage = interfaceErrorMessage;
+        this.internalErrorMessage = internalMessage;
+        this.interfaceErrorMessage = interfaceMessage;
     }
     public String  getInternalErrorMessage() {
         return this.internalErrorMessage;

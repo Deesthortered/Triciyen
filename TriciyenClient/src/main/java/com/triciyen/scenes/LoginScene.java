@@ -92,12 +92,14 @@ public class LoginScene implements BaseScene {
         String password = passwordField.getText();
         boolean success = service.authenticate(login, password);
         if (success) {
+            destroy();
             TriciyenApplication.setGlobalScene(MainScene.getInstance());
         } else {
             errorMessage();
         }
     }
     private void registrationEvent() {
+        destroy();
         TriciyenApplication.setGlobalScene(RegistrationScene.getInstance());
     }
     private void errorMessage() {

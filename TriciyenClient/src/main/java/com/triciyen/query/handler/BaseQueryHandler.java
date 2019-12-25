@@ -71,7 +71,6 @@ abstract class BaseQueryHandler {
         errorBuilder.append("\n");
 
         localStorage.setErrorMessage(errorBuilder.toString(), responseError);
-        System.out.println(errorBuilder.toString());
     }
 
     protected HttpURLConnection makeGetQuery(String targetUrl) throws IOException {

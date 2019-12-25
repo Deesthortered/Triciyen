@@ -124,6 +124,7 @@ public class RegistrationScene implements BaseScene {
             UserAccountService service = UserAccountService.getInstance();
             boolean success = service.registration(newAccount);
             if (success) {
+                destroy();
                 TriciyenApplication.setGlobalScene(MainScene.getInstance());
             } else {
                 errorLabel.setText(localStorage.getInterfaceErrorMessage());
@@ -135,6 +136,7 @@ public class RegistrationScene implements BaseScene {
         }
     }
     private void backEvent() {
+        destroy();
         TriciyenApplication.setGlobalScene(LoginScene.getInstance());
     }
 }
