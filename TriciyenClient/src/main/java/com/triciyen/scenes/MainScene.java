@@ -2,6 +2,7 @@ package com.triciyen.scenes;
 
 import com.triciyen.MessageListener;
 import com.triciyen.TriciyenApplication;
+import com.triciyen.components.ConversationButton;
 import com.triciyen.entity.Conversation;
 import com.triciyen.entity.UserAccount;
 import com.triciyen.service.ConversationService;
@@ -38,7 +39,7 @@ public class MainScene implements BaseScene {
 
     // Conversation box settings
     private VBox conversationsBox;
-    private List<Button> conversationButtons;
+    private List<ConversationButton> conversationButtons;
     private static final int conversationButtonWidth = 250;
     private static final int conversationButtonHeight = 70;
     private static final int conversationScrollPaneWidth = 265;
@@ -222,7 +223,7 @@ public class MainScene implements BaseScene {
         Optional<List<Conversation>> conversationListEnvelop = conversationService.getAllSubscribedConversations();
         if (localStorage.wasError()) {
             System.err.println(localStorage.getInternalErrorMessage());
-            Button button = makeErrorConversationButton();
+            ConversationButton button = makeErrorConversationButton();
             conversationButtons.add(button);
             conversationsBox.getChildren().add(button);
             localStorage.closeError();
@@ -241,7 +242,7 @@ public class MainScene implements BaseScene {
                             conversationsBox.getChildren().add(button);
                         });
             } else {
-                Button button = makeNoConversationButton();
+                ConversationButton button = makeNoConversationButton();
                 conversationButtons.add(button);
                 conversationsBox.getChildren().add(button);
             }
@@ -287,26 +288,25 @@ public class MainScene implements BaseScene {
         this.oldestReadMessageId = -1;
     }
 
-    private Button mapConversationToButton(Conversation conversation) {
-        Button button = new Button();
+    private ConversationButton mapConversationToButton(Conversation conversation) {
+        ConversationButton button = new ConversationButton
+                (conversation.getName(), localStorage.getBaseAccountImage());
         button.setId(conversation.getConversationId().toString());
-        button.setText(conversation.getName());
-        button.setMinWidth(conversationButtonWidth);
-        button.setMinHeight(conversationButtonHeight);
         button.setOnMouseClicked(this::handleConversationButton);
+
+        //button.setLastMessage();
+        //button.setLastTime();
+        //button.setUnreadCounter("0");
+
         return button;
     }
-    private Button makeNoConversationButton() {
-        Button button = new Button();
-        button.setText("You have no conversations");
-        button.setMinWidth(conversationButtonWidth);
-        return button;
+    private ConversationButton makeNoConversationButton() {
+        return new ConversationButton
+                ("You have no conversations", localStorage.getBaseAccountImage());
     }
-    private Button makeErrorConversationButton() {
-        Button button = new Button();
-        button.setText("Error: " + localStorage.getInterfaceErrorMessage());
-        button.setMinWidth(conversationButtonWidth);
-        return button;
+    private ConversationButton makeErrorConversationButton() {
+        return new ConversationButton
+                ("Error: " + localStorage.getInterfaceErrorMessage(), localStorage.getBaseAccountImage());
     }
 
     private void handleLogout(Event event) {
@@ -315,7 +315,7 @@ public class MainScene implements BaseScene {
         TriciyenApplication.setGlobalScene(LoginScene.getInstance());
     }
     private void handleConversationButton(Event event) {
-        Button conversationButton = (Button) event.getSource();
+        ConversationButton conversationButton = (ConversationButton) event.getSource();
         Integer conversationId = Integer.valueOf(conversationButton.getId());
         destroyMessages();
         initializeMessages(conversationId);
