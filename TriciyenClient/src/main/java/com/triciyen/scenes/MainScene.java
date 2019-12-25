@@ -322,5 +322,5 @@ public class MainScene implements BaseScene {
     }
     private void handleSendMessageButton(Event event) {
 
-}
+    }
 }

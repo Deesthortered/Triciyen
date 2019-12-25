@@ -20,12 +20,6 @@ abstract class BaseQueryHandler {
     String urlGetAllSubscribedConversations = "/http_api/getConversations/";
     String urlGetLastReadMessageIdOfConversation = "/http_api/getLastReadMessageIdOfConversation/";
 
-
-    String urlGetLastMessageOfConversation = "/http_api/getLastMessage/";
-    String urlGetMessagesOfConversationWithPaginationQuery = "/http_api/getListOfLastMessages/";
-    String urlGetLastNewestMessages = "/http_api/getLastMessages";
-    String urlSentMessage = "/http_api/sendMessage";
-
     protected void writeStringIntoConnectionBody(HttpURLConnection connection, String data) throws IOException {
         try (OutputStream os = connection.getOutputStream()) {
             byte[] input = data.getBytes(StandardCharsets.UTF_8);
@@ -57,7 +51,8 @@ abstract class BaseQueryHandler {
         }
         return result;
     }
-    protected void logServerError(String handlerName, String handlerFunction, HttpURLConnection connection) throws IOException {
+    protected void logServerError
+            (String handlerName, String handlerFunction, HttpURLConnection connection) throws IOException {
         String responseError = readResponseError(connection);
 
         StringBuilder errorBuilder = new StringBuilder();
