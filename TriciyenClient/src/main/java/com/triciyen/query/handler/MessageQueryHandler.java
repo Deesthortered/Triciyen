@@ -47,4 +47,22 @@ public class MessageQueryHandler extends BaseQueryHandler {
         logServerError("MessageQueryHandler", "getLastMessagesOfConversationQuery", connection);
         return Optional.empty();
     }
+
+    public Optional<List<Message>> getPageOfElderMessagesOfConversationQuery
+            (Integer conversationId, Integer lastReadMessageId, Integer pageSize) throws IOException {
+        HttpURLConnection connection = makeGetQuery
+                (urlGetPageOfElderMessagesOfConversation + conversationId +
+                        "?lastReadMessageId=" + lastReadMessageId +
+                        "&pageSize=" + pageSize
+                );
+
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String jsonResponse = readResponseBody(connection);
+            List<Message> res = jsonMapper.readValue(jsonResponse, new TypeReference<>(){});
+            return Optional.of(res);
+        }
+
+        logServerError("MessageQueryHandler", "getPageOfElderMessagesOfConversationQuery", connection);
+        return Optional.empty();
+    }
 }

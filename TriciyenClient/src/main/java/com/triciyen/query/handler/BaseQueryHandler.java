@@ -20,6 +20,7 @@ abstract class BaseQueryHandler {
     String urlGetAllSubscribedConversations = "/http_api/getConversations/";
     String urlGetLastReadMessageIdOfConversation = "/http_api/getLastReadMessageIdOfConversation/";
     String urlGetLastMessagesOfConversation = "/http_api/getListOfLastMessages/";
+    String urlGetPageOfElderMessagesOfConversation = "/http_api/getPageOfElderMessages/";
 
     protected void writeStringIntoConnectionBody(HttpURLConnection connection, String data) throws IOException {
         try (OutputStream os = connection.getOutputStream()) {

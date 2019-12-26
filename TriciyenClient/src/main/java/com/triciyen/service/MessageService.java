@@ -52,4 +52,21 @@ public class MessageService implements BaseService {
         }
         return messageListEnvelop.get();
     }
+    public List<Message> getPageOfElderMessagesOfConversation(Integer conversationId, Integer lastReadMessageId) {
+        Optional<List<Message>> messageListEnvelop = Optional.empty();
+        try {
+            messageListEnvelop = messageQueryHandler
+                    .getPageOfElderMessagesOfConversationQuery(conversationId, lastReadMessageId, messagePageSize);
+        } catch (IOException e) {
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with loading page of elder messages");
+        }
+
+        if (messageListEnvelop.isEmpty()) {
+            localStorage.setErrorMessage(
+                    "Loaded empty Optional of page of elder messages of conversation",
+                    "Some troubles with loading page of elder messages");
+            return new ArrayList<>();
+        }
+        return messageListEnvelop.get();
+    }
 }

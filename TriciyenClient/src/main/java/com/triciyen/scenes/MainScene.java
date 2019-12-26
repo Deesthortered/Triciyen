@@ -41,8 +41,6 @@ public class MainScene implements BaseScene {
     // Conversation box settings
     private VBox conversationsBox;
     private List<ConversationButton> conversationButtons;
-    private static final int conversationButtonWidth = 250;
-    private static final int conversationButtonHeight = 70;
     private static final int conversationScrollPaneWidth = 265;
     private static final int conversationScrollPaneHeight = sceneHeight - leftCornerHeight;
 
@@ -261,9 +259,16 @@ public class MainScene implements BaseScene {
             localStorage.closeError();
         } else {
             System.out.println("Last read: " + oldestReadMessageId);
+
+            System.out.println("Last: ");
             List<Message> lastMessages = messageService
                     .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageId);
             lastMessages.forEach(System.out::println);
+
+            System.out.println("Elder: ");
+            List<Message> elderMessages = messageService
+                    .getPageOfElderMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageId);
+            elderMessages.forEach(System.out::println);
         }
     }
 
