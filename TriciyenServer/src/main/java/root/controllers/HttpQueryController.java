@@ -84,4 +84,15 @@ public class HttpQueryController {
                 .setLastReadMessageOfTheConversation(conversationId, userLogin, lastReadMessageId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
+    @PostMapping("/sendMessage")
+    public ResponseEntity<?> sendMessage(
+            @RequestParam(value = "conversationId") Integer conversationId,
+            @RequestParam(value = "userLogin") String userLogin,
+            @RequestParam(value = "contentTypeId") Integer contentTypeId,
+            @RequestParam(value = "content") String content
+    ) {
+        Message result = messageService.sendMessage(conversationId, userLogin, contentTypeId, content);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }

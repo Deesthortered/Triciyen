@@ -96,4 +96,24 @@ public class MessageServiceImpl implements MessageService {
             throw new MultipleChangesException("A lot of rows were changed by setLastReadMessageQuery");
         return true;
     }
+
+    @Override
+    public Message sendMessage(Integer conversationId, String userLogin, Integer contentTypeId, String content) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new NotFoundException("Conversation is not found"));
+        UserAccount userAccount = userAccountRepository.findById(userLogin)
+                .orElseThrow(() -> new NotFoundException("UserAccount is not found"));
+        MessageContentType contentType = messageContentTypeRepository.findById(contentTypeId)
+                .orElseThrow(() -> new NotFoundException("Content type is not found"));
+
+        Message message = Message.builder()
+                .conversation(conversation)
+                .user(userAccount)
+                .creationTime(LocalDateTime.now())
+                .contentType(contentType)
+                .content(content)
+                .build();
+
+        return messageRepository.save(message);
+    }
 }
