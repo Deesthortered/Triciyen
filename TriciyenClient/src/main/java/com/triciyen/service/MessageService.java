@@ -105,4 +105,22 @@ public class MessageService implements BaseService {
         }
         return setLastReadResult.get();
     }
+    public Message getLastMessage(Integer conversationId) {
+        Optional<Message> lastMessageEnvelop = Optional.empty();
+        try {
+            lastMessageEnvelop = messageQueryHandler
+                    .getLastMessageOfTheConversationQuery(conversationId);
+        } catch (IOException e) {
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with loading last message");
+        }
+
+        if (lastMessageEnvelop.isEmpty()) {
+            localStorage.setErrorMessage(
+                    "Loaded empty Optional of last message",
+                    "Some troubles with loading last message");
+            return Message.builder().build();
+        }
+        return lastMessageEnvelop.get();
+    }
+
 }

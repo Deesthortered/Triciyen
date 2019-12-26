@@ -275,6 +275,10 @@ public class MainScene implements BaseScene {
             List<Message> elderMessages = messageService
                     .getPageOfElderMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);
             elderMessages.forEach(System.out::println);
+
+            System.out.println("Last last: ");
+            Message last = messageService.getLastMessage(localStorage.getCurrentActiveConversation());
+            System.out.println(last);
         }
     }
 
