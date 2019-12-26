@@ -1,5 +1,8 @@
 package com.triciyen.components;
 
+import javafx.event.Event;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -34,6 +37,7 @@ public class ConversationPanel extends HBox {
                         "-fx-max-width: 20px; " +
                         "-fx-max-height: 20px;"
         );
+        addButton.setOnMouseClicked(this::handleAddMemberButton);
 
         ImageView leaveIView = new ImageView(new Image("images/minus_leave_red.png"));
         leaveIView.setFitHeight(20);
@@ -47,6 +51,8 @@ public class ConversationPanel extends HBox {
                         "-fx-max-width: 20px; " +
                         "-fx-max-height: 20px;"
         );
+        leaveButton.setOnMouseClicked(this::handleLeaveConversationButton);
+
 
         ImageView deleteIView = new ImageView(new Image("images/cross_delete_black.png"));
         deleteIView.setFitHeight(20);
@@ -60,12 +66,31 @@ public class ConversationPanel extends HBox {
                         "-fx-max-width: 20px; " +
                         "-fx-max-height: 20px;"
         );
+        deleteButton.setOnMouseClicked(this::handleDeleteConversationButton);
 
         rHBox.getChildren().addAll(addButton, leaveButton, deleteButton);
         rHBox.setSpacing(5);
+        rHBox.setAlignment(Pos.BOTTOM_LEFT);
 
         setSpacing(20);
+        setPadding(new Insets(0,0,10,5));
+        setAlignment(Pos.BOTTOM_LEFT);
         getChildren().addAll(title, rHBox);
     }
 
+    public void setTitle(String title) {
+        this.title.setText(title);
+    }
+
+    private void handleAddMemberButton(Event event) {
+
+    }
+
+    private void handleLeaveConversationButton(Event event) {
+
+    }
+
+    private void handleDeleteConversationButton(Event event) {
+
+    }
 }

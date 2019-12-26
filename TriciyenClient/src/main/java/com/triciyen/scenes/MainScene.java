@@ -4,6 +4,7 @@ import com.triciyen.MessageListener;
 import com.triciyen.TriciyenApplication;
 import com.triciyen.components.ChatMessageBox;
 import com.triciyen.components.ConversationButton;
+import com.triciyen.components.ConversationPanel;
 import com.triciyen.entity.Conversation;
 import com.triciyen.entity.Message;
 import com.triciyen.entity.UserAccount;
@@ -11,11 +12,14 @@ import com.triciyen.service.ConversationService;
 import com.triciyen.service.MessageService;
 import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -39,6 +43,10 @@ public class MainScene implements BaseScene {
     private ImageView imageUserAvatar;
     private Label usernameLabel;
     private Label loginLabel;
+    private HBox conversationHBox;
+    private Label conversationLabel;
+    private Button createConversationButton;
+    private Button findConversationButton;
     private Button logoutButton;
 
     // Conversation box settings
@@ -55,8 +63,7 @@ public class MainScene implements BaseScene {
 
     // Big right box settings - Conversation state
     private VBox fullRightPane;
-    private StackPane fullRightTitlePane;
-    private Label fullRightConversationLabel;
+    private ConversationPanel fullRightTitlePane;
 
     private ScrollPane fullRightScrollPane;
     private VBox messageBox;
@@ -87,8 +94,46 @@ public class MainScene implements BaseScene {
 
         usernameLabel = new Label("");
         loginLabel = new Label("");
+        conversationHBox = new HBox();
+        conversationLabel = new Label("Conversation: ");
+
+        ImageView addIView = new ImageView(new Image("images/plus_add_green.png"));
+        addIView.setFitWidth(20);
+        addIView.setFitHeight(20);
+
+        createConversationButton = new Button("", addIView);
+        createConversationButton.setStyle(
+                "-fx-background-radius: 5em; " +
+                        "-fx-min-width: 1px; " +
+                        "-fx-min-height: 1px; " +
+                        "-fx-max-width: 1px; " +
+                        "-fx-max-height: 1px;"
+        );
+        createConversationButton.setOnMouseClicked(this::handleCreateConversationButton);
+
+        ImageView findIView = new ImageView(new Image("images/black_magnifier.png"));
+        findIView.setFitWidth(20);
+        findIView.setFitHeight(20);
+
+        findConversationButton = new Button("", findIView);
+        findConversationButton.setStyle(
+                "-fx-background-radius: 5em; " +
+                        "-fx-min-width: 1px; " +
+                        "-fx-min-height: 1px; " +
+                        "-fx-max-width: 1px; " +
+                        "-fx-max-height: 1px;"
+        );
+        findConversationButton.setPadding(new Insets(0,0,0,30));
+        findConversationButton.setOnMouseClicked(this::handleFindConversationButton);
+
+
+        conversationHBox.setAlignment(Pos.CENTER_LEFT);
+        conversationHBox.getChildren().addAll(conversationLabel, createConversationButton, findConversationButton);
+        conversationHBox.setSpacing(10);
+
+
         VBox loginBox = new VBox();
-        loginBox.getChildren().addAll(usernameLabel, loginLabel);
+        loginBox.getChildren().addAll(usernameLabel, loginLabel, conversationHBox);
 
         imageUserAvatar = new ImageView(localStorage.getBaseAccountImage());
         imageUserAvatar.setFitWidth(avatarSize);
@@ -96,12 +141,15 @@ public class MainScene implements BaseScene {
 
         HBox avatarBox = new HBox();
         avatarBox.getChildren().addAll(imageUserAvatar, loginBox);
+        avatarBox.setSpacing(5);
 
         logoutButton = new Button("Logout");
         logoutButton.setOnMouseClicked(this::handleLogout);
 
         VBox leftCornerBox = new VBox();
         leftCornerBox.getChildren().addAll(avatarBox, logoutButton);
+        leftCornerBox.setSpacing(5);
+        leftCornerBox.setPadding(new Insets(5,0,0,5));
 
         leftCornerPane.getChildren().add(leftCornerBox);
 
@@ -133,15 +181,13 @@ public class MainScene implements BaseScene {
         mainPane.setCenter(emptyRightPane);
 
         fullRightPane = new VBox();
-        fullRightTitlePane = new StackPane();
+        fullRightTitlePane = new ConversationPanel("Title");
         fullRightTitlePane.setMinHeight(fullRightTitlePaneHeight);
         fullRightTitlePane.setPrefHeight(fullRightTitlePaneHeight);
         fullRightTitlePane.setMaxHeight(fullRightTitlePaneHeight);
         fullRightTitlePane.setMinWidth(fullRightTitlePaneWidth);
         fullRightTitlePane.setPrefWidth(fullRightTitlePaneWidth);
         fullRightTitlePane.setMaxWidth(fullRightTitlePaneWidth);
-        fullRightConversationLabel = new Label("");
-        fullRightTitlePane.getChildren().addAll(fullRightConversationLabel);
 
         messageBox = new VBox();
         fullRightScrollPane = new ScrollPane(messageBox);
@@ -153,6 +199,7 @@ public class MainScene implements BaseScene {
         fullRightScrollPane.setMinWidth(fullRightScrollPaneWidth);
         fullRightScrollPane.setPrefWidth(fullRightScrollPaneWidth);
         fullRightScrollPane.setMaxWidth(fullRightScrollPaneWidth);
+
 
         writeMessagePane = new StackPane();
         writeMessageHBox = new HBox();
@@ -370,4 +417,13 @@ public class MainScene implements BaseScene {
             localStorage.closeError();
         }
     }
+
+    private void handleCreateConversationButton(Event event) {
+
+    }
+
+    private void handleFindConversationButton(Event event) {
+
+    }
+
 }
