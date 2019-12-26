@@ -122,4 +122,12 @@ public class HttpQueryController {
         Conversation result = conversationService.createConversation(name, userCreatorLogin);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
+    @PostMapping("/deleteConversation")
+    public ResponseEntity<?> deleteConversation(
+            @RequestParam(value = "conversationId") Integer conversationId
+    ) {
+        Boolean result = conversationService.deleteConversation(conversationId);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }

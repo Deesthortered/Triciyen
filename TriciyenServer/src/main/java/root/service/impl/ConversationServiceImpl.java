@@ -62,4 +62,13 @@ public class ConversationServiceImpl implements ConversationService {
 
         return newConversation;
     }
+
+    @Override
+    public Boolean deleteConversation(Integer conversationId) {
+        userConversationRepository.deleteAllByConversation_ConversationId(conversationId);
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new NotFoundException("The conversation is not found"));
+        conversationRepository.delete(conversation);
+        return true;
+    }
 }

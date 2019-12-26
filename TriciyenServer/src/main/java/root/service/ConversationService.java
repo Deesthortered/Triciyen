@@ -9,4 +9,5 @@ import java.util.List;
 public interface ConversationService {
     List<Conversation> getAllConversationsByUser(String login);
     Conversation createConversation(String name, String userCreatorLogin);
+    Boolean deleteConversation(Integer conversationId);
 }

@@ -29,4 +29,6 @@ public interface UserConversationRepository extends CrudRepository<UserConversat
             @Param("userLogin") String userLogin,
             @Param("messageId") Integer messageId
     );
+
+    int deleteAllByConversation_ConversationId(Integer conversationId);
 }
