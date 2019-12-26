@@ -113,4 +113,13 @@ public class HttpQueryController {
         Integer result = messageService.getCountOfUnreadMessagesForUser(conversationId, userLogin);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
+    @PostMapping("/createConversation")
+    public ResponseEntity<?> createConversation(
+            @RequestParam(value = "name") String name,
+            @RequestParam(value = "userCreatorLogin") String userCreatorLogin
+    ) {
+        Conversation result = conversationService.createConversation(name, userCreatorLogin);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }

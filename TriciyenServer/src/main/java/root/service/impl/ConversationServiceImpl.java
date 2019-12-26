@@ -38,4 +38,28 @@ public class ConversationServiceImpl implements ConversationService {
 
         return conversations;
     }
+
+    @Override
+    public Conversation createConversation(String name, String userCreatorLogin) {
+        UserAccount userAccount = userAccountRepository
+                .findById(userCreatorLogin)
+                .orElseThrow(() -> new NotFoundException("User is not found"));
+
+        Conversation newConversation = Conversation
+                .builder()
+                .name(name)
+                .build();
+        newConversation = conversationRepository.save(newConversation);
+
+        UserConversation userConversation = UserConversation
+                .builder()
+                .user(userAccount)
+                .lastReadMessageId(-1)
+                .conversation(newConversation)
+                .build();
+
+        userConversationRepository.save(userConversation);
+
+        return newConversation;
+    }
 }

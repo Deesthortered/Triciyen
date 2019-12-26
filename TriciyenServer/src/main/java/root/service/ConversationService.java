@@ -8,4 +8,5 @@ import java.util.List;
 @Service
 public interface ConversationService {
     List<Conversation> getAllConversationsByUser(String login);
+    Conversation createConversation(String name, String userCreatorLogin);
 }
