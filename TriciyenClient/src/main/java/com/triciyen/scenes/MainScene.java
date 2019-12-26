@@ -271,6 +271,10 @@ public class MainScene implements BaseScene {
                     .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);
             lastMessages.forEach(System.out::println);
 
+            System.out.println("Count of unread: ");
+            Integer unreadCount = messageService.getCountOfUnreadMessages(localStorage.getCurrentActiveConversation());
+            System.out.println(unreadCount);
+
             System.out.println("Elder: ");
             List<Message> elderMessages = messageService
                     .getPageOfElderMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);

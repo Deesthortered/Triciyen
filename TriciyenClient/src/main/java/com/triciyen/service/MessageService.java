@@ -122,5 +122,22 @@ public class MessageService implements BaseService {
         }
         return lastMessageEnvelop.get();
     }
+    public Integer getCountOfUnreadMessages(Integer conversationId) {
+        String userLogin = localStorage.getLoggedAccount().getLogin();
+        Optional<Integer> countOfUnreadEnvelop = Optional.empty();
+        try {
+            countOfUnreadEnvelop = messageQueryHandler
+                    .getCountOfUnreadMessagesQuery(conversationId, userLogin);
+        } catch (IOException e) {
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with loading count of last messages");
+        }
 
+        if (countOfUnreadEnvelop.isEmpty()) {
+            localStorage.setErrorMessage(
+                    "Loaded empty Optional of count of last messages",
+                    "Some troubles with loading count of last messages");
+            return -1;
+        }
+        return countOfUnreadEnvelop.get();
+    }
 }

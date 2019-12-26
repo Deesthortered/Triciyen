@@ -120,4 +120,20 @@ public class MessageQueryHandler extends BaseQueryHandler {
         logServerError("MessageQueryHandler", "getLastMessageOfTheConversationQuery", connection);
         return Optional.empty();
     }
+
+    public Optional<Integer> getCountOfUnreadMessagesQuery(Integer conversationId, String userLogin) throws IOException {
+        HttpURLConnection connection = makeGetQuery(urlGetCountOfUnreadMessages +
+                "?conversationId=" + conversationId +
+                "&userLogin=" + userLogin
+        );
+
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String jsonResponse = readResponseBody(connection);
+            Integer res = jsonMapper.readValue(jsonResponse, new TypeReference<>(){});
+            return Optional.of(res);
+        }
+
+        logServerError("MessageQueryHandler", "getCountOfUnreadMessagesQuery", connection);
+        return Optional.empty();
+    }
 }
