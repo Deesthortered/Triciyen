@@ -87,4 +87,22 @@ public class MessageService implements BaseService {
         }
         return setLastReadResult.get();
     }
+    public Message sendMessage(Integer conversationId, Integer contentTypeId, String content) {
+        String userLogin = localStorage.getLoggedAccount().getLogin();
+        Optional<Message> setLastReadResult = Optional.empty();
+        try {
+            setLastReadResult = messageQueryHandler
+                    .sendMessageQuery(conversationId, userLogin, contentTypeId, content);
+        } catch (IOException e) {
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with sending message");
+        }
+
+        if (setLastReadResult.isEmpty()) {
+            localStorage.setErrorMessage(
+                    "Loaded empty Optional of sending message",
+                    "Some troubles with sending message");
+            return Message.builder().build();
+        }
+        return setLastReadResult.get();
+    }
 }

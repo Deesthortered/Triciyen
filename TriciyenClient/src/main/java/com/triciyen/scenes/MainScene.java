@@ -269,15 +269,6 @@ public class MainScene implements BaseScene {
             List<Message> elderMessages = messageService
                     .getPageOfElderMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageId);
             elderMessages.forEach(System.out::println);
-
-            System.out.println("Try to set:");
-            Boolean res = messageService.setLastReadMessageOfTheConversation(2, 2);
-            System.out.println(res);
-            if (localStorage.wasError()) {
-                System.out.println("Was error:");
-                System.out.println(localStorage.getInternalErrorMessage());
-                localStorage.closeError();
-            }
         }
     }
 

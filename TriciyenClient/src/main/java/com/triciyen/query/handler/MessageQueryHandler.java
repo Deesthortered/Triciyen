@@ -5,6 +5,8 @@ import com.triciyen.entity.Message;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -82,6 +84,27 @@ public class MessageQueryHandler extends BaseQueryHandler {
         }
 
         logServerError("MessageQueryHandler", "setLastReadMessageOfTheConversationQuery", connection);
+        return Optional.empty();
+    }
+
+    public Optional<Message> sendMessageQuery
+            (Integer conversationId, String userLogin, Integer contentTypeId, String content) throws IOException {
+        HttpURLConnection connection = makePostQuery
+                (urlSendMessage +
+                                "?conversationId="+ conversationId +
+                                "&userLogin=" + userLogin +
+                                "&contentTypeId=" + contentTypeId +
+                                "&content=" + URLEncoder.encode(content, StandardCharsets.UTF_8.toString()),
+                        ""
+                );
+
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            String jsonResponse = readResponseBody(connection);
+            Message res = jsonMapper.readValue(jsonResponse, new TypeReference<>(){});
+            return Optional.of(res);
+        }
+
+        logServerError("MessageQueryHandler", "sendMessageQuery", connection);
         return Optional.empty();
     }
 }
