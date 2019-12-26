@@ -43,7 +43,7 @@ public class MainScene implements BaseScene {
     // Conversation box settings
     private VBox conversationsBox;
     private List<ConversationButton> conversationButtons;
-    private static final int conversationScrollPaneWidth = 265;
+    private static final int conversationScrollPaneWidth = 330;
     private static final int conversationScrollPaneHeight = sceneHeight - leftCornerHeight;
 
     // Big right box settings - None state
@@ -233,16 +233,15 @@ public class MainScene implements BaseScene {
         } else {
             if (conversationListEnvelop.isPresent() && !conversationListEnvelop.get().isEmpty()) {
                 List<Conversation> conversationList = conversationListEnvelop.get();
-                conversationList.stream()
-                        .map(conversation -> {
-                            MessageListener listener = new MessageListener(conversation.getConversationId());
-                            messageListeners.add(listener);
-                            listener.start();
-                            return mapConversationToButton(conversation);
-                        })
-                        .forEach(button -> {
+                conversationList
+                        .forEach(conversation -> {
+                            ConversationButton button = mapConversationToButton(conversation);
                             conversationButtons.add(button);
                             conversationsBox.getChildren().add(button);
+
+                            MessageListener listener = new MessageListener(conversation.getConversationId(), button);
+                            messageListeners.add(listener);
+                            listener.start();
                         });
             } else {
                 ConversationButton button = makeNoConversationButton();
@@ -305,7 +304,7 @@ public class MainScene implements BaseScene {
     }
     private void destroyMessages() {
         localStorage.setCurrentActiveConversation(-1);
-
+        conversationButtons.forEach(conversationButton -> conversationButton.clickStyle(false));
         mainPane.setCenter(emptyRightPane);
 
         messageBox.getChildren().clear();
@@ -320,9 +319,9 @@ public class MainScene implements BaseScene {
         button.setId(conversation.getConversationId().toString());
         button.setOnMouseClicked(this::handleConversationButton);
 
-        //button.setLastMessage();
-        //button.setLastTime();
-        //button.setUnreadCounter("0");
+        button.setLastMessage("");
+        button.setLastTime("");
+        button.setUnreadCounter("0");
 
         return button;
     }
@@ -349,6 +348,7 @@ public class MainScene implements BaseScene {
         ConversationButton conversationButton = (ConversationButton) event.getSource();
         Integer conversationId = Integer.valueOf(conversationButton.getId());
         destroyMessages();
+        conversationButton.clickStyle(true);
         initializeMessages(conversationId);
     }
     private void handleSendMessageButton(Event event) {
