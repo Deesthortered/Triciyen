@@ -69,4 +69,22 @@ public class MessageService implements BaseService {
         }
         return messageListEnvelop.get();
     }
+    public Boolean setLastReadMessageOfTheConversation(Integer conversationId, Integer lastReadMessageId) {
+        String userLogin = localStorage.getLoggedAccount().getLogin();
+        Optional<Boolean> setLastReadResult = Optional.empty();
+        try {
+            setLastReadResult = messageQueryHandler
+                    .setLastReadMessageOfTheConversationQuery(conversationId, userLogin, lastReadMessageId);
+        } catch (IOException e) {
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with setting last read message of conv");
+        }
+
+        if (setLastReadResult.isEmpty()) {
+            localStorage.setErrorMessage(
+                    "Loaded empty Optional of setting last read message of conversation",
+                    "Some troubles with setting last read message of conversation");
+            return false;
+        }
+        return setLastReadResult.get();
+    }
 }

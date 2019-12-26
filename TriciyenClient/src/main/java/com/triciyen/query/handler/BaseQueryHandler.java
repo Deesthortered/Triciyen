@@ -21,6 +21,7 @@ abstract class BaseQueryHandler {
     String urlGetLastReadMessageIdOfConversation = "/http_api/getLastReadMessageIdOfConversation/";
     String urlGetLastMessagesOfConversation = "/http_api/getListOfLastMessages/";
     String urlGetPageOfElderMessagesOfConversation = "/http_api/getPageOfElderMessages/";
+    String urlSetLastReadMessageOfConversation = "/http_api/setLastReadMessage/";
 
     protected void writeStringIntoConnectionBody(HttpURLConnection connection, String data) throws IOException {
         try (OutputStream os = connection.getOutputStream()) {
@@ -77,6 +78,16 @@ abstract class BaseQueryHandler {
         URL url = new URL(domain + targetUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
+        return connection;
+    }
+    protected HttpURLConnection makePutQuery(String targetUrl, String body) throws IOException {
+        URL url = new URL(domain + targetUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("PUT");
+        connection.setRequestProperty("Content-Type", "application/json; utf-8");
+        connection.setRequestProperty("Accept", "application/json");
+        connection.setDoOutput(true);
+        writeStringIntoConnectionBody(connection, body);
         return connection;
     }
     protected HttpURLConnection makePostQuery(String targetUrl, String body) throws IOException {
