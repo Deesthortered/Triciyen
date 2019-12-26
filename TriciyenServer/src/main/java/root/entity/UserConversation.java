@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Entity
 @Table(name="user_conversation")
+@DynamicUpdate
 public class UserConversation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

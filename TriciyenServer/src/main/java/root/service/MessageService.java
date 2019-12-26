@@ -12,4 +12,5 @@ public interface MessageService {
     List<Message> getLastMessagesInConversation(Integer conversationId, Integer lastReadMessageId);
     List<Message> getPageOfElderMessagesInConversation
             (Integer conversationId, Integer lastReadMessageId, Integer pageSize);
+    Boolean setLastReadMessageOfTheConversation(Integer conversationId,  String userLogin, Integer messageId);
 }

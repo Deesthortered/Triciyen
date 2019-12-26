@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import root.exception.AlreadyExistsException;
 import root.exception.InvalidCredentialsException;
+import root.exception.MultipleChangesException;
 import root.exception.NotFoundException;
 
 @ControllerAdvice
@@ -28,4 +29,12 @@ public class ErrorHandlerController {
                 .status(HttpStatus.FORBIDDEN)
                 .body(e.getMessage());
     }
+
+    @ExceptionHandler(MultipleChangesException.class)
+    public ResponseEntity<?> handleMultipleChangesException(MultipleChangesException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
+    }
+
 }

@@ -1,6 +1,9 @@
 package root.repository;
 
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import root.entity.Conversation;
 import root.entity.UserAccount;
@@ -16,4 +19,14 @@ public interface UserConversationRepository extends CrudRepository<UserConversat
 
     // Загружаем конкретную беседу по ID и Логину, что бы с нее выцепить ID последнего прочитаного сообщения
     Optional<UserConversation> findByConversation_ConversationIdAndUser_Login(Integer conversationId, String userLogin);
+
+    //Задаем последнее прочитаное сообщение (его ID) для конкретного юзера для конкретной беседы
+    @Modifying
+    @Query("UPDATE UserConversation uc SET uc.lastReadMessageId = :messageId " +
+            "WHERE uc.conversation.conversationId = :conversationId and uc.user.login = :userLogin")
+    int updateLastReadOfTheConversation(
+            @Param("conversationId") Integer conversationId,
+            @Param("userLogin") String userLogin,
+            @Param("messageId") Integer messageId
+    );
 }

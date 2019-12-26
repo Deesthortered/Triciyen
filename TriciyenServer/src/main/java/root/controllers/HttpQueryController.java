@@ -73,4 +73,15 @@ public class HttpQueryController {
                 getPageOfElderMessagesInConversation(conversationId, lastReadMessageId, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(lastMessages);
     }
+
+    @PutMapping("/setLastReadMessage/{conversationId}")
+    public ResponseEntity<?> setLastReadMessageOfTheConversation(
+            @PathVariable Integer conversationId,
+            @RequestParam(value = "userLogin") String userLogin,
+            @RequestParam(value = "lastReadMessageId") Integer lastReadMessageId
+    ) {
+        Boolean result = messageService
+                .setLastReadMessageOfTheConversation(conversationId, userLogin, lastReadMessageId);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import root.entity.*;
+import root.exception.MultipleChangesException;
 import root.exception.NotFoundException;
 import root.repository.*;
 import root.service.MessageService;
@@ -83,5 +84,16 @@ public class MessageServiceImpl implements MessageService {
                         lastReadMessageDateTime,
                         PageRequest.of(0, pageSize)
                 );
+    }
+
+    @Override
+    public Boolean setLastReadMessageOfTheConversation(Integer conversationId, String userLogin, Integer messageId) {
+        int countOfChangedRows = userConversationRepository
+                .updateLastReadOfTheConversation(conversationId, userLogin, messageId);
+        if (countOfChangedRows == 0)
+            throw new NotFoundException("The user conversation wasn't found by ConvID and UsLogin");
+        if (countOfChangedRows > 1)
+            throw new MultipleChangesException("A lot of rows were changed by setLastReadMessageQuery");
+        return true;
     }
 }

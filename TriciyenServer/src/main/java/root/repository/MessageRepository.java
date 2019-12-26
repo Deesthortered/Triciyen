@@ -20,7 +20,7 @@ public interface MessageRepository extends CrudRepository<Message, Integer> {
             (Integer conversationId, LocalDateTime dateTime);
 
     // Загрузка страницы сообщений беседы, которые раньше (строгое неравенство) указаной даты.
-    // Нужно для того, что бы загрузить
+    // Нужно для того, что бы загрузить страницу сообщений перед последним прочитаным
     List<Message> getAllByConversation_ConversationIdAndCreationTimeLessThanOrderByCreationTime
             (Integer conversationId, LocalDateTime dateTime, Pageable pageable);
 }
