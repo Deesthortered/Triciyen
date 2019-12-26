@@ -1,9 +1,11 @@
 package com.triciyen;
 
+import com.triciyen.components.ChatMessageBox;
 import com.triciyen.components.ConversationButton;
 import com.triciyen.entity.Message;
 import com.triciyen.scenes.MainScene;
 import com.triciyen.service.MessageService;
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 
@@ -17,12 +19,12 @@ public class MessageListener extends Thread {
     private int currentConversationId;
     private ConversationButton conversationButton;
 
-    private List<Button> messageButtons;
+    private List<ChatMessageBox> messageButtons;
     private VBox messageBox;
     private boolean first = false;
     private int lastReadMessageId = -1;
 
-    public MessageListener(int conversationId, ConversationButton conversationButton, List<Button> messageButtons, VBox messageBox) {
+    public MessageListener(int conversationId, ConversationButton conversationButton, List<ChatMessageBox> messageButtons, VBox messageBox) {
         this.currentConversationId = conversationId;
         this.conversationButton = conversationButton;
 
@@ -61,9 +63,11 @@ public class MessageListener extends Thread {
                 .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), lastReadMessageId);
 
         lastMessages.forEach(message -> {
-            Button messageButton = MainScene.mapMessageToButton(message);
+            ChatMessageBox messageButton = MainScene.mapMessageToButton(message);
             messageButtons.add(messageButton);
-            messageBox.getChildren().add(messageButton);
+            Platform.runLater(() -> {
+                messageBox.getChildren().add(messageButton);
+            });
         });
 
         lastReadMessageId = lastMessages.get(lastMessages.size() - 1).getMessageId();

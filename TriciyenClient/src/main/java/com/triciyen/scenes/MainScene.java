@@ -2,6 +2,7 @@ package com.triciyen.scenes;
 
 import com.triciyen.MessageListener;
 import com.triciyen.TriciyenApplication;
+import com.triciyen.components.ChatMessageBox;
 import com.triciyen.components.ConversationButton;
 import com.triciyen.entity.Conversation;
 import com.triciyen.entity.Message;
@@ -59,7 +60,7 @@ public class MainScene implements BaseScene {
 
     private ScrollPane fullRightScrollPane;
     private VBox messageBox;
-    private List<Button> messageButtons;
+    private List<ChatMessageBox> messageButtons;
 
     private StackPane writeMessagePane;
     private HBox writeMessageHBox;
@@ -270,13 +271,13 @@ public class MainScene implements BaseScene {
                     .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);
 
             elderMessages.forEach(message -> {
-                Button messageButton = mapMessageToButton(message);
+                ChatMessageBox messageButton = mapMessageToButton(message);
                 messageButtons.add(messageButton);
                 messageBox.getChildren().add(messageButton);
             });
 
             lastMessages.forEach(message -> {
-                Button messageButton = mapMessageToButton(message);
+                ChatMessageBox messageButton = mapMessageToButton(message);
                 messageButtons.add(messageButton);
                 messageBox.getChildren().add(messageButton);
             });
@@ -337,9 +338,9 @@ public class MainScene implements BaseScene {
                 ("Error: " + localStorage.getInterfaceErrorMessage(), localStorage.getBaseAccountImage());
     }
 
-    public static Button mapMessageToButton(Message message) {
-        Button button = new Button();
-        button.setText(message.getUser().getName() + ": " + message.getContent());
+    public static ChatMessageBox mapMessageToButton(Message message) {
+        ChatMessageBox button = new ChatMessageBox(localStorage.getBaseAccountImage(), message.getUser().getName());
+        button.setText(message.getContent());
         return button;
     }
 
