@@ -239,7 +239,7 @@ public class MainScene implements BaseScene {
                             conversationButtons.add(button);
                             conversationsBox.getChildren().add(button);
 
-                            MessageListener listener = new MessageListener(conversation.getConversationId(), button);
+                            MessageListener listener = new MessageListener(conversation.getConversationId(), button, messageButtons, messageBox);
                             messageListeners.add(listener);
                             listener.start();
                         });
@@ -280,6 +280,11 @@ public class MainScene implements BaseScene {
                 messageButtons.add(messageButton);
                 messageBox.getChildren().add(messageButton);
             });
+
+            if (!lastMessages.isEmpty()) {
+                messageService.setLastReadMessageOfTheConversation
+                        (localStorage.getCurrentActiveConversation(), lastMessages.get(lastMessages.size() - 1).getMessageId());
+            }
         }
     }
 
@@ -332,7 +337,7 @@ public class MainScene implements BaseScene {
                 ("Error: " + localStorage.getInterfaceErrorMessage(), localStorage.getBaseAccountImage());
     }
 
-    private Button mapMessageToButton(Message message) {
+    public static Button mapMessageToButton(Message message) {
         Button button = new Button();
         button.setText(message.getUser().getName() + ": " + message.getContent());
         return button;

@@ -2,19 +2,32 @@ package com.triciyen;
 
 import com.triciyen.components.ConversationButton;
 import com.triciyen.entity.Message;
+import com.triciyen.scenes.MainScene;
 import com.triciyen.service.MessageService;
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
+
+import java.util.List;
 
 public class MessageListener extends Thread {
-    private final static int DELAY = 300;
+    private final static int DELAY = 500;
     private final static LocalStorage localStorage = LocalStorage.getInstance();
     private final static MessageService messageService = MessageService.getInstance();
 
     private int currentConversationId;
     private ConversationButton conversationButton;
 
-    public MessageListener(int conversationId, ConversationButton conversationButton) {
+    private List<Button> messageButtons;
+    private VBox messageBox;
+    private boolean first = false;
+    private int lastReadMessageId = -1;
+
+    public MessageListener(int conversationId, ConversationButton conversationButton, List<Button> messageButtons, VBox messageBox) {
         this.currentConversationId = conversationId;
         this.conversationButton = conversationButton;
+
+        this.messageButtons = messageButtons;
+        this.messageBox = messageBox;
         this.setDaemon(true);
     }
     @Override
@@ -37,9 +50,27 @@ public class MessageListener extends Thread {
     }
 
     private void ActiveAction() {
+        if (messageButtons == null)
+            return;
 
+        if (first) {
+            first = false;
+            lastReadMessageId = messageService.getLastReadMessageIdOfConversation(localStorage.getCurrentActiveConversation());
+        }
+        List<Message> lastMessages = messageService
+                .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), lastReadMessageId);
+
+        lastMessages.forEach(message -> {
+            Button messageButton = MainScene.mapMessageToButton(message);
+            messageButtons.add(messageButton);
+            messageBox.getChildren().add(messageButton);
+        });
+
+        lastReadMessageId = lastMessages.get(lastMessages.size() - 1).getMessageId();
+        messageService.setLastReadMessageOfTheConversation(localStorage.getCurrentActiveConversation(), lastReadMessageId);
     }
     private void PassiveAction() {
+        first = true;
         Message lastMessage = messageService.getLastMessage(currentConversationId);
         if (localStorage.wasError()) {
             System.err.println(localStorage.getInternalErrorMessage());
