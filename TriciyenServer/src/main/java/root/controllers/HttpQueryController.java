@@ -130,4 +130,20 @@ public class HttpQueryController {
         Boolean result = conversationService.deleteConversation(conversationId);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
+    @GetMapping("/findConversationByName/{name}")
+    public ResponseEntity<?> findConversationByName(
+            @PathVariable String name
+    ) {
+        List<Conversation> result = conversationService.findConversationByName(name);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/findConversationById/{id}")
+    public ResponseEntity<?> findConversationById(
+            @PathVariable Integer id
+    ) {
+        Conversation result = conversationService.findConversationById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }
