@@ -33,6 +33,7 @@ public class MessageListener extends Thread {
                 PassiveAction();
             }
         }
+        System.out.println("Finished #" + this.currentConversationId + " message listener");
     }
 
     private void ActiveAction() {

@@ -59,7 +59,7 @@ public class MainScene implements BaseScene {
 
     private ScrollPane fullRightScrollPane;
     private VBox messageBox;
-    private List<Button> messageButton;
+    private List<Button> messageButtons;
 
     private StackPane writeMessagePane;
     private HBox writeMessageHBox;
@@ -252,7 +252,7 @@ public class MainScene implements BaseScene {
     }
     private void initializeMessages(Integer conversationId) {
         messageBox.getChildren().clear();
-        messageButton = new ArrayList<>();
+        messageButtons = new ArrayList<>();
         localStorage.setCurrentActiveConversation(conversationId);
 
         mainPane.setCenter(fullRightPane);
@@ -263,25 +263,23 @@ public class MainScene implements BaseScene {
             System.err.println(localStorage.getInternalErrorMessage());
             localStorage.closeError();
         } else {
-            System.out.println("Last read: " + oldestReadMessageIdForCurrentConversation);
-
-            System.out.println("Last: ");
-            List<Message> lastMessages = messageService
-                    .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);
-            lastMessages.forEach(System.out::println);
-
-            System.out.println("Count of unread: ");
-            Integer unreadCount = messageService.getCountOfUnreadMessages(localStorage.getCurrentActiveConversation());
-            System.out.println(unreadCount);
-
-            System.out.println("Elder: ");
             List<Message> elderMessages = messageService
                     .getPageOfElderMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);
-            elderMessages.forEach(System.out::println);
 
-            System.out.println("Last last: ");
-            Message last = messageService.getLastMessage(localStorage.getCurrentActiveConversation());
-            System.out.println(last);
+            List<Message> lastMessages = messageService
+                    .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);
+
+            elderMessages.forEach(message -> {
+                Button messageButton = mapMessageToButton(message);
+                messageButtons.add(messageButton);
+                messageBox.getChildren().add(messageButton);
+            });
+
+            lastMessages.forEach(message -> {
+                Button messageButton = mapMessageToButton(message);
+                messageButtons.add(messageButton);
+                messageBox.getChildren().add(messageButton);
+            });
         }
     }
 
@@ -308,8 +306,8 @@ public class MainScene implements BaseScene {
         mainPane.setCenter(emptyRightPane);
 
         messageBox.getChildren().clear();
-        if (messageButton != null)
-            messageButton.clear();
+        if (messageButtons != null)
+            messageButtons.clear();
         this.oldestReadMessageIdForCurrentConversation = -1;
     }
 
@@ -334,6 +332,12 @@ public class MainScene implements BaseScene {
                 ("Error: " + localStorage.getInterfaceErrorMessage(), localStorage.getBaseAccountImage());
     }
 
+    private Button mapMessageToButton(Message message) {
+        Button button = new Button();
+        button.setText(message.getUser().getName() + ": " + message.getContent());
+        return button;
+    }
+
     private void handlePressButton(KeyEvent event) {
         if(event.getCode() == KeyCode.ESCAPE) {
             destroyMessages();
@@ -352,6 +356,14 @@ public class MainScene implements BaseScene {
         initializeMessages(conversationId);
     }
     private void handleSendMessageButton(Event event) {
+        String content = writeMessageField.getText();
+        writeMessageField.setText("");
 
+        MessageService messageService = MessageService.getInstance();
+        messageService.sendMessage(localStorage.getCurrentActiveConversation(), 1, content);
+        if (localStorage.wasError()) {
+            System.err.println(localStorage.getInternalErrorMessage());
+            localStorage.closeError();
+        }
     }
 }
