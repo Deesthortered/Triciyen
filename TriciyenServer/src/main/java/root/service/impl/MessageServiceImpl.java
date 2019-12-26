@@ -9,7 +9,6 @@ import root.repository.*;
 import root.service.MessageService;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,8 +36,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<Message> getLastMessagesInConversation
-            (Integer conversationId, Integer lastReadMessageId) {
+    public List<Message> getLastMessagesInConversation(Integer conversationId, Integer lastReadMessageId) {
         LocalDateTime lastReadMessageDateTime;
         if (lastReadMessageId == -1) {
             Optional<Message> lastReadMessage = messageRepository
@@ -58,6 +56,32 @@ public class MessageServiceImpl implements MessageService {
                 .getAllByConversation_ConversationIdAndCreationTimeGreaterThanEqualOrderByCreationTime(
                         conversationId,
                         lastReadMessageDateTime
+                );
+    }
+
+    @Override
+    public List<Message> getPageOfElderMessagesInConversation
+            (Integer conversationId, Integer lastReadMessageId, Integer pageSize) {
+        LocalDateTime lastReadMessageDateTime;
+        if (lastReadMessageId == -1) {
+            Optional<Message> lastReadMessage = messageRepository
+                    .findTopByConversation_ConversationIdOrderByCreationTime(conversationId);
+            if (lastReadMessage.isPresent()) {
+                lastReadMessageDateTime = lastReadMessage.get().getCreationTime();
+            } else {
+                lastReadMessageDateTime = LocalDateTime.now();
+            }
+        } else {
+            Message lastReadMessage = messageRepository.findById(lastReadMessageId)
+                    .orElseThrow(() -> new NotFoundException("Last read message is not found"));
+            lastReadMessageDateTime = lastReadMessage.getCreationTime();
+        }
+
+        return messageRepository
+                .getAllByConversation_ConversationIdAndCreationTimeLessThanOrderByCreationTime(
+                        conversationId,
+                        lastReadMessageDateTime,
+                        PageRequest.of(0, pageSize)
                 );
     }
 }

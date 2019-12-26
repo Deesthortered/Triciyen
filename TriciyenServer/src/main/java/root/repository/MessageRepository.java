@@ -1,5 +1,6 @@
 package root.repository;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import root.entity.Message;
@@ -13,8 +14,13 @@ public interface MessageRepository extends CrudRepository<Message, Integer> {
     // Для того, что бы получить самое старое сообщение беседы, когда нет последнего прочитного
     Optional<Message> findTopByConversation_ConversationIdOrderByCreationTime(Integer conversationId);
 
-    // Загрузка всех сообщений беседы, которые позже указаной даты.
-    // Нужна для того, что бы загрузить все сообщения после последнего прочитаного сообщения
-    List<Message> getAllByConversation_ConversationIdAndCreationTimeGreaterThanEqualOrderByCreationTime(
-            Integer conversationId, LocalDateTime dateTime);
+    // Загрузка всех сообщений беседы, которые позже (нестрогое неравенство) указаной даты.
+    // Нужно для того, что бы загрузить все сообщения после последнего прочитаного сообщения
+    List<Message> getAllByConversation_ConversationIdAndCreationTimeGreaterThanEqualOrderByCreationTime
+            (Integer conversationId, LocalDateTime dateTime);
+
+    // Загрузка страницы сообщений беседы, которые раньше (строгое неравенство) указаной даты.
+    // Нужно для того, что бы загрузить
+    List<Message> getAllByConversation_ConversationIdAndCreationTimeLessThanOrderByCreationTime
+            (Integer conversationId, LocalDateTime dateTime, Pageable pageable);
 }

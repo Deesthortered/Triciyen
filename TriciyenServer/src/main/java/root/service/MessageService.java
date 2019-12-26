@@ -10,4 +10,6 @@ import java.util.List;
 public interface MessageService {
     Integer getLastReadMessageIdOfConversation(Integer conversationId,  String userLogin);
     List<Message> getLastMessagesInConversation(Integer conversationId, Integer lastReadMessageId);
+    List<Message> getPageOfElderMessagesInConversation
+            (Integer conversationId, Integer lastReadMessageId, Integer pageSize);
 }
