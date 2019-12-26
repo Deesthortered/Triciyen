@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import root.entity.Conversation;
 import root.entity.UserAccount;
 import root.entity.UserConversation;
 
@@ -30,5 +29,5 @@ public interface UserConversationRepository extends CrudRepository<UserConversat
             @Param("messageId") Integer messageId
     );
 
-    int deleteAllByConversation_ConversationId(Integer conversationId);
+    void deleteAllByConversation_ConversationId(Integer conversationId);
 }

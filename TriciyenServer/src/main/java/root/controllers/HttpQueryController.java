@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import root.entity.Conversation;
 import root.entity.Message;
 import root.entity.UserAccount;
+import root.entity.UserConversation;
 import root.entity.auxiliary.AuthData;
 import root.service.AccountService;
 import root.service.ConversationService;
 import root.service.MessageService;
+import root.service.UserConversationService;
 
 import java.util.List;
 
@@ -24,7 +26,8 @@ public class HttpQueryController {
     private ConversationService conversationService;
     @Autowired
     private MessageService messageService;
-
+    @Autowired
+    private UserConversationService userConversationService;
 
     @PostMapping("/auth")
     public ResponseEntity<?> authenticate(@RequestBody AuthData authData) {
@@ -144,6 +147,24 @@ public class HttpQueryController {
             @PathVariable Integer id
     ) {
         Conversation result = conversationService.findConversationById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @PostMapping("/addUserToConversation")
+    public ResponseEntity<?> addUserToConversation(
+            @RequestParam(value = "conversationId") Integer conversationId,
+            @RequestParam(value = "userLogin") String userLogin
+    ) {
+        UserConversation result = userConversationService.addUserToConversation(conversationId, userLogin);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @PostMapping("/deleteUserFromConversation")
+    public ResponseEntity<?> deleteUserFromConversation(
+            @RequestParam(value = "conversationId") Integer conversationId,
+            @RequestParam(value = "userLogin") String userLogin
+    ) {
+        Boolean result = userConversationService.deleteUserFromConversation(conversationId, userLogin);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
