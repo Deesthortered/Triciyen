@@ -15,4 +15,6 @@ public interface MessageService {
             (Integer conversationId, Integer lastReadMessageId, Integer pageSize);
     Boolean setLastReadMessageOfTheConversation(Integer conversationId,  String userLogin, Integer messageId);
     Message sendMessage(Integer conversationId, String userLogin, Integer contentTypeId, String content);
+
+    Message getLastMessageInConversation(Integer conversationId);
 }

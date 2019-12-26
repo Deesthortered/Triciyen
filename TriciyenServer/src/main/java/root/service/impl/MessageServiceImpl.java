@@ -116,4 +116,20 @@ public class MessageServiceImpl implements MessageService {
 
         return messageRepository.save(message);
     }
+
+
+    @Override
+    public Message getLastMessageInConversation(Integer conversationId) {
+        MessageContentType notificationType = messageContentTypeRepository.findById(2)
+                .orElseThrow(() -> new NotFoundException("Notification content type is not found"));
+
+        Optional<Message> message = messageRepository
+                .findTopByConversation_ConversationIdOrderByCreationTimeDesc(conversationId);
+        return message.orElse(Message
+                .builder()
+                .user(UserAccount.builder().name("System").build())
+                .content("It is empty conversation")
+                .contentType(notificationType)
+                .build());
+    }
 }

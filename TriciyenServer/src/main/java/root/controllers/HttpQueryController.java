@@ -95,4 +95,13 @@ public class HttpQueryController {
         Message result = messageService.sendMessage(conversationId, userLogin, contentTypeId, content);
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
+
+    @GetMapping("/getLastMessage/{conversationId}")
+    public ResponseEntity<?> getLastMessage(
+            @PathVariable Integer conversationId
+    ) {
+        Message message = messageService.getLastMessageInConversation(conversationId);
+        return ResponseEntity.status(HttpStatus.OK).body(message);
+    }
 }
