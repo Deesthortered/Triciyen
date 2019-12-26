@@ -16,6 +16,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 
 import java.util.*;
@@ -72,7 +74,7 @@ public class MainScene implements BaseScene {
     private static final int fullRightScrollPaneHeight = sceneHeight - fullRightTitlePaneHeight - writeMessagePaneHeight;
 
     List<MessageListener> messageListeners;
-    Integer oldestReadMessageId = -1;
+    Integer oldestReadMessageIdForCurrentConversation = -1;
 
     private MainScene() {
         mainPane = new BorderPane();
@@ -176,6 +178,7 @@ public class MainScene implements BaseScene {
         fullRightPane.getChildren().addAll(fullRightTitlePane, fullRightScrollPane, writeMessagePane);
 
         scene = new Scene(mainPane, sceneWidth, sceneHeight);
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, this::handlePressButton);
     }
     public static MainScene getInstance() {
         return instance;
@@ -193,9 +196,10 @@ public class MainScene implements BaseScene {
     }
     @Override
     public void destroy() {
-        destroyUserCorner();
-        destroyRightPane();
+        destroyMessages();
         destroyConversations();
+        destroyRightPane();
+        destroyUserCorner();
     }
     @Override
     public void handle(Event event) {
@@ -252,22 +256,24 @@ public class MainScene implements BaseScene {
         messageButton = new ArrayList<>();
         localStorage.setCurrentActiveConversation(conversationId);
 
+        mainPane.setCenter(fullRightPane);
+
         MessageService messageService = MessageService.getInstance();
-        oldestReadMessageId = messageService.getLastReadMessageIdOfConversation(conversationId);
+        oldestReadMessageIdForCurrentConversation = messageService.getLastReadMessageIdOfConversation(conversationId);
         if (localStorage.wasError()) {
             System.err.println(localStorage.getInternalErrorMessage());
             localStorage.closeError();
         } else {
-            System.out.println("Last read: " + oldestReadMessageId);
+            System.out.println("Last read: " + oldestReadMessageIdForCurrentConversation);
 
             System.out.println("Last: ");
             List<Message> lastMessages = messageService
-                    .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageId);
+                    .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);
             lastMessages.forEach(System.out::println);
 
             System.out.println("Elder: ");
             List<Message> elderMessages = messageService
-                    .getPageOfElderMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageId);
+                    .getPageOfElderMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);
             elderMessages.forEach(System.out::println);
         }
     }
@@ -291,10 +297,13 @@ public class MainScene implements BaseScene {
     }
     private void destroyMessages() {
         localStorage.setCurrentActiveConversation(-1);
+
+        mainPane.setCenter(emptyRightPane);
+
         messageBox.getChildren().clear();
         if (messageButton != null)
             messageButton.clear();
-        this.oldestReadMessageId = -1;
+        this.oldestReadMessageIdForCurrentConversation = -1;
     }
 
     private ConversationButton mapConversationToButton(Conversation conversation) {
@@ -318,6 +327,11 @@ public class MainScene implements BaseScene {
                 ("Error: " + localStorage.getInterfaceErrorMessage(), localStorage.getBaseAccountImage());
     }
 
+    private void handlePressButton(KeyEvent event) {
+        if(event.getCode() == KeyCode.ESCAPE) {
+            destroyMessages();
+        }
+    }
     private void handleLogout(Event event) {
         localStorage.setDefaultState();
         destroy();
