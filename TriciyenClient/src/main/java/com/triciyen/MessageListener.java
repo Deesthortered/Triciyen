@@ -23,7 +23,8 @@ public class MessageListener extends Thread {
     private boolean first = false;
     private int lastReadMessageId = -1;
 
-    public MessageListener(int conversationId, ConversationButton conversationButton, List<ChatMessageBox> messageButtons, VBox messageBox) {
+    public MessageListener(int conversationId, ConversationButton conversationButton,
+                           List<ChatMessageBox> messageButtons, VBox messageBox) {
         this.currentConversationId = conversationId;
         this.conversationButton = conversationButton;
 

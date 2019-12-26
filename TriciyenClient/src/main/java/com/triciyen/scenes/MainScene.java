@@ -256,6 +256,7 @@ public class MainScene implements BaseScene {
 
 
     private void initializeUserCorner() {
+        fullRightTitlePane.attachHandlers();
         UserAccount currentLoggedAccount = localStorage.getLoggedAccount();
         loginLabel.setText("Login: " + currentLoggedAccount.getLogin());
         usernameLabel.setText(currentLoggedAccount.getName());
@@ -403,6 +404,7 @@ public class MainScene implements BaseScene {
         ConversationButton conversationButton = (ConversationButton) event.getSource();
         Integer conversationId = Integer.valueOf(conversationButton.getId());
         destroyMessages();
+        fullRightTitlePane.setTitle(conversationButton.getConversationName());
         conversationButton.clickStyle(true);
         initializeMessages(conversationId);
     }
@@ -419,11 +421,18 @@ public class MainScene implements BaseScene {
     }
 
     private void handleCreateConversationButton(Event event) {
-
+        System.out.println("handleCreateConversationButton");
     }
-
     private void handleFindConversationButton(Event event) {
-
+        System.out.println("handleFindConversationButton");
     }
-
+    public void handleAddMemberButton(Event event) {
+        System.out.println("handleAddMemberButton");
+    }
+    public void handleLeaveConversationButton(Event event) {
+        System.out.println("handleLeaveConversationButton");
+    }
+    public void handleDeleteConversationButton(Event event) {
+        System.out.println("handleDeleteConversationButton");
+    }
 }

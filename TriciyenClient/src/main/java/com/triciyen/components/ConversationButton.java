@@ -103,4 +103,8 @@ public class ConversationButton extends HBox {
             }
         });
     }
+
+    public String getConversationName() {
+        return conversationName.getText();
+    }
 }
