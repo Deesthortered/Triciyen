@@ -222,6 +222,7 @@ public class MainScene implements BaseScene {
         conversationsBox.getChildren().clear();
         conversationButtons = new ArrayList<>();
         messageListeners = new ArrayList<>();
+        messageButtons = new ArrayList<>();
 
         ConversationService conversationService = ConversationService.getInstance();
         Optional<List<Conversation>> conversationListEnvelop = conversationService.getAllSubscribedConversations();
@@ -253,9 +254,7 @@ public class MainScene implements BaseScene {
     }
     private void initializeMessages(Integer conversationId) {
         messageBox.getChildren().clear();
-        messageButtons = new ArrayList<>();
         localStorage.setCurrentActiveConversation(conversationId);
-
         mainPane.setCenter(fullRightPane);
 
         MessageService messageService = MessageService.getInstance();
@@ -312,8 +311,7 @@ public class MainScene implements BaseScene {
         mainPane.setCenter(emptyRightPane);
 
         messageBox.getChildren().clear();
-        if (messageButtons != null)
-            messageButtons.clear();
+        messageButtons.clear();
         this.oldestReadMessageIdForCurrentConversation = -1;
     }
 

@@ -41,7 +41,7 @@ public class ConversationButton extends HBox {
             this.unreadCounter.setStyle("-fx-border-color: red;" +
                     "-fx-border-radius: 5;" +
                     "-fx-border-width: 1;" +
-                    "-fx-text-fill: #c8cadd;" +
+                    "-fx-text-fill: #1c18a6;" +
                     "-fx-padding: 2");
             this.unreadCounter.setFont(Font.font("Cambria", FontWeight.BOLD, 13));
             this.lastTime = new Label("20.01.1999 00:00");
