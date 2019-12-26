@@ -104,4 +104,13 @@ public class HttpQueryController {
         Message message = messageService.getLastMessageInConversation(conversationId);
         return ResponseEntity.status(HttpStatus.OK).body(message);
     }
+
+    @GetMapping("/getCountOfUnreadMessages")
+    public ResponseEntity<?> getCountOfUnreadMessages(
+            @RequestParam(value = "conversationId") Integer conversationId,
+            @RequestParam(value = "userLogin") String userLogin
+    ) {
+        Integer result = messageService.getCountOfUnreadMessagesForUser(conversationId, userLogin);
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }

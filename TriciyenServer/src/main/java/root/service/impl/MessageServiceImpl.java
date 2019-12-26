@@ -54,7 +54,7 @@ public class MessageServiceImpl implements MessageService {
         }
 
         return messageRepository
-                .getAllByConversation_ConversationIdAndCreationTimeGreaterThanEqualOrderByCreationTime(
+                .getAllByConversation_ConversationIdAndCreationTimeGreaterThanOrderByCreationTime(
                         conversationId,
                         lastReadMessageDateTime
                 );
@@ -79,7 +79,7 @@ public class MessageServiceImpl implements MessageService {
         }
 
         return messageRepository
-                .getAllByConversation_ConversationIdAndCreationTimeLessThanOrderByCreationTime(
+                .getAllByConversation_ConversationIdAndCreationTimeLessThanEqualOrderByCreationTime(
                         conversationId,
                         lastReadMessageDateTime,
                         PageRequest.of(0, pageSize)
@@ -131,5 +131,18 @@ public class MessageServiceImpl implements MessageService {
                 .content("It is empty conversation")
                 .contentType(notificationType)
                 .build());
+    }
+
+    @Override
+    public Integer getCountOfUnreadMessagesForUser(Integer conversationId, String userLogin) {
+        Integer messageId = getLastReadMessageIdOfConversation(conversationId, userLogin);
+        if (messageId == -1) {
+            return messageRepository.countOfAllMessagesInTheConversation(conversationId);
+        } else {
+            LocalDateTime dateTime = messageRepository.findById(messageId)
+                    .orElseThrow(() -> new NotFoundException("Message is not found"))
+                    .getCreationTime();
+            return messageRepository.countOfMessagesInTheConversationAfterCurrentDate(conversationId, dateTime);
+        }
     }
 }
