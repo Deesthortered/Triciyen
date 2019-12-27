@@ -27,8 +27,8 @@ abstract class BaseQueryHandler {
     String urlGetCountOfUnreadMessages = "/http_api/getCountOfUnreadMessages";
     String urlCreateConversation = "/http_api/createConversation";
     String urlDeleteConversation = "/http_api/deleteConversation";
-    String urlFindConversationByName = "/http_api/findConversationByName";
-    String urlFindConversationById = "/http_api/findConversationById";
+    String urlFindConversationByName = "/http_api/findConversationByName/";
+    String urlFindConversationById = "/http_api/findConversationById/";
     String urlAddUserToConversation = "/http_api/addUserToConversation";
     String urlDeleteUserFromConversation = "/http_api/deleteUserFromConversation";
 

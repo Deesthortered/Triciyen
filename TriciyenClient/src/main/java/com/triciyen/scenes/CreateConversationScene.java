@@ -61,6 +61,7 @@ public class CreateConversationScene implements BaseScene {
             Conversation newConversation = conversationService.createConversation(conversationNameField.getText());
             if (localStorage.wasError()) {
                 infoLabel.setText(localStorage.getInterfaceErrorMessage());
+                System.err.println(localStorage.getInternalErrorMessage());
                 localStorage.closeError();
             } else {
                 MainScene.getInstance().destroy();

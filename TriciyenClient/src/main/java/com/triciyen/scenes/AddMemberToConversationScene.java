@@ -66,6 +66,7 @@ public class AddMemberToConversationScene implements BaseScene {
             );
             if (localStorage.wasError()) {
                 infoLabel.setText(localStorage.getInterfaceErrorMessage());
+                System.err.println(localStorage.getInternalErrorMessage());
                 localStorage.closeError();
             } else {
                 MainScene.getInstance().destroy();

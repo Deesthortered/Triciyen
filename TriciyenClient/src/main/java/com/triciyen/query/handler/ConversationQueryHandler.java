@@ -67,8 +67,7 @@ public class ConversationQueryHandler extends BaseQueryHandler {
         return Optional.empty();
     }
     public Optional<List<Conversation>> findConversationByNameQuery(String name) throws IOException {
-        HttpURLConnection connection = makeGetQuery(urlFindConversationByName +
-                        "?name=" + name);
+        HttpURLConnection connection = makeGetQuery(urlFindConversationByName + name);
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String jsonResponse = readResponseBody(connection);
@@ -80,8 +79,7 @@ public class ConversationQueryHandler extends BaseQueryHandler {
         return Optional.empty();
     }
     public Optional<Conversation> findConversationByIdQuery(Integer id) throws IOException {
-        HttpURLConnection connection = makeGetQuery(urlFindConversationById +
-                "?id=" + id);
+        HttpURLConnection connection = makeGetQuery(urlFindConversationById + id);
 
         if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             String jsonResponse = readResponseBody(connection);

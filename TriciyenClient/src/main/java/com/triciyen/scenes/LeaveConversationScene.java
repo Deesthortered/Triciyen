@@ -66,6 +66,7 @@ public class LeaveConversationScene implements BaseScene {
                     localStorage.getLoggedAccount().getLogin());
             if (localStorage.wasError()) {
                 this.infoLabel.setText(localStorage.getInterfaceErrorMessage());
+                System.err.println(localStorage.getInternalErrorMessage());
             } else {
                 MainScene.getInstance().destroy();
                 MainScene.getInstance().initialize();

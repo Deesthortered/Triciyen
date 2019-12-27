@@ -368,7 +368,8 @@ public class MainScene implements BaseScene {
 
     private ConversationButton mapConversationToButton(Conversation conversation) {
         ConversationButton button = new ConversationButton
-                (conversation.getName(), localStorage.getBaseAccountImage());
+                ("(" + conversation.getConversationId() + ") " + conversation.getName(),
+                        localStorage.getBaseAccountImage());
         button.setId(conversation.getConversationId().toString());
         button.setOnMouseClicked(this::handleConversationButton);
 

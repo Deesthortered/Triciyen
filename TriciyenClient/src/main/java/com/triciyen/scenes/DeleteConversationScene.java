@@ -64,6 +64,7 @@ public class DeleteConversationScene implements BaseScene {
             Boolean result = conversationService.deleteConversation(localStorage.getCurrentActiveConversation());
             if (localStorage.wasError()) {
                 this.infoLabel.setText(localStorage.getInterfaceErrorMessage());
+                System.err.println(localStorage.getInternalErrorMessage());
             } else {
                 MainScene.getInstance().destroy();
                 MainScene.getInstance().initialize();

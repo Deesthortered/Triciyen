@@ -59,6 +59,22 @@ public class ConversationService implements BaseService {
         }
         return deleteConversationResultEnvelop.get();
     }
+    public Conversation findConversationById(Integer conversationId) {
+        Optional<Conversation> foundConversationEnvelop = Optional.empty();
+        try {
+            foundConversationEnvelop = conversationQueryHandler.findConversationByIdQuery(conversationId);
+        } catch (IOException e) {
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with finding the conversation");
+        }
+
+        if (foundConversationEnvelop.isEmpty()) {
+            localStorage.setErrorMessage(
+                    "Loaded empty Optional of result of finding the conversation",
+                    "Some troubles with finding the conversation");
+            return Conversation.builder().build();
+        }
+        return foundConversationEnvelop.get();
+    }
     public UserConversation addUserToConversation(Integer conversationId, String userLogin) {
         Optional<UserConversation> newUserConversationResultEnvelop = Optional.empty();
         try {
