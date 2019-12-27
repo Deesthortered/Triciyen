@@ -305,7 +305,6 @@ public class MainScene implements BaseScene {
     }
     private void initializeMessages(Integer conversationId) {
         messageBox.getChildren().clear();
-        localStorage.setCurrentActiveConversation(conversationId);
         mainPane.setCenter(fullRightPane);
 
         MessageService messageService = MessageService.getInstance();
@@ -315,10 +314,10 @@ public class MainScene implements BaseScene {
             localStorage.closeError();
         } else {
             List<Message> elderMessages = messageService
-                    .getPageOfElderMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);
+                    .getPageOfElderMessagesOfConversation(conversationId, oldestReadMessageIdForCurrentConversation);
 
             List<Message> lastMessages = messageService
-                    .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);
+                    .getLastMessagesOfConversation(conversationId, oldestReadMessageIdForCurrentConversation);
 
             elderMessages.forEach(message -> {
                 ChatMessageBox messageButton = mapMessageToButton(message);
@@ -334,8 +333,9 @@ public class MainScene implements BaseScene {
 
             if (!lastMessages.isEmpty()) {
                 messageService.setLastReadMessageOfTheConversation
-                        (localStorage.getCurrentActiveConversation(), lastMessages.get(lastMessages.size() - 1).getMessageId());
+                        (conversationId, lastMessages.get(lastMessages.size() - 1).getMessageId());
             }
+            localStorage.setCurrentActiveConversation(conversationId);
         }
     }
 

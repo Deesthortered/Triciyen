@@ -17,6 +17,6 @@ public class Message implements Serializable {
     private Date creationTime;
     private Conversation conversation;
     private UserAccount user;
-    private MessageContentType contentType;
+    private Integer contentTypeId;
     private String content;
 }
