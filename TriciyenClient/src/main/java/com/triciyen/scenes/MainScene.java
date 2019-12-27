@@ -431,6 +431,7 @@ public class MainScene implements BaseScene {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(scene.getWindow());
         stage.setScene(CreateConversationScene.getInstance().getScene());
+        stage.setResizable(false);
         CreateConversationScene.getInstance().initialize();
         stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
                 (event1) -> CreateConversationScene.getInstance().destroy());
@@ -442,6 +443,7 @@ public class MainScene implements BaseScene {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(scene.getWindow());
         stage.setScene(FindConversationScene.getInstance().getScene());
+        stage.setResizable(false);
         FindConversationScene.getInstance().initialize();
         stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
                 (event1) -> FindConversationScene.getInstance().destroy());
@@ -453,6 +455,7 @@ public class MainScene implements BaseScene {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(scene.getWindow());
         stage.setScene(AddMemberToConversationScene.getInstance().getScene());
+        stage.setResizable(false);
         AddMemberToConversationScene.getInstance().initialize();
         stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
                 (event1) -> AddMemberToConversationScene.getInstance().destroy());
@@ -464,6 +467,7 @@ public class MainScene implements BaseScene {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(scene.getWindow());
         stage.setScene(LeaveConversationScene.getInstance().getScene());
+        stage.setResizable(false);
         LeaveConversationScene.getInstance().initialize();
         stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
                 (event1) -> LeaveConversationScene.getInstance().destroy());
@@ -475,6 +479,7 @@ public class MainScene implements BaseScene {
         stage.initModality(Modality.WINDOW_MODAL);
         stage.initOwner(scene.getWindow());
         stage.setScene(DeleteConversationScene.getInstance().getScene());
+        stage.setResizable(false);
         DeleteConversationScene.getInstance().initialize();
         stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
                 (event1) -> DeleteConversationScene.getInstance().destroy());

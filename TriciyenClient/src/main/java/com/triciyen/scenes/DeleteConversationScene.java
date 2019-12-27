@@ -2,14 +2,38 @@ package com.triciyen.scenes;
 
 import javafx.event.Event;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class DeleteConversationScene implements BaseScene {
     private static final DeleteConversationScene instance = new DeleteConversationScene();
     private Scene scene;
+    private static final int WINDOW_WIDTH = 400;
+    private static final int WINDOW_HEIGHT = 100;
+
+    Button submitButton;
+    Button cancelButton;
 
     private DeleteConversationScene() {
-        this.scene = new Scene(new StackPane(), 300, 300);
+        Label titleLabel = new Label("Do you want to delete the conversation?");
+
+        submitButton = new Button("Submit");
+        submitButton.setMinWidth(WINDOW_WIDTH);
+        submitButton.setOnMouseClicked(this);
+
+        cancelButton = new Button("Cancel");
+        cancelButton.setMinWidth(WINDOW_WIDTH);
+        cancelButton.setOnMouseClicked(this);
+
+        VBox box = new VBox();
+        box.getChildren().addAll(titleLabel, submitButton, cancelButton);
+        StackPane mainPane = new StackPane();
+        mainPane.getChildren().add(box);
+
+        this.scene = new Scene(mainPane, WINDOW_WIDTH, WINDOW_HEIGHT);
     }
     public static DeleteConversationScene getInstance() {
         return instance;
@@ -29,6 +53,11 @@ public class DeleteConversationScene implements BaseScene {
     }
     @Override
     public void handle(Event event) {
+        if (event.getSource() == this.cancelButton) {
+            Stage stage = (Stage) scene.getWindow();
+            stage.close();
+        } else if (event.getSource() == this.submitButton) {
 
+        }
     }
 }
