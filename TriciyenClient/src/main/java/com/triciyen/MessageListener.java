@@ -64,11 +64,15 @@ public class MessageListener extends Thread {
                 .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), lastReadMessageId);
 
         if (!lastMessages.isEmpty()) {
-            lastMessages.forEach(message -> {
-                ChatMessageBox messageButton = MainScene.mapMessageToButton(message);
-                messageButtons.add(messageButton);
-                Platform.runLater(() -> messageBox.getChildren().add(messageButton));
-            });
+            synchronized (messageButtons) {
+                synchronized (messageBox) {
+                    lastMessages.forEach(message -> {
+                        ChatMessageBox messageButton = MainScene.mapMessageToButton(message);
+                        messageButtons.add(messageButton);
+                        Platform.runLater(() -> messageBox.getChildren().add(messageButton));
+                    });
+                }
+            }
 
             Message lastMessage = lastMessages.get(lastMessages.size() - 1);
             lastReadMessageId = lastMessage.getMessageId();

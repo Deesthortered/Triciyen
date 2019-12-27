@@ -84,8 +84,10 @@ public class MainScene implements BaseScene {
     private static final int fullRightScrollPaneWidth = fullRightTitlePaneWidth;
     private static final int fullRightScrollPaneHeight = sceneHeight - fullRightTitlePaneHeight - writeMessagePaneHeight;
 
-    List<MessageListener> messageListeners;
-    Integer oldestReadMessageIdForCurrentConversation = -1;
+    private List<MessageListener> messageListeners;
+    private Integer oldestReadMessageIdForCurrentConversation = -1;
+
+    private Button expandMessagesButton;
 
     private MainScene() {
         mainPane = new BorderPane();
@@ -228,6 +230,9 @@ public class MainScene implements BaseScene {
         writeMessagePane.getChildren().add(writeMessageHBox);
         fullRightPane.getChildren().addAll(fullRightTitlePane, fullRightScrollPane, writeMessagePane);
 
+        expandMessagesButton = new Button("Load previous...");
+        expandMessagesButton.setOnMouseClicked(this::handleExpandMessagesButton);
+
         scene = new Scene(mainPane, sceneWidth, sceneHeight);
         scene.addEventHandler(KeyEvent.KEY_PRESSED, this::handlePressButton);
     }
@@ -306,6 +311,7 @@ public class MainScene implements BaseScene {
     private void initializeMessages(Integer conversationId) {
         messageBox.getChildren().clear();
         mainPane.setCenter(fullRightPane);
+        expandMessagesButton.setDisable(false);
 
         MessageService messageService = MessageService.getInstance();
         oldestReadMessageIdForCurrentConversation = messageService.getLastReadMessageIdOfConversation(conversationId);
@@ -319,17 +325,25 @@ public class MainScene implements BaseScene {
             List<Message> lastMessages = messageService
                     .getLastMessagesOfConversation(conversationId, oldestReadMessageIdForCurrentConversation);
 
+            if (!elderMessages.isEmpty()) {
+                oldestReadMessageIdForCurrentConversation = elderMessages.get(elderMessages.size()-1).getMessageId();
+            }
+
+            if (elderMessages.size() >= localStorage.getMessagePageSize()) {
+                messageBox.getChildren().add(this.expandMessagesButton);
+            }
+
             elderMessages.forEach(message -> {
                 ChatMessageBox messageButton = mapMessageToButton(message);
-                messageButtons.add(messageButton);
-                messageBox.getChildren().add(messageButton);
+                messageButtons.add(0, messageButton);
             });
 
             lastMessages.forEach(message -> {
                 ChatMessageBox messageButton = mapMessageToButton(message);
                 messageButtons.add(messageButton);
-                messageBox.getChildren().add(messageButton);
             });
+
+            messageButtons.forEach(messageBox.getChildren()::add);
 
             if (!lastMessages.isEmpty()) {
                 messageService.setLastReadMessageOfTheConversation
@@ -485,5 +499,32 @@ public class MainScene implements BaseScene {
         stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
                 (event1) -> DeleteConversationScene.getInstance().destroy());
         stage.show();
+    }
+
+    private void handleExpandMessagesButton(Event event) {
+        MessageService messageService = MessageService.getInstance();
+        List<Message> elderMessages = messageService
+                .getPageOfElderMessagesOfConversation(
+                        localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);
+        elderMessages.remove(0);
+        if (!elderMessages.isEmpty()) {
+            oldestReadMessageIdForCurrentConversation = elderMessages.get(elderMessages.size() - 1).getMessageId();
+        }
+
+        synchronized (messageButtons) {
+            elderMessages.forEach(message -> {
+                ChatMessageBox messageButton = mapMessageToButton(message);
+                messageButtons.add(0, messageButton);
+            });
+        }
+
+        synchronized (messageBox) {
+            messageBox.getChildren().clear();
+            if (elderMessages.size() + 1 >= localStorage.getMessagePageSize()) {
+                messageBox.getChildren().add(this.expandMessagesButton);
+            }
+
+            messageButtons.forEach(button -> messageBox.getChildren().add(button));
+        }
     }
 }

@@ -31,6 +31,8 @@ public class LocalStorage {
         return instance;
     }
 
+    private final int messagePageSize = 5;
+
     private Image baseAccountImage;
 
     private boolean wasError;
@@ -97,5 +99,9 @@ public class LocalStorage {
         this.conversationLock.writeLock().lock();
         this.currentActiveConversation = currentActiveConversation;
         this.conversationLock.writeLock().unlock();
+    }
+
+    public int getMessagePageSize() {
+        return messagePageSize;
     }
 }

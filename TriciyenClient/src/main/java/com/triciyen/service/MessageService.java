@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public class MessageService implements BaseService {
     private static final MessageService instance = new MessageService();
-    private static final int messagePageSize = 17;
 
     private MessageService() {
 
@@ -60,7 +59,8 @@ public class MessageService implements BaseService {
         Optional<List<Message>> messageListEnvelop = Optional.empty();
         try {
             messageListEnvelop = messageQueryHandler
-                    .getPageOfElderMessagesOfConversationQuery(conversationId, lastReadMessageId, messagePageSize);
+                    .getPageOfElderMessagesOfConversationQuery(conversationId, lastReadMessageId,
+                            localStorage.getMessagePageSize());
         } catch (IOException e) {
             localStorage.setErrorMessage(e.getMessage(), "Some troubles with loading page of elder messages");
         }
