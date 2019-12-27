@@ -30,8 +30,6 @@ public class Message implements Serializable {
 
     private LocalDateTime creationTime;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="messageContentTypeId")
     private MessageContentType contentType;
 
     private String content;

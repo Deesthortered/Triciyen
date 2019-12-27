@@ -41,4 +41,6 @@ public interface MessageRepository extends CrudRepository<Message, Integer> {
     Integer countOfAllMessagesInTheConversation(
             @Param("conversationId") Integer conversationId
     );
+
+    void deleteAllByConversation_ConversationId(Integer conversationId);
 }

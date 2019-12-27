@@ -8,6 +8,7 @@ import root.entity.UserAccount;
 import root.entity.UserConversation;
 import root.exception.NotFoundException;
 import root.repository.ConversationRepository;
+import root.repository.MessageRepository;
 import root.repository.UserAccountRepository;
 import root.repository.UserConversationRepository;
 import root.service.ConversationService;
@@ -24,6 +25,8 @@ public class ConversationServiceImpl implements ConversationService {
     private UserConversationRepository userConversationRepository;
     @Autowired
     private ConversationRepository conversationRepository;
+    @Autowired
+    private MessageRepository messageRepository;
 
     @Override
     public List<Conversation> getAllConversationsByUser(String login) {
@@ -65,10 +68,11 @@ public class ConversationServiceImpl implements ConversationService {
 
     @Override
     public Boolean deleteConversation(Integer conversationId) {
-        userConversationRepository.deleteAllByConversation_ConversationId(conversationId);
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new NotFoundException("The conversation is not found"));
-        conversationRepository.delete(conversation);
+        messageRepository.deleteAllByConversation_ConversationId(conversationId);
+        userConversationRepository.deleteAllByConversation_ConversationId(conversationId);
+        conversationRepository.deleteById(conversationId);
         return true;
     }
 
