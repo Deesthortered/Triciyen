@@ -25,6 +25,12 @@ abstract class BaseQueryHandler {
     String urlSendMessage = "/http_api/sendMessage";
     String urlGetLastMessage = "/http_api/getLastMessage/";
     String urlGetCountOfUnreadMessages = "/http_api/getCountOfUnreadMessages";
+    String urlCreateConversation = "/http_api/createConversation";
+    String urlDeleteConversation = "/http_api/deleteConversation";
+    String urlFindConversationByName = "/http_api/findConversationByName";
+    String urlFindConversationById = "/http_api/findConversationById";
+    String urlAddUserToConversation = "/http_api/addUserToConversation";
+    String urlDeleteUserFromConversation = "/http_api/deleteUserFromConversation";
 
     protected void writeStringIntoConnectionBody(HttpURLConnection connection, String data) throws IOException {
         try (OutputStream os = connection.getOutputStream()) {
