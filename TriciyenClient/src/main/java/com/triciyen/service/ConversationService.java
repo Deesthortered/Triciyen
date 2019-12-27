@@ -42,4 +42,20 @@ public class ConversationService implements BaseService {
         }
         return newConversationEnvelop.get();
     }
+    public Boolean deleteConversation(Integer conversationId) {
+        Optional<Boolean> deleteConversationResultEnvelop = Optional.empty();
+        try {
+            deleteConversationResultEnvelop = conversationQueryHandler.deleteConversationQuery(conversationId);
+        } catch (IOException e) {
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with deleting the conversation");
+        }
+
+        if (deleteConversationResultEnvelop.isEmpty()) {
+            localStorage.setErrorMessage(
+                    "Loaded empty Optional of result of deleting the conversation",
+                    "Some troubles with deleting the conversationn");
+            return false;
+        }
+        return deleteConversationResultEnvelop.get();
+    }
 }
