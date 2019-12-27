@@ -110,7 +110,7 @@ public class MessageServiceImpl implements MessageService {
                 .conversation(conversation)
                 .user(userAccount)
                 .creationTime(LocalDateTime.now())
-                .contentType(contentType)
+                .contentTypeId(contentType.getMessageContentTypeId())
                 .content(content)
                 .build();
 
@@ -129,7 +129,7 @@ public class MessageServiceImpl implements MessageService {
                 .builder()
                 .user(UserAccount.builder().name("System").build())
                 .content("It is empty conversation")
-                .contentType(notificationType)
+                .contentTypeId(notificationType.getMessageContentTypeId())
                 .build());
     }
 

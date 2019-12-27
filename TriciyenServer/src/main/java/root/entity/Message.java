@@ -30,7 +30,7 @@ public class Message implements Serializable {
 
     private LocalDateTime creationTime;
 
-    private MessageContentType contentType;
+    private Integer contentTypeId;
 
     private String content;
 }
