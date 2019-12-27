@@ -31,7 +31,7 @@ public class LocalStorage {
         return instance;
     }
 
-    private final int messagePageSize = 5;
+    private final int messagePageSize = 17;
 
     private Image baseAccountImage;
 

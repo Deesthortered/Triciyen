@@ -58,7 +58,7 @@ public class MessageListener extends Thread {
         if (first) {
             first = false;
             conversationButton.setUnreadCounter(String.valueOf(0));
-            lastReadMessageId = messageService.getLastReadMessageIdOfConversation(localStorage.getCurrentActiveConversation());
+            lastReadMessageId = messageService.getLastReadMessageIdOfConversation(currentConversationId);
         }
         List<Message> lastMessages = messageService
                 .getLastMessagesOfConversation(localStorage.getCurrentActiveConversation(), lastReadMessageId);
@@ -96,10 +96,12 @@ public class MessageListener extends Thread {
             localStorage.closeError();
         }
 
-        if (lastMessage.getMessageId() == prevLastMessageId) {
+        if (lastMessage.getMessageId() != null && lastMessage.getMessageId() == prevLastMessageId) {
             return;
         }
-        prevLastMessageId = lastMessage.getMessageId();
+        if (lastMessage.getMessageId() != null) {
+            prevLastMessageId = lastMessage.getMessageId();
+        }
         conversationButton.setUnreadCounter(String.valueOf(countUnread));
         conversationButton.setLastTime(String.valueOf(
                 lastMessage.getCreationTime() == null ? "" : lastMessage.getCreationTime()));
