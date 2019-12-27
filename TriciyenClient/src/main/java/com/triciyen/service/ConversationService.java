@@ -53,9 +53,26 @@ public class ConversationService implements BaseService {
         if (deleteConversationResultEnvelop.isEmpty()) {
             localStorage.setErrorMessage(
                     "Loaded empty Optional of result of deleting the conversation",
-                    "Some troubles with deleting the conversationn");
+                    "Some troubles with deleting the conversation");
             return false;
         }
         return deleteConversationResultEnvelop.get();
+    }
+    public Boolean deleteUserFromConversation(Integer conversationId, String userLogin) {
+        Optional<Boolean> deleteUserFromConversationResultEnvelop = Optional.empty();
+        try {
+            deleteUserFromConversationResultEnvelop = conversationQueryHandler
+                    .deleteUserFromConversationQuery(conversationId, userLogin);
+        } catch (IOException e) {
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with deleting user from the conversation");
+        }
+
+        if (deleteUserFromConversationResultEnvelop.isEmpty()) {
+            localStorage.setErrorMessage(
+                    "Loaded empty Optional of result of deleting user from the conversation",
+                    "Some troubles with deleting user from the conversation");
+            return false;
+        }
+        return deleteUserFromConversationResultEnvelop.get();
     }
 }
