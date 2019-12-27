@@ -28,9 +28,11 @@ public class MessageService implements BaseService {
         }
 
         if (lastReadMessageIdEnvelop.isEmpty()) {
-            localStorage.setErrorMessage(
-                    "Loaded empty Optional of last read message of UserConversation",
-                    "Some troubles with loading last read message");
+            if (!localStorage.wasError()) {
+                localStorage.setErrorMessage(
+                        "Loaded empty Optional of last read message of UserConversation",
+                        "Some troubles with loading last read message");
+            }
             return -1;
         }
         return lastReadMessageIdEnvelop.get();
@@ -45,9 +47,11 @@ public class MessageService implements BaseService {
         }
 
         if (messageListEnvelop.isEmpty()) {
-            localStorage.setErrorMessage(
-                    "Loaded empty Optional of last messages of conversation",
-                    "Some troubles with loading last messages");
+            if (!localStorage.wasError()) {
+                localStorage.setErrorMessage(
+                        "Loaded empty Optional of last messages of conversation",
+                        "Some troubles with loading last messages");
+            }
             return new ArrayList<>();
         }
         return messageListEnvelop.get();
@@ -62,9 +66,11 @@ public class MessageService implements BaseService {
         }
 
         if (messageListEnvelop.isEmpty()) {
-            localStorage.setErrorMessage(
-                    "Loaded empty Optional of page of elder messages of conversation",
-                    "Some troubles with loading page of elder messages");
+            if (!localStorage.wasError()) {
+                localStorage.setErrorMessage(
+                        "Loaded empty Optional of page of elder messages of conversation",
+                        "Some troubles with loading page of elder messages");
+            }
             return new ArrayList<>();
         }
         return messageListEnvelop.get();
@@ -80,9 +86,11 @@ public class MessageService implements BaseService {
         }
 
         if (setLastReadResult.isEmpty()) {
-            localStorage.setErrorMessage(
-                    "Loaded empty Optional of setting last read message of conversation",
-                    "Some troubles with setting last read message of conversation");
+            if (!localStorage.wasError()) {
+                localStorage.setErrorMessage(
+                        "Loaded empty Optional of setting last read message of conversation",
+                        "Some troubles with setting last read message of conversation");
+            }
             return false;
         }
         return setLastReadResult.get();
@@ -98,9 +106,11 @@ public class MessageService implements BaseService {
         }
 
         if (setLastReadResult.isEmpty()) {
-            localStorage.setErrorMessage(
-                    "Loaded empty Optional of sending message",
-                    "Some troubles with sending message");
+            if (!localStorage.wasError()) {
+                localStorage.setErrorMessage(
+                        "Loaded empty Optional of sending message",
+                        "Some troubles with sending message");
+            }
             return Message.builder().build();
         }
         return setLastReadResult.get();
@@ -115,9 +125,11 @@ public class MessageService implements BaseService {
         }
 
         if (lastMessageEnvelop.isEmpty()) {
-            localStorage.setErrorMessage(
-                    "Loaded empty Optional of last message",
-                    "Some troubles with loading last message");
+            if (!localStorage.wasError()) {
+                localStorage.setErrorMessage(
+                        "Loaded empty Optional of last message",
+                        "Some troubles with loading last message");
+            }
             return Message.builder().build();
         }
         return lastMessageEnvelop.get();
@@ -133,9 +145,11 @@ public class MessageService implements BaseService {
         }
 
         if (countOfUnreadEnvelop.isEmpty()) {
-            localStorage.setErrorMessage(
-                    "Loaded empty Optional of count of last messages",
-                    "Some troubles with loading count of last messages");
+            if (!localStorage.wasError()) {
+                localStorage.setErrorMessage(
+                        "Loaded empty Optional of count of last messages",
+                        "Some troubles with loading count of last messages");
+            }
             return -1;
         }
         return countOfUnreadEnvelop.get();

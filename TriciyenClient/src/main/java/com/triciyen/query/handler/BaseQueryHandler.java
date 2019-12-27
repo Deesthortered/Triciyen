@@ -80,7 +80,8 @@ abstract class BaseQueryHandler {
         errorBuilder.append(responseError);
         errorBuilder.append("\n");
 
-        localStorage.setErrorMessage(errorBuilder.toString(), responseError);
+        localStorage.setErrorMessage(errorBuilder.toString(),
+                responseError.length() > 30 ? "Internal Server Error" : responseError);
     }
 
     protected HttpURLConnection makeGetQuery(String targetUrl) throws IOException {

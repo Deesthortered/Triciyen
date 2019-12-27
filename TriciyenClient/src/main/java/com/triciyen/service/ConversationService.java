@@ -36,9 +36,11 @@ public class ConversationService implements BaseService {
         }
 
         if (newConversationEnvelop.isEmpty()) {
-            localStorage.setErrorMessage(
-                    "Loaded empty Optional of new conversation",
-                    "Some troubles with creating new conversation");
+            if (!localStorage.wasError()) {
+                localStorage.setErrorMessage(
+                        "Loaded empty Optional of new conversation",
+                        "Some troubles with creating new conversation");
+            }
             return Conversation.builder().build();
         }
         return newConversationEnvelop.get();
@@ -52,9 +54,11 @@ public class ConversationService implements BaseService {
         }
 
         if (deleteConversationResultEnvelop.isEmpty()) {
-            localStorage.setErrorMessage(
-                    "Loaded empty Optional of result of deleting the conversation",
-                    "Some troubles with deleting the conversation");
+            if (!localStorage.wasError()) {
+                localStorage.setErrorMessage(
+                        "Loaded empty Optional of result of deleting the conversation",
+                        "Some troubles with deleting the conversation");
+            }
             return false;
         }
         return deleteConversationResultEnvelop.get();
@@ -68,9 +72,11 @@ public class ConversationService implements BaseService {
         }
 
         if (foundConversationEnvelop.isEmpty()) {
-            localStorage.setErrorMessage(
-                    "Loaded empty Optional of result of finding the conversation",
-                    "Some troubles with finding the conversation");
+            if (!localStorage.wasError()) {
+                localStorage.setErrorMessage(
+                        "Loaded empty Optional of result of finding the conversation",
+                        "Some troubles with finding the conversation");
+            }
             return Conversation.builder().build();
         }
         return foundConversationEnvelop.get();
@@ -84,9 +90,11 @@ public class ConversationService implements BaseService {
         }
 
         if (newUserConversationResultEnvelop.isEmpty()) {
-            localStorage.setErrorMessage(
-                    "Loaded empty Optional of result of adding new user to the conversation",
-                    "Some troubles with adding new user to the conversation");
+            if (!localStorage.wasError()) {
+                localStorage.setErrorMessage(
+                        "Loaded empty Optional of result of adding new user to the conversation",
+                        "Some troubles with adding new user to the conversation");
+            }
             return UserConversation.builder().build();
         }
         return newUserConversationResultEnvelop.get();
@@ -101,9 +109,11 @@ public class ConversationService implements BaseService {
         }
 
         if (deleteUserFromConversationResultEnvelop.isEmpty()) {
-            localStorage.setErrorMessage(
-                    "Loaded empty Optional of result of deleting user from the conversation",
-                    "Some troubles with deleting user from the conversation");
+            if (!localStorage.wasError()) {
+                localStorage.setErrorMessage(
+                        "Loaded empty Optional of result of deleting user from the conversation",
+                        "Some troubles with deleting user from the conversation");
+            }
             return false;
         }
         return deleteUserFromConversationResultEnvelop.get();
