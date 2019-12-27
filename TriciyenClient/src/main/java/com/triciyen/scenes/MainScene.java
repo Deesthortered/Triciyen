@@ -24,6 +24,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.util.*;
 
@@ -403,10 +406,12 @@ public class MainScene implements BaseScene {
     private void handleConversationButton(Event event) {
         ConversationButton conversationButton = (ConversationButton) event.getSource();
         Integer conversationId = Integer.valueOf(conversationButton.getId());
-        destroyMessages();
-        fullRightTitlePane.setTitle(conversationButton.getConversationName());
-        conversationButton.clickStyle(true);
-        initializeMessages(conversationId);
+        if (conversationId != localStorage.getCurrentActiveConversation()) {
+            destroyMessages();
+            fullRightTitlePane.setTitle(conversationButton.getConversationName());
+            conversationButton.clickStyle(true);
+            initializeMessages(conversationId);
+        }
     }
     private void handleSendMessageButton(Event event) {
         String content = writeMessageField.getText();
@@ -421,18 +426,58 @@ public class MainScene implements BaseScene {
     }
 
     private void handleCreateConversationButton(Event event) {
-        System.out.println("handleCreateConversationButton");
+        Stage stage = new Stage();
+        stage.setTitle("Create new conversation");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(scene.getWindow());
+        stage.setScene(CreateConversationScene.getInstance().getScene());
+        CreateConversationScene.getInstance().initialize();
+        stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
+                (event1) -> CreateConversationScene.getInstance().destroy());
+        stage.show();
     }
     private void handleFindConversationButton(Event event) {
-        System.out.println("handleFindConversationButton");
+        Stage stage = new Stage();
+        stage.setTitle("Find conversation");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(scene.getWindow());
+        stage.setScene(FindConversationScene.getInstance().getScene());
+        FindConversationScene.getInstance().initialize();
+        stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
+                (event1) -> FindConversationScene.getInstance().destroy());
+        stage.show();
     }
     public void handleAddMemberButton(Event event) {
-        System.out.println("handleAddMemberButton");
+        Stage stage = new Stage();
+        stage.setTitle("Add member to conversation");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(scene.getWindow());
+        stage.setScene(AddMemberToConversationScene.getInstance().getScene());
+        AddMemberToConversationScene.getInstance().initialize();
+        stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
+                (event1) -> AddMemberToConversationScene.getInstance().destroy());
+        stage.show();
     }
     public void handleLeaveConversationButton(Event event) {
-        System.out.println("handleLeaveConversationButton");
+        Stage stage = new Stage();
+        stage.setTitle("Leave conversation");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(scene.getWindow());
+        stage.setScene(LeaveConversationScene.getInstance().getScene());
+        LeaveConversationScene.getInstance().initialize();
+        stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
+                (event1) -> LeaveConversationScene.getInstance().destroy());
+        stage.show();
     }
     public void handleDeleteConversationButton(Event event) {
-        System.out.println("handleDeleteConversationButton");
+        Stage stage = new Stage();
+        stage.setTitle("Delete conversation");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(scene.getWindow());
+        stage.setScene(DeleteConversationScene.getInstance().getScene());
+        DeleteConversationScene.getInstance().initialize();
+        stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
+                (event1) -> DeleteConversationScene.getInstance().destroy());
+        stage.show();
     }
 }
