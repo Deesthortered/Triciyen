@@ -48,7 +48,8 @@ public class AddMemberToConversationScene implements BaseScene {
     }
     @Override
     public void destroy() {
-
+        searchTextField.setText("");
+        infoLabel.setText("Waiting to search...");
     }
     @Override
     public void handle(Event event) {

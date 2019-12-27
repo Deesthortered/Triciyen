@@ -1,5 +1,7 @@
 package com.triciyen.scenes;
 
+import com.triciyen.entity.Conversation;
+import com.triciyen.service.ConversationService;
 import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -7,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class CreateConversationScene implements BaseScene {
     private static final CreateConversationScene instance = new CreateConversationScene();
@@ -46,10 +49,25 @@ public class CreateConversationScene implements BaseScene {
     }
     @Override
     public void destroy() {
-
+        conversationNameField.setText("");
+        infoLabel.setText("Waiting to submit...");
     }
     @Override
     public void handle(Event event) {
-
+        if (conversationNameField.getText().equals("")) {
+            infoLabel.setText("Name must not be empty.");
+        } else {
+            ConversationService conversationService = ConversationService.getInstance();
+            Conversation newConversation = conversationService.createConversation(conversationNameField.getText());
+            if (localStorage.wasError()) {
+                infoLabel.setText(localStorage.getInterfaceErrorMessage());
+                localStorage.closeError();
+            } else {
+                MainScene.getInstance().destroy();
+                MainScene.getInstance().initialize();
+                destroy();
+                ((Stage) scene.getWindow()).close();
+            }
+        }
     }
 }

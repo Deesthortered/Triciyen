@@ -25,4 +25,21 @@ public class ConversationService implements BaseService {
         }
         return conversationList;
     }
+    public Conversation createConversation(String name) {
+        String userLogin = localStorage.getLoggedAccount().getLogin();
+        Optional<Conversation> newConversationEnvelop = Optional.empty();
+        try {
+            newConversationEnvelop = conversationQueryHandler.createConversationQuery(name, userLogin);
+        } catch (IOException e) {
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with creating new conversation");
+        }
+
+        if (newConversationEnvelop.isEmpty()) {
+            localStorage.setErrorMessage(
+                    "Loaded empty Optional of new conversation",
+                    "Some troubles with creating new conversation");
+            return Conversation.builder().build();
+        }
+        return newConversationEnvelop.get();
+    }
 }

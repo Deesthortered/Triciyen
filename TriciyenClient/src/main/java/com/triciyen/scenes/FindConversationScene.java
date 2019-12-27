@@ -35,7 +35,7 @@ public class FindConversationScene implements BaseScene {
         searchButton.setMinWidth(WINDOW_WIDTH);
         searchButton.setOnMouseClicked(this);
 
-        this.infoLabel = new Label("Waiting to search");
+        this.infoLabel = new Label("Waiting to search...");
 
         VBox box = new VBox();
         box.getChildren().addAll(chooseTypeLabel, radioBox, titleLabel, this.searchTextField, searchButton, this.infoLabel);
@@ -58,7 +58,8 @@ public class FindConversationScene implements BaseScene {
     }
     @Override
     public void destroy() {
-
+        searchTextField.setText("");
+        infoLabel.setText("Waiting to search...");
     }
     @Override
     public void handle(Event event) {

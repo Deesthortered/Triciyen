@@ -54,8 +54,7 @@ public class DeleteConversationScene implements BaseScene {
     @Override
     public void handle(Event event) {
         if (event.getSource() == this.cancelButton) {
-            Stage stage = (Stage) scene.getWindow();
-            stage.close();
+            ((Stage) scene.getWindow()).close();
         } else if (event.getSource() == this.submitButton) {
 
         }

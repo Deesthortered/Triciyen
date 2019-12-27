@@ -7,6 +7,8 @@ import com.triciyen.entity.UserConversation;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +39,7 @@ public class ConversationQueryHandler extends BaseQueryHandler {
     }
     public Optional<Conversation> createConversationQuery(String name, String userCreatorLogin) throws IOException {
         HttpURLConnection connection = makePostQuery(urlCreateConversation +
-                "?name=" + name +
+                "?name=" + URLEncoder.encode(name, StandardCharsets.UTF_8.toString()) +
                 "&userCreatorLogin=" + userCreatorLogin,
                 "");
 
