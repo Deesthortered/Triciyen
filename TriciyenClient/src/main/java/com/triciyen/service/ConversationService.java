@@ -1,6 +1,7 @@
 package com.triciyen.service;
 
 import com.triciyen.entity.Conversation;
+import com.triciyen.entity.UserConversation;
 
 import java.io.IOException;
 import java.util.List;
@@ -57,6 +58,22 @@ public class ConversationService implements BaseService {
             return false;
         }
         return deleteConversationResultEnvelop.get();
+    }
+    public UserConversation addUserToConversation(Integer conversationId, String userLogin) {
+        Optional<UserConversation> newUserConversationResultEnvelop = Optional.empty();
+        try {
+            newUserConversationResultEnvelop = conversationQueryHandler.addUserToConversationQuery(conversationId, userLogin);
+        } catch (IOException e) {
+            localStorage.setErrorMessage(e.getMessage(), "Some troubles with adding new user to the conversation");
+        }
+
+        if (newUserConversationResultEnvelop.isEmpty()) {
+            localStorage.setErrorMessage(
+                    "Loaded empty Optional of result of adding new user to the conversation",
+                    "Some troubles with adding new user to the conversation");
+            return UserConversation.builder().build();
+        }
+        return newUserConversationResultEnvelop.get();
     }
     public Boolean deleteUserFromConversation(Integer conversationId, String userLogin) {
         Optional<Boolean> deleteUserFromConversationResultEnvelop = Optional.empty();

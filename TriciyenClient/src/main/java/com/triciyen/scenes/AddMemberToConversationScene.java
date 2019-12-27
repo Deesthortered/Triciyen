@@ -1,5 +1,7 @@
 package com.triciyen.scenes;
 
+import com.triciyen.entity.UserConversation;
+import com.triciyen.service.ConversationService;
 import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -7,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class AddMemberToConversationScene implements BaseScene {
     private static final AddMemberToConversationScene instance = new AddMemberToConversationScene();
@@ -53,6 +56,23 @@ public class AddMemberToConversationScene implements BaseScene {
     }
     @Override
     public void handle(Event event) {
-
+        if (searchTextField.getText().equals("")) {
+            infoLabel.setText("Login must not be empty.");
+        } else {
+            ConversationService conversationService = ConversationService.getInstance();
+            UserConversation newUserConversation = conversationService.addUserToConversation(
+                    localStorage.getCurrentActiveConversation(),
+                    searchTextField.getText()
+            );
+            if (localStorage.wasError()) {
+                infoLabel.setText(localStorage.getInterfaceErrorMessage());
+                localStorage.closeError();
+            } else {
+                MainScene.getInstance().destroy();
+                MainScene.getInstance().initialize();
+                destroy();
+                ((Stage) scene.getWindow()).close();
+            }
+        }
     }
 }
