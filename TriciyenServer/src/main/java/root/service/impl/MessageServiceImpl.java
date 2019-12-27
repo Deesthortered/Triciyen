@@ -79,7 +79,7 @@ public class MessageServiceImpl implements MessageService {
         }
 
         return messageRepository
-                .getAllByConversation_ConversationIdAndCreationTimeLessThanEqualOrderByCreationTime(
+                .getAllByConversation_ConversationIdAndCreationTimeLessThanEqualOrderByCreationTimeDesc(
                         conversationId,
                         lastReadMessageDateTime,
                         PageRequest.of(0, pageSize)
