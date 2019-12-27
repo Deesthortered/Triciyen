@@ -45,7 +45,7 @@ public class MessageServiceImpl implements MessageService {
             if (lastReadMessage.isPresent()) {
                 lastReadMessageDateTime = lastReadMessage.get().getCreationTime();
             } else {
-                lastReadMessageDateTime = LocalDateTime.now();
+                lastReadMessageDateTime = LocalDateTime.of(1900, 1, 1, 1, 1);
             }
         } else {
             Message lastReadMessage = messageRepository.findById(lastReadMessageId)
