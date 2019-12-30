@@ -1,0 +1,530 @@
+package com.triciyen.scenes;
+
+import com.triciyen.MessageListener;
+import com.triciyen.TriciyenApplication;
+import com.triciyen.components.ChatMessageBox;
+import com.triciyen.components.ConversationButton;
+import com.triciyen.components.ConversationPanel;
+import com.triciyen.entity.Conversation;
+import com.triciyen.entity.Message;
+import com.triciyen.entity.UserAccount;
+import com.triciyen.service.ConversationService;
+import com.triciyen.service.MessageService;
+import javafx.beans.value.ChangeListener;
+import javafx.event.Event;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+
+import java.util.*;
+
+public class MainScene implements BaseScene {
+    private static final MainScene instance = new MainScene();
+
+    // Scene settings
+    private static Scene scene;
+    private static final int sceneWidth = 1000;
+    private static final int sceneHeight = 700;
+    private BorderPane mainPane;
+
+    // Left corner settings
+    private static final int leftCornerHeight = 100;
+    private static final int avatarSize = 50;
+
+    private ImageView imageUserAvatar;
+    private Label usernameLabel;
+    private Label loginLabel;
+    private HBox conversationHBox;
+    private Label conversationLabel;
+    private Button createConversationButton;
+    private Button findConversationButton;
+    private Button logoutButton;
+
+    // Conversation box settings
+    private VBox conversationsBox;
+    private List<ConversationButton> conversationButtons;
+    private static final int conversationScrollPaneWidth = 330;
+    private static final int conversationScrollPaneHeight = sceneHeight - leftCornerHeight;
+
+    // Big right box settings - None state
+    private StackPane emptyRightPane;
+    private Label emptyRightTitle;
+    private static final int emptyRightPaneWidth = sceneWidth - conversationScrollPaneWidth;
+    private static final int emptyRightPaneHeight = leftCornerHeight;
+
+    // Big right box settings - Conversation state
+    private VBox fullRightPane;
+    private ConversationPanel fullRightTitlePane;
+
+    private ScrollPane fullRightScrollPane;
+    private VBox messageBox;
+    private List<ChatMessageBox> messageButtons;
+
+    private StackPane writeMessagePane;
+    private HBox writeMessageHBox;
+    private TextField writeMessageField;
+    private Button writeMessageSendButton;
+
+    private static final int writeMessagePaneWidth = sceneWidth - conversationScrollPaneWidth;
+    private static final int writeMessagePaneHeight = 100;
+    private static final int fullRightTitlePaneWidth = sceneWidth - conversationScrollPaneWidth;
+    private static final int fullRightTitlePaneHeight = leftCornerHeight;
+    private static final int fullRightScrollPaneWidth = fullRightTitlePaneWidth;
+    private static final int fullRightScrollPaneHeight = sceneHeight - fullRightTitlePaneHeight - writeMessagePaneHeight;
+
+    private List<MessageListener> messageListeners;
+    private Integer oldestReadMessageIdForCurrentConversation = -1;
+
+    private Button expandMessagesButton;
+
+    private MainScene() {
+        mainPane = new BorderPane();
+
+        StackPane leftCornerPane = new StackPane();
+        leftCornerPane.setMinHeight(leftCornerHeight);
+        leftCornerPane.setMaxHeight(leftCornerHeight);
+        leftCornerPane.setPrefHeight(leftCornerHeight);
+
+        usernameLabel = new Label("");
+        loginLabel = new Label("");
+        conversationHBox = new HBox();
+        conversationLabel = new Label("Conversation: ");
+
+        ImageView addIView = new ImageView(new Image("images/plus_add_green.png"));
+        addIView.setFitWidth(20);
+        addIView.setFitHeight(20);
+
+        createConversationButton = new Button("", addIView);
+        createConversationButton.setStyle(
+                "-fx-background-radius: 5em; " +
+                        "-fx-min-width: 1px; " +
+                        "-fx-min-height: 1px; " +
+                        "-fx-max-width: 1px; " +
+                        "-fx-max-height: 1px;"
+        );
+        createConversationButton.setOnMouseClicked(this::handleCreateConversationButton);
+
+        ImageView findIView = new ImageView(new Image("images/black_magnifier.png"));
+        findIView.setFitWidth(20);
+        findIView.setFitHeight(20);
+
+        findConversationButton = new Button("", findIView);
+        findConversationButton.setStyle(
+                "-fx-background-radius: 5em; " +
+                        "-fx-min-width: 1px; " +
+                        "-fx-min-height: 1px; " +
+                        "-fx-max-width: 1px; " +
+                        "-fx-max-height: 1px;"
+        );
+        findConversationButton.setPadding(new Insets(0,0,0,30));
+        findConversationButton.setOnMouseClicked(this::handleFindConversationButton);
+
+
+        conversationHBox.setAlignment(Pos.CENTER_LEFT);
+        conversationHBox.getChildren().addAll(conversationLabel, createConversationButton, findConversationButton);
+        conversationHBox.setSpacing(10);
+
+
+        VBox loginBox = new VBox();
+        loginBox.getChildren().addAll(usernameLabel, loginLabel, conversationHBox);
+
+        imageUserAvatar = new ImageView(localStorage.getBaseAccountImage());
+        imageUserAvatar.setFitWidth(avatarSize);
+        imageUserAvatar.setFitHeight(avatarSize);
+
+        HBox avatarBox = new HBox();
+        avatarBox.getChildren().addAll(imageUserAvatar, loginBox);
+        avatarBox.setSpacing(5);
+
+        logoutButton = new Button("Logout");
+        logoutButton.setOnMouseClicked(this::handleLogout);
+
+        VBox leftCornerBox = new VBox();
+        leftCornerBox.getChildren().addAll(avatarBox, logoutButton);
+        leftCornerBox.setSpacing(5);
+        leftCornerBox.setPadding(new Insets(5,0,0,5));
+
+        leftCornerPane.getChildren().add(leftCornerBox);
+
+        conversationsBox = new VBox();
+        ScrollPane conversationScrollPane = new ScrollPane(conversationsBox);
+        conversationScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.ALWAYS);
+        conversationScrollPane.setMaxWidth(conversationScrollPaneWidth);
+        conversationScrollPane.setMinWidth(conversationScrollPaneWidth);
+        conversationScrollPane.setPrefWidth(conversationScrollPaneWidth);
+        conversationScrollPane.setMaxHeight(conversationScrollPaneHeight);
+        conversationScrollPane.setMinHeight(conversationScrollPaneHeight);
+        conversationScrollPane.setPrefHeight(conversationScrollPaneHeight);
+
+
+        VBox leftPane = new VBox();
+        leftPane.getChildren().addAll(leftCornerPane, conversationScrollPane);
+
+        mainPane.setLeft(leftPane);
+
+        emptyRightPane = new StackPane();
+        emptyRightPane.setMinHeight(emptyRightPaneHeight);
+        emptyRightPane.setPrefHeight(emptyRightPaneHeight);
+        emptyRightPane.setMaxHeight(emptyRightPaneHeight);
+        emptyRightPane.setMinWidth(emptyRightPaneWidth);
+        emptyRightPane.setPrefWidth(emptyRightPaneWidth);
+        emptyRightPane.setMaxWidth(emptyRightPaneWidth);
+        emptyRightTitle = new Label("Please, choose the conversation");
+        emptyRightPane.getChildren().addAll(emptyRightTitle);
+        mainPane.setCenter(emptyRightPane);
+
+        fullRightPane = new VBox();
+        fullRightTitlePane = new ConversationPanel("Title");
+        fullRightTitlePane.setMinHeight(fullRightTitlePaneHeight);
+        fullRightTitlePane.setPrefHeight(fullRightTitlePaneHeight);
+        fullRightTitlePane.setMaxHeight(fullRightTitlePaneHeight);
+        fullRightTitlePane.setMinWidth(fullRightTitlePaneWidth);
+        fullRightTitlePane.setPrefWidth(fullRightTitlePaneWidth);
+        fullRightTitlePane.setMaxWidth(fullRightTitlePaneWidth);
+
+        messageBox = new VBox();
+        fullRightScrollPane = new ScrollPane(messageBox);
+        messageBox.heightProperty().addListener(
+                (ChangeListener) (observable, oldvalue, newValue) -> fullRightScrollPane.setVvalue((Double)newValue ));
+        fullRightScrollPane.setMinHeight(fullRightScrollPaneHeight);
+        fullRightScrollPane.setPrefHeight(fullRightScrollPaneHeight);
+        fullRightScrollPane.setMaxHeight(fullRightScrollPaneHeight);
+        fullRightScrollPane.setMinWidth(fullRightScrollPaneWidth);
+        fullRightScrollPane.setPrefWidth(fullRightScrollPaneWidth);
+        fullRightScrollPane.setMaxWidth(fullRightScrollPaneWidth);
+
+
+        writeMessagePane = new StackPane();
+        writeMessageHBox = new HBox();
+
+        writeMessageField = new TextField();
+        writeMessageField.setMinHeight(writeMessagePaneHeight);
+        writeMessageField.setPrefHeight(writeMessagePaneHeight);
+        writeMessageField.setMaxHeight(writeMessagePaneHeight);
+        writeMessageField.setMinWidth(writeMessagePaneWidth - writeMessagePaneHeight);
+        writeMessageField.setPrefWidth(writeMessagePaneWidth - writeMessagePaneHeight);
+        writeMessageField.setMaxWidth(writeMessagePaneWidth - writeMessagePaneHeight);
+
+        writeMessageSendButton = new Button("Send");
+        writeMessageSendButton.setOnMouseClicked(this::handleSendMessageButton);
+        writeMessageSendButton.setMinHeight(writeMessagePaneHeight);
+        writeMessageSendButton.setPrefHeight(writeMessagePaneHeight);
+        writeMessageSendButton.setMaxHeight(writeMessagePaneHeight);
+        writeMessageSendButton.setMinWidth(writeMessagePaneHeight);
+        writeMessageSendButton.setPrefWidth(writeMessagePaneHeight);
+        writeMessageSendButton.setMaxWidth(writeMessagePaneHeight);
+
+        writeMessageHBox.getChildren().addAll(writeMessageField, writeMessageSendButton);
+        writeMessagePane.getChildren().add(writeMessageHBox);
+        fullRightPane.getChildren().addAll(fullRightTitlePane, fullRightScrollPane, writeMessagePane);
+
+        expandMessagesButton = new Button("Load previous...");
+        expandMessagesButton.setOnMouseClicked(this::handleExpandMessagesButton);
+
+        scene = new Scene(mainPane, sceneWidth, sceneHeight);
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, this::handlePressButton);
+    }
+    public static MainScene getInstance() {
+        return instance;
+    }
+
+    @Override
+    public Scene getScene() {
+        return scene;
+    }
+    @Override
+    public void initialize() {
+        initializeUserCorner();
+        initializeRightPane();
+        initializeConversations();
+    }
+    @Override
+    public void destroy() {
+        destroyMessages();
+        destroyConversations();
+        destroyRightPane();
+        destroyUserCorner();
+    }
+    @Override
+    public void handle(Event event) {
+        System.out.println("Login Scene: Unknown event.");
+    }
+
+
+    private void initializeUserCorner() {
+        fullRightTitlePane.attachHandlers();
+        UserAccount currentLoggedAccount = localStorage.getLoggedAccount();
+        loginLabel.setText("Login: " + currentLoggedAccount.getLogin());
+        usernameLabel.setText(currentLoggedAccount.getName());
+    }
+    private void initializeRightPane() {
+        emptyRightTitle.setText("Please, choose the conversation");
+        mainPane.setCenter(emptyRightPane);
+
+    }
+    private void initializeConversations() {
+        conversationsBox.getChildren().clear();
+        conversationButtons = new ArrayList<>();
+        messageListeners = new ArrayList<>();
+        messageButtons = new ArrayList<>();
+
+        ConversationService conversationService = ConversationService.getInstance();
+        Optional<List<Conversation>> conversationListEnvelop = conversationService.getAllSubscribedConversations();
+        if (localStorage.wasError()) {
+            System.err.println(localStorage.getInternalErrorMessage());
+            ConversationButton button = makeErrorConversationButton();
+            conversationButtons.add(button);
+            conversationsBox.getChildren().add(button);
+            localStorage.closeError();
+        } else {
+            if (conversationListEnvelop.isPresent() && !conversationListEnvelop.get().isEmpty()) {
+                List<Conversation> conversationList = conversationListEnvelop.get();
+                conversationList
+                        .forEach(conversation -> {
+                            ConversationButton button = mapConversationToButton(conversation);
+                            conversationButtons.add(button);
+                            conversationsBox.getChildren().add(button);
+
+                            MessageListener listener = new MessageListener(conversation.getConversationId(), button, messageButtons, messageBox);
+                            messageListeners.add(listener);
+                            listener.start();
+                        });
+            } else {
+                ConversationButton button = makeNoConversationButton();
+                conversationButtons.add(button);
+                conversationsBox.getChildren().add(button);
+            }
+        }
+    }
+    private void initializeMessages(Integer conversationId) {
+        messageBox.getChildren().clear();
+        mainPane.setCenter(fullRightPane);
+        expandMessagesButton.setDisable(false);
+
+        MessageService messageService = MessageService.getInstance();
+        oldestReadMessageIdForCurrentConversation = messageService.getLastReadMessageIdOfConversation(conversationId);
+        if (localStorage.wasError()) {
+            System.err.println(localStorage.getInternalErrorMessage());
+            localStorage.closeError();
+        } else {
+            List<Message> elderMessages = messageService
+                    .getPageOfElderMessagesOfConversation(conversationId, oldestReadMessageIdForCurrentConversation);
+
+            List<Message> lastMessages = messageService
+                    .getLastMessagesOfConversation(conversationId, oldestReadMessageIdForCurrentConversation);
+
+            if (!elderMessages.isEmpty()) {
+                oldestReadMessageIdForCurrentConversation = elderMessages.get(elderMessages.size()-1).getMessageId();
+            }
+
+            if (elderMessages.size() >= localStorage.getMessagePageSize()) {
+                messageBox.getChildren().add(this.expandMessagesButton);
+            }
+
+            elderMessages.forEach(message -> {
+                ChatMessageBox messageButton = mapMessageToButton(message);
+                messageButtons.add(0, messageButton);
+            });
+
+            lastMessages.forEach(message -> {
+                ChatMessageBox messageButton = mapMessageToButton(message);
+                messageButtons.add(messageButton);
+            });
+
+            messageButtons.forEach(messageBox.getChildren()::add);
+
+            if (!lastMessages.isEmpty()) {
+                messageService.setLastReadMessageOfTheConversation
+                        (conversationId, lastMessages.get(lastMessages.size() - 1).getMessageId());
+            }
+            localStorage.setCurrentActiveConversation(conversationId);
+        }
+    }
+
+    private void destroyUserCorner() {
+        loginLabel.setText("Shutdown....");
+        usernameLabel.setText("Shutdown....");
+    }
+    private void destroyRightPane() {
+        emptyRightTitle.setText("Shutdown....");
+        mainPane.setCenter(emptyRightPane);
+    }
+    private void destroyConversations() {
+        conversationsBox.getChildren().clear();
+        if (conversationButtons != null)
+            conversationButtons.clear();
+        if (messageListeners != null) {
+            messageListeners.forEach(Thread::interrupt);
+            messageListeners.clear();
+        }
+    }
+    private void destroyMessages() {
+        localStorage.setCurrentActiveConversation(-1);
+        conversationButtons.forEach(conversationButton -> conversationButton.clickStyle(false));
+        mainPane.setCenter(emptyRightPane);
+
+        messageBox.getChildren().clear();
+        messageButtons.clear();
+        this.oldestReadMessageIdForCurrentConversation = -1;
+    }
+
+    private ConversationButton mapConversationToButton(Conversation conversation) {
+        ConversationButton button = new ConversationButton
+                ("(" + conversation.getConversationId() + ") " + conversation.getName(),
+                        localStorage.getBaseAccountImage());
+        button.setId(conversation.getConversationId().toString());
+        button.setOnMouseClicked(this::handleConversationButton);
+
+        button.setLastMessage("");
+        button.setLastTime("");
+        button.setUnreadCounter("0");
+
+        return button;
+    }
+    private ConversationButton makeNoConversationButton() {
+        return new ConversationButton
+                ("You have no conversations", localStorage.getBaseAccountImage());
+    }
+    private ConversationButton makeErrorConversationButton() {
+        return new ConversationButton
+                ("Error: " + localStorage.getInterfaceErrorMessage(), localStorage.getBaseAccountImage());
+    }
+
+    public static ChatMessageBox mapMessageToButton(Message message) {
+        ChatMessageBox button = new ChatMessageBox(localStorage.getBaseAccountImage(), message.getUser().getName());
+        button.setText(message.getContent());
+        return button;
+    }
+
+    private void handlePressButton(KeyEvent event) {
+        if(event.getCode() == KeyCode.ESCAPE) {
+            destroyMessages();
+        }
+    }
+    private void handleLogout(Event event) {
+        localStorage.setDefaultState();
+        destroy();
+        TriciyenApplication.setGlobalScene(LoginScene.getInstance());
+    }
+    private void handleConversationButton(Event event) {
+        ConversationButton conversationButton = (ConversationButton) event.getSource();
+        Integer conversationId = Integer.valueOf(conversationButton.getId());
+        if (conversationId != localStorage.getCurrentActiveConversation()) {
+            destroyMessages();
+            fullRightTitlePane.setTitle(conversationButton.getConversationName());
+            conversationButton.clickStyle(true);
+            initializeMessages(conversationId);
+        }
+    }
+    private void handleSendMessageButton(Event event) {
+        String content = writeMessageField.getText();
+        writeMessageField.setText("");
+
+        MessageService messageService = MessageService.getInstance();
+        messageService.sendMessage(localStorage.getCurrentActiveConversation(), 1, content);
+        if (localStorage.wasError()) {
+            System.err.println(localStorage.getInternalErrorMessage());
+            localStorage.closeError();
+        }
+    }
+
+    private void handleCreateConversationButton(Event event) {
+        Stage stage = new Stage();
+        stage.setTitle("Create new conversation");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(scene.getWindow());
+        stage.setScene(CreateConversationScene.getInstance().getScene());
+        stage.setResizable(false);
+        CreateConversationScene.getInstance().initialize();
+        stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
+                (event1) -> CreateConversationScene.getInstance().destroy());
+        stage.show();
+    }
+    private void handleFindConversationButton(Event event) {
+        Stage stage = new Stage();
+        stage.setTitle("Find conversation");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(scene.getWindow());
+        stage.setScene(FindConversationScene.getInstance().getScene());
+        stage.setResizable(false);
+        FindConversationScene.getInstance().initialize();
+        stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
+                (event1) -> FindConversationScene.getInstance().destroy());
+        stage.show();
+    }
+    public void handleAddMemberButton(Event event) {
+        Stage stage = new Stage();
+        stage.setTitle("Add member to conversation");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(scene.getWindow());
+        stage.setScene(AddMemberToConversationScene.getInstance().getScene());
+        stage.setResizable(false);
+        AddMemberToConversationScene.getInstance().initialize();
+        stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
+                (event1) -> AddMemberToConversationScene.getInstance().destroy());
+        stage.show();
+    }
+    public void handleLeaveConversationButton(Event event) {
+        Stage stage = new Stage();
+        stage.setTitle("Leave conversation");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(scene.getWindow());
+        stage.setScene(LeaveConversationScene.getInstance().getScene());
+        stage.setResizable(false);
+        LeaveConversationScene.getInstance().initialize();
+        stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
+                (event1) -> LeaveConversationScene.getInstance().destroy());
+        stage.show();
+    }
+    public void handleDeleteConversationButton(Event event) {
+        Stage stage = new Stage();
+        stage.setTitle("Delete conversation");
+        stage.initModality(Modality.WINDOW_MODAL);
+        stage.initOwner(scene.getWindow());
+        stage.setScene(DeleteConversationScene.getInstance().getScene());
+        stage.setResizable(false);
+        DeleteConversationScene.getInstance().initialize();
+        stage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST,
+                (event1) -> DeleteConversationScene.getInstance().destroy());
+        stage.show();
+    }
+
+    private void handleExpandMessagesButton(Event event) {
+        MessageService messageService = MessageService.getInstance();
+        List<Message> elderMessages = messageService
+                .getPageOfElderMessagesOfConversation(
+                        localStorage.getCurrentActiveConversation(), oldestReadMessageIdForCurrentConversation);
+        elderMessages.remove(0);
+        if (!elderMessages.isEmpty()) {
+            oldestReadMessageIdForCurrentConversation = elderMessages.get(elderMessages.size() - 1).getMessageId();
+        }
+
+        synchronized (messageButtons) {
+            elderMessages.forEach(message -> {
+                ChatMessageBox messageButton = mapMessageToButton(message);
+                messageButtons.add(0, messageButton);
+            });
+        }
+
+        synchronized (messageBox) {
+            messageBox.getChildren().clear();
+            if (elderMessages.size() + 1 >= localStorage.getMessagePageSize()) {
+                messageBox.getChildren().add(this.expandMessagesButton);
+            }
+
+            messageButtons.forEach(button -> messageBox.getChildren().add(button));
+        }
+    }
+}

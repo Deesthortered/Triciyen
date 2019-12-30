@@ -29,5 +29,3 @@ TriciyenServer/build/*
 TriciyenClient/.idea/*
 TriciyenClient/.gradle/*
 TriciyenClient/build/*
-
-javafx13lib/*
